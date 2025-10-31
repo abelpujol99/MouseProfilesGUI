@@ -5,12 +5,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-        headers
         libs
         libs/glad/include/glad
         libs/glad/include/KHR
         libs/ImGuiAPI
-        libs/ImGuiAPI/backends)
+        libs/ImGuiAPI/backends
+        headers
+        headers/Factories
+        headers/Managers
+        headers/UI
+)
 
 set(SOURCES
         main.cpp
@@ -21,7 +25,13 @@ set(SOURCES
         libs/ImGuiAPI/imgui_widgets.cpp
         libs/ImGuiAPI/backends/imgui_impl_glfw.cpp
         libs/ImGuiAPI/backends/imgui_impl_opengl3.cpp
-        )
+        src/Factories/DrawableFactory.cpp
+        src/Managers/ApplicationManager.cpp
+        src/Managers/DrawManager.cpp
+        src/Managers/WindowManager.cpp
+        src/UI/Drawable.cpp
+        src/UI/Texture.cpp
+)
 
 add_executable(MouseProfilesGUI ${SOURCES})
 

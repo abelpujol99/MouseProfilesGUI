@@ -1,17 +1,20 @@
 #pragma once
-#include "Drawable.h"
+#include "RectDrawable.h"
 
 #include "glad/glad.h"
 
-class Texture : public Drawable
+class Texture : public RectDrawable
 {
 public:
 
-    Texture(int positionX, int positionY, const char* fileName);
+    Texture(const ImVec2& parentPosition, float positionX, float positionY, const char* fileName, bool isHidden = false);
+
+    ~Texture() override = default;
 
     void Draw(ImDrawList* drawList) override;
 
 private:
+
     GLuint _texture;
 
     GLuint LoadTexture(const char* fileName);

@@ -10,11 +10,11 @@ FontFactory::FontFactory()
 {
     std::filesystem::path resourceDir = RESOURCE_DIR;
 
-    auto path {resourceDir / "fonts/faith.ttf"};
+    auto path {resourceDir / "fonts/Roboto-Medium.ttf"};
 
     ImGuiIO& io {ImGui::GetIO()};
 
-    _fontFamilies.emplace(ROBOTO_REGULAR, io.Fonts->AddFontFromFileTTF(path.c_str()));
+    _fontFamilies.emplace(FontFamilyTypes::ROBOTO_REGULAR, io.Fonts->AddFontFromFileTTF(path.c_str()));
 }
 
 FontFactory& FontFactory::GetInstance()

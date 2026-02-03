@@ -9,7 +9,8 @@
 #include <filesystem>
 #include <iostream>
 
-Texture::Texture(int positionX, int positionY, const char* fileName) : Drawable(positionX, positionY)
+Texture::Texture(const ImVec2& parentPosition, float positionX, float positionY, const char* fileName, bool isHidden) :
+    RectDrawable(parentPosition, positionX, positionY, isHidden)
 {
     _texture = LoadTexture(fileName);
 }
@@ -47,5 +48,10 @@ GLuint Texture::LoadTexture(const char* fileName)
 
 void Texture::Draw(ImDrawList* drawList)
 {
-    drawList->AddImage(_texture, _topLeftPosition, _bottomRightPosition);
+    if (_isHidden)
+    {
+        return;
+    }
+
+    drawList->AddImage(_texture, GetFinalPosition(), _bottomRightPosition);
 }

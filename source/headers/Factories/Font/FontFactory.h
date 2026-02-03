@@ -9,6 +9,11 @@ struct ImFont;
 class FontFactory
 {
 public:
+    
+    FontFactory(const FontFactory& other) = delete;
+    FontFactory& operator=(const FontFactory& other) = delete;
+    FontFactory(FontFactory&& other) = delete;
+    FontFactory&& operator=(FontFactory&& other) = delete;
 
     static FontFactory& GetInstance();
 

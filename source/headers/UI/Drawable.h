@@ -10,15 +10,25 @@ public:
 
     virtual ~Drawable() = default;
 
+    void SetIsHidden(bool isHidden);
+
+    [[nodiscard]] const ImVec2& GetParentPosition() const;
+
+    [[nodiscard]] virtual const ImVec2& GetRelativePosition() const;
+
+    [[nodiscard]] const ImVec2& GetFinalPosition() const;
+
+    virtual void UpdatePosition();
+
     virtual void Draw(ImDrawList* drawList) = 0;
 
 protected:
 
-    ImVec2 _topLeftPosition;
-    ImVec2 _size;
-    ImVec2 _bottomRightPosition;
+    const ImVec2& _parentPosition;
+    ImVec2 _relativePosition;
+    ImVec2 _finalPosition;
 
-    Drawable(int positionX, int positionY);
+    bool _isHidden;
 
-    void SetSize(int width, int height);
+    Drawable(const ImVec2& parentPosition, float relativePositionX, float relativePositionY, bool isHidden);
 };

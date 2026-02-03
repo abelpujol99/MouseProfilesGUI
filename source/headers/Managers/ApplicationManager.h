@@ -18,7 +18,7 @@ public:
 
 private:
 
-    static ApplicationManager _applicationMangerInstance;
-
     ApplicationManager() = default;
+
+    static ApplicationManager _applicationMangerInstance;
 };

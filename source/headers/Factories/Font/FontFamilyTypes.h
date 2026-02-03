@@ -1,6 +1,6 @@
 #pragma once
 
-enum FontFamilyTypes
+enum class FontFamilyTypes
 {
     ROBOTO_REGULAR
 };

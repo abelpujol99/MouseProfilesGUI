@@ -2,6 +2,8 @@
 #include <memory>
 #include <vector>
 
+#include "imgui.h"
+
 class Text;
 class Drawable;
 struct ImDrawList;
@@ -21,7 +23,7 @@ public:
 
     void AddDrawable(Drawable* drawable);
 
-    void DrawElements(ImDrawList* drawList) const;
+    void DrawElements(ImDrawList* drawList);
 
     void Start();
 
@@ -32,9 +34,13 @@ private:
 
     static DrawManager _drawManagerInstance;
 
+    ImVec2 _rootPosition {0, 0};
+
     std::unique_ptr<Drawable> _texture;
 
     std::unique_ptr<Drawable> _text;
+
+    std::unique_ptr<Drawable> _textBox;
 
     std::vector<Drawable*> _drawables;
 };

@@ -1,14 +1,7 @@
 #pragma once
-#include <memory>
 
 class ApplicationManager
 {
-private:
-
-    static std::unique_ptr<ApplicationManager> _applicationMangerInstance;
-
-    ApplicationManager() = default;
-
 public:
 
     ~ApplicationManager() = default;
@@ -21,4 +14,11 @@ public:
     static ApplicationManager& GetInstance();
 
     void Start();
+
+
+private:
+
+    static ApplicationManager _applicationMangerInstance;
+
+    ApplicationManager() = default;
 };

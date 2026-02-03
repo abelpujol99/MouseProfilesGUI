@@ -1,18 +1,14 @@
 #include "Managers/DrawManager.h"
 
 #include "Factories/DrawableFactory.h"
+#include "Factories/Font/FontFactory.h"
 #include "UI/Drawable.h"
 
-std::unique_ptr<DrawManager> DrawManager::_drawManagerInstance = nullptr;
+DrawManager DrawManager::_drawManagerInstance{};
 
 DrawManager& DrawManager::GetInstance()
 {
-    if (!_drawManagerInstance)
-    {
-        _drawManagerInstance.reset(new DrawManager());
-    }
-
-    return *_drawManagerInstance;
+    return _drawManagerInstance;
 }
 
 void DrawManager::AddDrawable(Drawable* drawable)
@@ -30,7 +26,12 @@ void DrawManager::DrawElements(ImDrawList* drawList) const
 
 void DrawManager::Start()
 {
-    _texture = std::move(DrawableFactory::CreateTexture(300, 300, "resources/cat.jpg"));
+    _texture = std::move(DrawableFactory::CreateTexture(300, 300, "images/cat.jpg"));
 
     AddDrawable(_texture.get());
+
+    _text = std::move(DrawableFactory::CreateText(1200, 300, "Test", FontFactory::GetInstance().GetFontFamily(ROBOTO_REGULAR),
+        200.f, {255, 255, 0, 255}));
+
+    AddDrawable(_text.get());
 }

@@ -6,6 +6,9 @@
 
 #include "imgui.h"
 
+#include <filesystem>
+#include <iostream>
+
 Texture::Texture(int positionX, int positionY, const char* fileName) : Drawable(positionX, positionY)
 {
     _texture = LoadTexture(fileName);
@@ -17,11 +20,15 @@ GLuint Texture::LoadTexture(const char* fileName)
     int height;
     int channels;
 
-    unsigned char* data {stbi_load(fileName, &width, &height, &channels, 4)};
+    std::filesystem::path resourceDir = RESOURCE_DIR;
+
+    auto path {resourceDir / fileName};
+
+    unsigned char* data {stbi_load(path.c_str(), &width, &height, &channels, 4)};
 
     if (!data)
     {
-        printf("Failed to load image: %s\n", fileName);
+        printf("Failed to load image: %s\n", path.c_str());
         return 0;
     }
 

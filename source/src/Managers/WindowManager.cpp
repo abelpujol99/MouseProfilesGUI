@@ -1,16 +1,16 @@
 #include "Managers/WindowManager.h"
 
-#include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 
 #include <GLFW/glfw3.h>
 
+#include "Factories/Font/FontFactory.h"
 #include "Managers/DrawManager.h"
 #include "UI/Texture.h"
 
-std::unique_ptr<WindowManager> WindowManager::_windowManagerInstance = nullptr;
+WindowManager WindowManager::_windowManagerInstance{};
 
 WindowManager::~WindowManager()
 {
@@ -19,12 +19,7 @@ WindowManager::~WindowManager()
 
 WindowManager& WindowManager::GetInstance()
 {
-    if (!_windowManagerInstance)
-    {
-        _windowManagerInstance.reset(new WindowManager());
-    }
-
-    return *_windowManagerInstance;
+    return _windowManagerInstance;
 }
 
 void WindowManager::SetSizes(int width, int height)
@@ -81,7 +76,6 @@ void WindowManager::SetupImGui() const
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& inputOutput {ImGui::GetIO()};
 
     ImGui::StyleColorsDark();
 

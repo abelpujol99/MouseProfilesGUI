@@ -2,16 +2,11 @@
 
 #include "Managers/WindowManager.h"
 
-std::unique_ptr<ApplicationManager> ApplicationManager::_applicationMangerInstance = nullptr;
+ApplicationManager ApplicationManager::_applicationMangerInstance{};
 
 ApplicationManager& ApplicationManager::GetInstance()
 {
-    if (!_applicationMangerInstance)
-    {
-        _applicationMangerInstance.reset(new ApplicationManager());
-    }
-
-    return *_applicationMangerInstance;
+    return _applicationMangerInstance;
 }
 
 void ApplicationManager::Start()

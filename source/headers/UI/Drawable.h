@@ -6,6 +6,12 @@ struct ImDrawList;
 
 class Drawable
 {
+public:
+
+    virtual ~Drawable() = default;
+
+    virtual void Draw(ImDrawList* drawList) = 0;
+
 protected:
 
     ImVec2 _topLeftPosition;
@@ -15,10 +21,4 @@ protected:
     Drawable(int positionX, int positionY);
 
     void SetSize(int width, int height);
-
-public:
-
-    virtual ~Drawable() = default;
-
-    virtual void Draw(ImDrawList* drawList) = 0;
 };

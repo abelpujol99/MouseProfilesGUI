@@ -7,25 +7,6 @@ struct GLFWwindow;
 
 class WindowManager
 {
-private:
-
-    static std::unique_ptr<WindowManager> _windowManagerInstance;
-
-    int _width;
-    int _height;
-
-    GLFWwindow* _window;
-
-    WindowManager() = default;
-
-    static void GlfwErrorCallback(int error, const char* description);
-
-    void SetupGLFW();
-
-    void SetupImGui() const;
-
-    void DrawElements(ImDrawList* drawList) const;
-
 public:
 
     ~WindowManager();
@@ -44,4 +25,24 @@ public:
     void Update();
 
     void Cleanse() const;
+
+
+private:
+
+    WindowManager() = default;
+
+    static void GlfwErrorCallback(int error, const char* description);
+
+    void SetupGLFW();
+
+    void SetupImGui() const;
+
+    void DrawElements(ImDrawList* drawList) const;
+
+    static WindowManager _windowManagerInstance;
+
+    int _width;
+    int _height;
+
+    GLFWwindow* _window;
 };

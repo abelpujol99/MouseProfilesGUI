@@ -28,6 +28,9 @@ OrganizeIDECodeFiles(${SOURCE_DIR} CODE_FILES)
 
 add_executable(${PROJECT_NAME} ${CODE_FILES})
 
+#Resources
+CopyResourcesToBuild(${SOURCE_DIR})
+
 #Includes
 set(INCLUDES
         headers

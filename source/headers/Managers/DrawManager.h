@@ -2,21 +2,12 @@
 #include <memory>
 #include <vector>
 
+class Text;
 class Drawable;
 struct ImDrawList;
 
 class DrawManager
 {
-private:
-
-    static std::unique_ptr<DrawManager> _drawManagerInstance;
-
-    std::unique_ptr<Drawable> _texture;
-
-    std::vector<Drawable*> _drawables;
-
-    DrawManager() = default;
-
 public:
 
     ~DrawManager() = default;
@@ -33,4 +24,17 @@ public:
     void DrawElements(ImDrawList* drawList) const;
 
     void Start();
+
+
+private:
+
+    DrawManager() = default;
+
+    static DrawManager _drawManagerInstance;
+
+    std::unique_ptr<Drawable> _texture;
+
+    std::unique_ptr<Drawable> _text;
+
+    std::vector<Drawable*> _drawables;
 };

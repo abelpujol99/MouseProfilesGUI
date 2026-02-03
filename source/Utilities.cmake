@@ -88,6 +88,17 @@ function(SetLibraryCppStandardToTarget target_name cpp_standard)
         CXX_STANDARD_REQUIRED ON)
 endfunction()
 
+#Resources
+function(CopyResourcesToBuild source_dir)
+    file(GLOB_RECURSE RESOURCE_FILES CONFIGURE_DEPENDS ${source_dir}/resources/*)
+    add_custom_target(copy_resources ALL
+        DEPENDS ${RESOURCE_FILES}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources)
+    add_dependencies(${PROJECT_NAME} copy_resources)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE RESOURCE_DIR="${CMAKE_BINARY_DIR}/resources"
+    )
+endfunction()
+
 #ImGui
 function(FetchImGui source_dir out_imgui_source_dir)
     set(FETCHCONTENT_BASE_DIR ${source_dir}/libraries/ImGui)
@@ -116,7 +127,6 @@ endfunction()
 #Glad
 function(AddGladTarget source_dir)
     set(GLAD_DIR ${source_dir}/libraries/glad)
-    message(${GLAD_DIR})
     add_library(glad STATIC
             ${GLAD_DIR}/src/glad.c)
 

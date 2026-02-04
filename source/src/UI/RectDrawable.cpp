@@ -12,3 +12,10 @@ void RectDrawable::SetSize(int width, int height)
     _bottomRightPosition.x = _relativePosition.x + _size.x;
     _bottomRightPosition.y = _relativePosition.y + _size.y;
 }
+
+void RectDrawable::UpdatePosition()
+{
+    Drawable::UpdatePosition();
+
+    _bottomRightPosition = {_finalPosition.x + _size.x, _finalPosition.y + _size.y};
+}

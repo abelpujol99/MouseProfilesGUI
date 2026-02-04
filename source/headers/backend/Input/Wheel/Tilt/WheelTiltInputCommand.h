@@ -1,0 +1,36 @@
+#pragma once
+#include <InputCommand.h>
+
+#include <memory>
+
+class ICommand;
+
+class WheelTiltInputCommand : public InputCommand
+{
+private:
+
+    TimePoint _lastPressRegisterTime;
+    const Duration _millisUntilInputStops;
+
+    std::unique_ptr<ICommand> _commandOnPress;
+    std::unique_ptr<ICommand> _commandOnHold;
+    std::unique_ptr<ICommand> _commandOnRelease;
+
+public:
+
+    WheelTiltInputCommand(std::unique_ptr<ICommand>&& commandOnPress, std::unique_ptr<ICommand>&& commandOnHold,
+        std::unique_ptr<ICommand>&& commandOnRelease, Duration&& firstDelayInMillis, Duration&& millisToRepeatInput,
+            Duration&& millisUntilInputStops);
+
+    void UpdateLastPressRegister();
+
+    const Duration& GetMillisUntilInputStops() const;
+
+    void Press() const;
+
+    void Hold() const;
+
+    void Release() const;
+
+    bool IsHolding() const;
+};

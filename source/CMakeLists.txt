@@ -17,7 +17,7 @@ AddGladTarget(${SOURCE_DIR})
 FetchStb(${SOURCE_DIR} STB_SOURCE_DIR)
 AddStbTarget(${STB_SOURCE_DIR})
 
-set(SOURCES headers src)
+set(SOURCES headers src usings)
 set(CODE_FILES "")
 foreach (source IN LISTS SOURCES)
         GetCodeFiles(${SOURCE_DIR}/${source} SOURCE_CODE_FILES)
@@ -34,6 +34,7 @@ CopyResourcesToBuild(${SOURCE_DIR})
 #Includes
 set(INCLUDES
         headers
+        headers/backend
         libraries)
 
 IncludeDirectoriesToTarget(${PROJECT_NAME} PUBLIC INCLUDES)

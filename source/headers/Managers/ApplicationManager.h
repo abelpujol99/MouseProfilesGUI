@@ -15,7 +15,6 @@ public:
 
     void Start();
 
-
 private:
 
     ApplicationManager() = default;

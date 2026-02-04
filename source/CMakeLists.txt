@@ -34,7 +34,8 @@ CopyResourcesToBuild(${SOURCE_DIR})
 #Includes
 set(INCLUDES
         headers
-        libraries)
+        libraries
+        usings)
 
 IncludeDirectoriesToTarget(${PROJECT_NAME} PUBLIC INCLUDES)
 

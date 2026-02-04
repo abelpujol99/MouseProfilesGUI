@@ -8,6 +8,7 @@
 
 #include "Factories/Font/FontFactory.h"
 #include "Managers/DrawManager.h"
+#include "Managers/Gesture/GestureManager.h"
 #include "UI/Texture.h"
 
 WindowManager WindowManager::_windowManagerInstance{};
@@ -89,6 +90,8 @@ void WindowManager::Update()
 {
     DrawManager& drawManager {DrawManager::GetInstance()};
 
+    GestureManager& gestureManager {GestureManager::GetInstance()};
+
     drawManager.Start();
 
     while (!glfwWindowShouldClose(_window))
@@ -100,6 +103,8 @@ void WindowManager::Update()
         ImGui::NewFrame();
 
         ImDrawList* drawList {ImGui::GetBackgroundDrawList()};
+
+        gestureManager.Update();
 
         drawManager.DrawElements(drawList);
 

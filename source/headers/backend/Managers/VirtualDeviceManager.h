@@ -11,14 +11,6 @@ class InputEvent;
 
 class VirtualDeviceManager
 {
-private:
-
-    static std::unique_ptr<VirtualDeviceManager> _virtualDeviceManagerInstance;
-
-    std::unordered_map<InputDevices, int> _virtualDevices;
-
-    VirtualDeviceManager();
-
 public:
 
     ~VirtualDeviceManager() = default;
@@ -40,4 +32,12 @@ public:
     void Emit(InputDevices inputDevice, InputEvent inputEvent) const;
 
     void DestroyVirtualFiles();
+
+private:
+
+    VirtualDeviceManager();
+
+    static std::unique_ptr<VirtualDeviceManager> _virtualDeviceManagerInstance;
+
+    std::unordered_map<InputDevices, int> _virtualDevices;
 };

@@ -6,14 +6,6 @@
 
 class SwitchScrollModeCommand : public ICommand
 {
-private:
-
-    std::string _filePath;
-
-    bool _isInFreeMode;
-
-    bool IsInFreeMode();
-
 public:
 
     SwitchScrollModeCommand();
@@ -21,4 +13,12 @@ public:
     ~SwitchScrollModeCommand() override = default;
 
     void Execute() override;
+
+private:
+
+    std::string _filePath;
+
+    bool _isInFreeMode;
+
+    bool IsInFreeMode();
 };

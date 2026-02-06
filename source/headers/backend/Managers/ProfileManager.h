@@ -16,36 +16,6 @@ class ButtonInputPacker;
 
 class ProfileManager
 {
-private:
-
-    static std::unique_ptr<ProfileManager> _profileManagerInstance;
-
-    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> _inputStrategies;
-
-    std::unordered_map<unsigned char, std::forward_list<Code>> _allProfilesCodes;
-
-    std::unordered_set<Code> _currentProfileCodes;
-
-    unsigned char _currentProfileIndex;
-
-    IMouseInputState* _mouseInputState;
-
-    std::vector<std::shared_ptr<std::function<void()>>> _actionsOnChangeProfile;
-
-    mutable std::mutex _mutex;
-
-    std::shared_ptr<bool> _shouldMouseInputLoopRun;
-
-    ProfileManager();
-
-    void CreateProfile();
-
-    void SetProfiles(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& inputStrategies);
-
-    void UpdateCodesBindings();
-
-    void MouseInputStateLoop(std::shared_ptr<bool> shouldKeepRun);
-
 public:
 
     ~ProfileManager() = default;
@@ -66,4 +36,34 @@ public:
     void RegisterInput(Code code, int value) const;
 
     void UnsubscribeToActionsOnChangeProfile(const std::weak_ptr<std::function<void()>>& weakActionOnChangeProfile);
+
+private:
+
+    ProfileManager();
+
+    void CreateProfile();
+
+    void SetProfiles(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& inputStrategies);
+
+    void UpdateCodesBindings();
+
+    void MouseInputStateLoop(std::shared_ptr<bool> shouldKeepRun);
+
+    static std::unique_ptr<ProfileManager> _profileManagerInstance;
+
+    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> _inputStrategies;
+
+    std::unordered_map<unsigned char, std::forward_list<Code>> _allProfilesCodes;
+
+    std::unordered_set<Code> _currentProfileCodes;
+
+    unsigned char _currentProfileIndex;
+
+    IMouseInputState* _mouseInputState;
+
+    std::vector<std::shared_ptr<std::function<void()>>> _actionsOnChangeProfile;
+
+    mutable std::mutex _mutex;
+
+    std::shared_ptr<bool> _shouldMouseInputLoopRun;
 };

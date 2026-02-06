@@ -5,7 +5,6 @@
 
 #include "backend/Command/ICommand.h"
 
-
 class EmitInputEventPreCommandDecorator : public BaseEmitInputEventCommandDecorator
 {
 

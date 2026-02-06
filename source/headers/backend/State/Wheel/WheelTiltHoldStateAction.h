@@ -5,13 +5,14 @@ class WheelTiltInputCommandStrategy;
 
 class WheelTiltHoldStateAction : public IWheelTiltInputStateAction
 {
-private:
-
-    WheelTiltInputCommandStrategy* _wheelInputCommandStrategy;
-
 public:
 
     WheelTiltHoldStateAction(WheelTiltInputCommandStrategy* wheelInputCommandStrategy);
 
     void OnReceiveInputEvent() override;
+
+private:
+
+    WheelTiltInputCommandStrategy* _wheelInputCommandStrategy;
+
 };

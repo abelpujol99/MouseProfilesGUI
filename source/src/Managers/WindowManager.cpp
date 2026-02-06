@@ -3,12 +3,10 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
-
 #include <GLFW/glfw3.h>
 
-#include "Factories/Font/FontFactory.h"
+#include "Managers/ApplicationManager.h"
 #include "Managers/DrawManager.h"
-#include "UI/Texture.h"
 
 WindowManager WindowManager::_windowManagerInstance{};
 
@@ -118,6 +116,8 @@ void WindowManager::Update()
     }
 
     Cleanse();
+
+    ApplicationManager::GetInstance().TurnOffGUI();
 }
 
 void WindowManager::Cleanse() const

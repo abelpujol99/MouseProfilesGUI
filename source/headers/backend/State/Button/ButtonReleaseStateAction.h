@@ -5,14 +5,14 @@ class ButtonInputCommandStrategy;
 
 class ButtonReleaseStateAction : public IButtonInputStateAction
 {
-private:
-
-    ButtonInputCommandStrategy* _buttonInputCommandStrategy;
-
 public:
 
     ButtonReleaseStateAction(ButtonInputCommandStrategy* buttonInputCommand);
 
     void OnReceiveInputEvent() override;
+
+private:
+
+    ButtonInputCommandStrategy* _buttonInputCommandStrategy;
 
 };

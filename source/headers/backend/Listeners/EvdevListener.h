@@ -3,11 +3,6 @@
 
 class EvdevListener : public BaseListener
 {
-
-private:
-
-    int _file;
-
 public:
 
     EvdevListener(FileCodes&& fileCodes);
@@ -15,4 +10,9 @@ public:
     void ListenerUpdate() override;
 
     void CloseFile();
+
+private:
+
+    int _file;
+
 };

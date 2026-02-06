@@ -5,13 +5,14 @@ class FileCodes;
 
 class HidrawListener : public BaseListener
 {
-private:
-
-    unsigned short _numberOfInputs;
-
 public:
 
     HidrawListener(FileCodes&& fileCodes);
 
     void ListenerUpdate() override;
+
+private:
+
+    unsigned short _numberOfInputs;
+
 };

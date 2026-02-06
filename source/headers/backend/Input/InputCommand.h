@@ -3,11 +3,6 @@
 
 class InputCommand
 {
-private:
-
-    const Duration _firstDelayInMillis;
-    const Duration _millisToRepeatInput;
-
 public:
 
     InputCommand(Duration&& firstDelayInMillis, Duration&& millisToRepeatInput);
@@ -17,4 +12,10 @@ public:
     const Duration& GetFirstDelayInMillis() const;
 
     const Duration& GetMillisToRepeatInput() const;
+
+private:
+
+    const Duration _firstDelayInMillis;
+    const Duration _millisToRepeatInput;
+
 };

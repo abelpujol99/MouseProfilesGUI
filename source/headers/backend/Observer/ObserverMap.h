@@ -8,7 +8,6 @@
 template<typename TKey, typename TValue>
 class ObserverMap : public IObserver
 {
-private:
 
 	using TEvent = std::function<void(TValue)>;
 
@@ -25,10 +24,6 @@ private:
 	using TActionMap = std::unordered_map<TKey, TAction>;
 	using TActionMapIterator = typename TActionMap::iterator;
 	using TActionMapConstIterator = typename TActionMap::const_iterator;
-
-	std::unordered_map<TKey, TValue> _data;
-	TEventMap _events;
-	TActionMap _actions;
 
 public:
 
@@ -47,6 +42,13 @@ public:
 	void Unsubscribe(TKey key, std::weak_ptr<TEvent> weakAction);
 	void UnsubscribeAllKey(TKey key);
 	void UnsubscribeAll() override;
+
+
+private:
+
+	std::unordered_map<TKey, TValue> _data;
+	TEventMap _events;
+	TActionMap _actions;
 
 };
 

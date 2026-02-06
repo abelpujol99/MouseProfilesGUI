@@ -11,24 +11,6 @@ concept DerivedFromBaseListener = std::is_base_of_v<BaseListener, TBaseListener>
 
 class ThreadsManager
 {
-private:
-
-    static std::unique_ptr<ThreadsManager> _threadsManagerInstance;
-
-    std::forward_list<std::unique_ptr<BaseListener>> _listeners;
-
-    std::forward_list<std::thread> _listenersThreads;
-
-    bool _shouldKeepRunning {true};
-
-    std::function<void()> _profileAction = nullptr;
-
-    std::mutex _mutex;
-
-    ThreadsManager() = default;
-
-    void ProfileThreadLoop();
-
 public:
 
     ~ThreadsManager() = default;
@@ -44,6 +26,28 @@ public:
     void SetProfileAction(std::function<void()>&& profileAction);
 
     void Start();
+
+private:
+
+    ThreadsManager() = default;
+
+    void ProfileThreadLoop();
+
+    void GUIThreadLoop();
+
+    static std::unique_ptr<ThreadsManager> _threadsManagerInstance;
+
+    std::forward_list<std::unique_ptr<BaseListener>> _listeners;
+
+    std::forward_list<std::thread> _listenersThreads;
+
+    bool _shouldKeepRunning {true};
+
+    bool _shouldGUIKeepRunning {true};
+
+    std::function<void()> _profileAction = nullptr;
+
+    std::mutex _mutex;
 };
 
 template<DerivedFromBaseListener TBaseListener>

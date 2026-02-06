@@ -7,13 +7,13 @@
 
 class EmitInputEventCommand : public ICommand
 {
-private:
-
-    std::vector<EmitData> _emitsData;
-
 public:
 
     EmitInputEventCommand(std::vector<EmitData>&& emitsData);
 
     void Execute() override;
+
+private:
+
+    std::vector<EmitData> _emitsData;
 };

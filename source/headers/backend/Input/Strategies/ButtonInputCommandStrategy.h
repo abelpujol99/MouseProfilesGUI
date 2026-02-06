@@ -12,16 +12,6 @@ class ButtonInputCommand;
 
 class ButtonInputCommandStrategy : public IInputCommandStrategy, public IMouseInputState
 {
-private:
-
-    std::unique_ptr<IButtonInputStateAction> _buttonInputState;
-
-    unsigned char _state {0};
-
-    std::vector<std::unique_ptr<ButtonInputCommand>> _buttonInputCommands;
-
-    ButtonInputCommand* _currentButtonInputCommand {nullptr};
-
 public:
 
     ButtonInputCommandStrategy(std::vector<std::unique_ptr<ButtonInputCommand>>&& buttonInputCommands);
@@ -49,4 +39,14 @@ public:
     const Duration& GetMillisToRepeatInput() const override;
 
     bool IsHolding() const override;
+
+private:
+
+    std::unique_ptr<IButtonInputStateAction> _buttonInputState;
+
+    unsigned char _state {0};
+
+    std::vector<std::unique_ptr<ButtonInputCommand>> _buttonInputCommands;
+
+    ButtonInputCommand* _currentButtonInputCommand {nullptr};
 };

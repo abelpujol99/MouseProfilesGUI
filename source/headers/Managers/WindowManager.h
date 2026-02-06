@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 
 class Texture;
 struct ImDrawList;

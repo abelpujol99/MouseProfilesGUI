@@ -12,6 +12,12 @@ class FileCodes;
 
 class BaseListener
 {
+public:
+
+    virtual ~BaseListener() = default;
+
+    virtual void ListenerUpdate() = 0;
+
 protected:
 
     bool _keepLooping {true};
@@ -26,9 +32,4 @@ protected:
 
     ssize_t ReadWithTimeout(int file, void* buffer, size_t size, int timeoutMillis);
 
-public:
-
-    virtual ~BaseListener() = default;
-
-    virtual void ListenerUpdate() = 0;
 };

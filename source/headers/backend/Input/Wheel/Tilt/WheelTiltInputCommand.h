@@ -8,15 +8,6 @@ class ICommand;
 
 class WheelTiltInputCommand : public InputCommand
 {
-private:
-
-    TimePoint _lastPressRegisterTime;
-    const Duration _millisUntilInputStops;
-
-    std::unique_ptr<ICommand> _commandOnPress;
-    std::unique_ptr<ICommand> _commandOnHold;
-    std::unique_ptr<ICommand> _commandOnRelease;
-
 public:
 
     WheelTiltInputCommand(std::unique_ptr<ICommand>&& commandOnPress, std::unique_ptr<ICommand>&& commandOnHold,
@@ -34,4 +25,13 @@ public:
     void Release() const;
 
     bool IsHolding() const;
+
+private:
+
+    TimePoint _lastPressRegisterTime;
+    const Duration _millisUntilInputStops;
+
+    std::unique_ptr<ICommand> _commandOnPress;
+    std::unique_ptr<ICommand> _commandOnHold;
+    std::unique_ptr<ICommand> _commandOnRelease;
 };

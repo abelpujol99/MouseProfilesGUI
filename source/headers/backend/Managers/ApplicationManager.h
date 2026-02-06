@@ -7,17 +7,6 @@ class ObserverSingleValue;
 
 class ApplicationManager
 {
-
-private:
-
-    static std::unique_ptr<ApplicationManager> _applicationManagerInstance;
-
-    std::string _scrollWheelModeHidrawPath;
-
-    std::unique_ptr<ObserverSingleValue<bool>> _shouldRunObserver;
-
-    ApplicationManager();
-
 public:
 
     ~ApplicationManager() = default;
@@ -29,6 +18,8 @@ public:
 
     void Start();
 
+    void TurnOnGUI();
+
     void StartGUI();
 
     std::string GetPathToSwitchScrollMode() const;
@@ -38,4 +29,21 @@ public:
 
     void SwitchShouldRun() const;
     bool GetShouldRun() const;
+
+    std::weak_ptr<std::function<void(bool)>> SubscribeToShouldGUIRunObserver(std::function<void(bool)> action) const;
+    void UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::function<void(bool)>> action) const;
+
+    void TurnOffGUI();
+
+private:
+
+    ApplicationManager();
+
+    static std::unique_ptr<ApplicationManager> _applicationManagerInstance;
+
+    std::string _scrollWheelModeHidrawPath;
+
+    std::unique_ptr<ObserverSingleValue<bool>> _shouldRunObserver;
+
+    std::unique_ptr<ObserverSingleValue<bool>> _shouldGUIRunObserver;
 };

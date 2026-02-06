@@ -5,11 +5,6 @@
 
 class EmitData
 {
-private:
-    InputDevices _inputDevice;
-
-    InputEvent _inputEvent;
-
 public:
 
     EmitData(InputDevices inputDevice, InputEvent&& inputEvent);
@@ -17,4 +12,10 @@ public:
     InputDevices GetInputDevice() const;
 
     InputEvent GetInputEvent() const;
+
+private:
+    InputDevices _inputDevice;
+
+    InputEvent _inputEvent;
+
 };

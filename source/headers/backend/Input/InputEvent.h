@@ -2,11 +2,6 @@
 
 class InputEvent
 {
-private:
-    unsigned short _type;
-    unsigned short _code;
-    int _value;
-
 public:
 
     InputEvent(unsigned short type, unsigned short code, int value);
@@ -16,4 +11,9 @@ public:
     unsigned short GetCode() const;
 
     int GetValue() const;
+
+private:
+    unsigned short _type;
+    unsigned short _code;
+    int _value;
 };

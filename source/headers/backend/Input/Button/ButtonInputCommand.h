@@ -8,12 +8,6 @@ class ICommand;
 
 class ButtonInputCommand : public InputCommand
 {
-private:
-
-    std::unique_ptr<ICommand> _commandOnPress;
-    std::unique_ptr<ICommand> _commandOnHold;
-    std::unique_ptr<ICommand> _commandOnRelease;
-
 public:
 
     ButtonInputCommand(std::unique_ptr<ICommand>&& commandOnPress, std::unique_ptr<ICommand>&& commandOnHold,
@@ -26,4 +20,10 @@ public:
     void Release() const;
 
     bool HasHoldCommand() const;
+
+private:
+
+    std::unique_ptr<ICommand> _commandOnPress;
+    std::unique_ptr<ICommand> _commandOnHold;
+    std::unique_ptr<ICommand> _commandOnRelease;
 };

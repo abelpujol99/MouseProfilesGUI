@@ -4,13 +4,13 @@
 
 class SwitchToProfileCommand : public ICommand
 {
-private:
-
-    int _profileIndex;
-
 public:
 
     SwitchToProfileCommand(int profileIndex);
 
     void Execute() override;
+
+private:
+
+    int _profileIndex;
 };

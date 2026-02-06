@@ -6,18 +6,13 @@
 template<typename T>
 class ObserverSingleValue : public IObserver
 {
-private:
+
+	using TAction = std::function<T(T)>;
 
 	using TEventHandler = std::function<void(T)>;
 	using TEventList = std::list<std::shared_ptr<TEventHandler>>;
 	using TEventListIterator = typename TEventList::iterator;
 	using TEventListConstIterator = typename TEventList::const_iterator;
-
-	using TAction = std::function<T(T)>;
-
-	T _data;
-	TEventList _events;
-	TAction _action;
 
 public:
 
@@ -34,6 +29,14 @@ public:
 	std::weak_ptr<TEventHandler> Subscribe(TEventHandler action);
 	void Unsubscribe(std::weak_ptr<TEventHandler> weakAction);
 	void UnsubscribeAll() override;
+
+private:
+
+	T _data;
+	TEventList _events;
+	TAction _action;
+
+
 };
 
 template<typename T>

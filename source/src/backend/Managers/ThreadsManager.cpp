@@ -28,7 +28,13 @@ void ThreadsManager::Start() {
         _shouldKeepRunning = value;
     });
 
+    ApplicationManager::GetInstance().SubscribeToShouldGUIRunObserver([&](bool value) {
+        _shouldGUIKeepRunning = value;
+    });
+
     std::thread profileLoop {std::thread(&ThreadsManager::ProfileThreadLoop, this)};
+
+    std::thread guiLoop {std::thread(&ThreadsManager::GUIThreadLoop, this)};
 
     for (auto& listenerThread : _listenersThreads)
     {
@@ -36,6 +42,7 @@ void ThreadsManager::Start() {
     }
 
     profileLoop.join();
+    guiLoop.join();
 }
 
 void ThreadsManager::ProfileThreadLoop()
@@ -52,5 +59,19 @@ void ThreadsManager::ProfileThreadLoop()
         _profileAction();
         _profileAction = nullptr;
         _mutex.unlock();
+    }
+}
+
+void ThreadsManager::GUIThreadLoop()
+{
+    while (_shouldKeepRunning)
+    {
+        if (!_shouldGUIKeepRunning)
+        {
+            std::this_thread::sleep_for(Duration(DEFAULT_THREAD_SLEEP_MILLIS));
+            continue;
+        }
+
+        ApplicationManager::GetInstance().StartGUI();
     }
 }

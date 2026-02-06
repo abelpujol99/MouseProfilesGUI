@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <ICommand.h>
+#include "backend/Command/ICommand.h"
 
 class SwitchScrollModeCommand : public ICommand
 {

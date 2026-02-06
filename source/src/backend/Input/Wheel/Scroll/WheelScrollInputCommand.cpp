@@ -1,6 +1,6 @@
-#include <WheelScrollInputCommand.h>
+#include "backend/Input/Wheel/Scroll/WheelScrollInputCommand.h"
 
-#include <ICommand.h>
+#include "backend/Command/ICommand.h"
 
 WheelScrollInputCommand::WheelScrollInputCommand(std::unique_ptr<ICommand> command) : _command(std::move(command))
 {}

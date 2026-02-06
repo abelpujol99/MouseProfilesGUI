@@ -1,19 +1,17 @@
-#include <ProfileManager.h>
+#include "backend/Managers/ProfileManager.h"
 
 #include <linux/input-event-codes.h>
 #include <iostream>
 
-#include <ThreadsManager.h>
-#include <ICommand.h>
-#include <CommandFactory.h>
-#include <InputEvent.h>
-#include <ButtonInputCommandStrategy.h>
-#include <WheelScrollInputCommandStrategy.h>
-#include <WheelTiltInputCommandStrategy.h>
-#include <IWheelTiltInputStateAction.h>
-#include <VirtualDeviceManager.h>
-
-#include "ApplicationManager.h"
+#include "backend/Managers/ApplicationManager.h"
+#include "backend/Managers/ThreadsManager.h"
+#include "backend/Managers/VirtualDeviceManager.h"
+#include "backend/Factories/CommandFactory.h"
+#include "backend/Command/ICommand.h"
+#include "backend/Input/InputEvent.h"
+#include "backend/Input/Strategies/ButtonInputCommandStrategy.h"
+#include "backend/Input/Strategies/WheelScrollInputCommandStrategy.h"
+#include "backend/Input/Strategies/WheelTiltInputCommandStrategy.h"
 
 std::unique_ptr<ProfileManager> ProfileManager::_profileManagerInstance = nullptr;
 

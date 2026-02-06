@@ -1,7 +1,8 @@
-#include <iostream>
-#include <SwitchToProfileCommand.h>
+#include "backend/Command/SwitchToProfileCommand.h"
 
-#include <ProfileManager.h>
+#include <iostream>
+
+#include "backend/Managers/ProfileManager.h"
 
 SwitchToProfileCommand::SwitchToProfileCommand(int profileIndex) : _profileIndex(profileIndex)
 {}

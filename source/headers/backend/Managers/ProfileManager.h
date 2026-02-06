@@ -5,9 +5,8 @@
 #include <memory>
 #include <thread>
 #include <unordered_set>
-#include <CodeUsing.h>
 
-#include <InputEvent.h>
+#include "backend/CodeUsing.h"
 
 class IMouseInputState;
 class IInputCommandStrategy;

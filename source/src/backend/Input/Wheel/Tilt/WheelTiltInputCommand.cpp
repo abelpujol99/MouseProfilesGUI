@@ -1,6 +1,6 @@
-#include <WheelTiltInputCommand.h>
+#include "backend/Input/Wheel/Tilt/WheelTiltInputCommand.h"
 
-#include <ICommand.h>
+#include "backend/Command/ICommand.h"
 
 WheelTiltInputCommand::WheelTiltInputCommand(std::unique_ptr<ICommand>&& commandOnPress,
     std::unique_ptr<ICommand>&& commandOnHold, std::unique_ptr<ICommand>&& commandOnRelease, Duration&& firstDelayInMillis,

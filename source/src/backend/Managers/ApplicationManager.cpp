@@ -1,13 +1,14 @@
-#include <ApplicationManager.h>
+#include "backend/Managers/ApplicationManager.h"
 
-#include <ThreadsManager.h>
-#include <ProfileManager.h>
-#include <EvdevListener.h>
-#include <HidrawListener.h>
-#include <ObserverSingleValue.h>
-#include <FileCodes.h>
+#include "backend/Managers/ThreadsManager.h"
+#include "backend/Managers/ProfileManager.h"
+#include "backend/Managers/VirtualDeviceManager.h"
+#include "backend/Listeners/EvdevListener.h"
+#include "backend/Listeners/HidrawListener.h"
+#include "backend/Observer/ObserverSingleValue.h"
+#include "backend/Profiles/FileCodes.h"
 
-#include "VirtualDeviceManager.h"
+#include "Managers/WindowManager.h"
 
 std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInstance = nullptr;
 
@@ -37,6 +38,15 @@ void ApplicationManager::Start()
     VirtualDeviceManager::GetInstance().CreateListeners();
 
     ThreadsManager::GetInstance().Start();
+}
+
+void ApplicationManager::StartGUI()
+{
+    WindowManager& windowManager {WindowManager::GetInstance()};
+
+    windowManager.SetSizes(1500, 700);
+    windowManager.Start();
+    windowManager.Update();
 }
 
 std::string ApplicationManager::GetPathToSwitchScrollMode() const

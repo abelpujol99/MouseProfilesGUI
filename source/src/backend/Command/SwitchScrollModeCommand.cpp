@@ -1,8 +1,8 @@
-#include <SwitchScrollModeCommand.h>
+#include "backend/Command/SwitchScrollModeCommand.h"
 
 #include <fstream>
 
-#include <ApplicationManager.h>
+#include "backend/Managers/ApplicationManager.h"
 
 SwitchScrollModeCommand::SwitchScrollModeCommand()
 {

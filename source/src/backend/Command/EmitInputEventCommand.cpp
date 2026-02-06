@@ -1,7 +1,10 @@
-#include <EmitInputEventCommand.h>
+#include "backend/Command/EmitInputEventCommand.h"
+
 #include <iostream>
 
-#include "VirtualDeviceManager.h"
+#include "backend/Input/InputEvent.h"
+#include "backend/Managers/VirtualDeviceManager.h"
+
 
 EmitInputEventCommand::EmitInputEventCommand(std::vector<EmitData>&& emitsData) : _emitsData(std::move(emitsData))
 {}

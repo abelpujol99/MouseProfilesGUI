@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ICommand.h>
+#include "backend/Command/ICommand.h"
 
 class SwitchToProfileCommand : public ICommand
 {

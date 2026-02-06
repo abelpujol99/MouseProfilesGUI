@@ -1,7 +1,7 @@
-#include <ThreadsManager.h>
+#include "backend/Managers/ThreadsManager.h"
 
-#include <ApplicationManager.h>
-#include <iostream>
+#include "backend/Managers/ApplicationManager.h"
+#include "TimeUsings.h"
 
 std::unique_ptr<ThreadsManager> ThreadsManager::_threadsManagerInstance = nullptr;
 

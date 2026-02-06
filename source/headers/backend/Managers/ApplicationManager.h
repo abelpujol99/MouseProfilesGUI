@@ -1,9 +1,6 @@
 #pragma once
 
-#include <forward_list>
-#include <thread>
-
-#include <BaseListener.h>
+#include "backend/Listeners/BaseListener.h"
 
 template <typename T>
 class ObserverSingleValue;
@@ -31,6 +28,8 @@ public:
     static ApplicationManager& GetInstance();
 
     void Start();
+
+    void StartGUI();
 
     std::string GetPathToSwitchScrollMode() const;
 

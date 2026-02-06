@@ -1,5 +1,5 @@
 #pragma once
-#include <CommandDecorator.h>
+#include "backend/Command/Decorators/CommandDecorator.h"
 
 class EmitInputEventCommand;
 

@@ -1,7 +1,7 @@
-#include <WheelTiltPressStateAction.h>
+#include "backend/State/Wheel/WheelTiltPressStateAction.h"
 
-#include <WheelTiltInputCommandStrategy.h>
-#include <WheelTiltHoldStateAction.h>
+#include "backend/Input/Strategies/WheelTiltInputCommandStrategy.h"
+#include "backend/State/Wheel/WheelTiltHoldStateAction.h"
 
 WheelTiltPressStateAction::WheelTiltPressStateAction(WheelTiltInputCommandStrategy* wheelInputCommandStrategy)
     : _wheelInputCommandStrategy(wheelInputCommandStrategy)

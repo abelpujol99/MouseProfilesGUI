@@ -1,8 +1,9 @@
 #pragma once
-#include <IInputCommandStrategy.h>
+#include "backend/Input/Strategies/IInputCommandStrategy.h"
 
 #include <memory>
 #include <vector>
+
 
 class WheelScrollInputCommand;
 

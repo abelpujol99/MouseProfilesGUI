@@ -1,6 +1,6 @@
-#include <EmitInputEventPosCommandDecorator.h>
+#include "backend/Command/Decorators/EmitInputEventPosCommandDecorator.h"
 
-#include <EmitInputEventCommand.h>
+#include "backend/Command/EmitInputEventCommand.h"
 
 EmitInputEventPosCommandDecorator::EmitInputEventPosCommandDecorator(std::unique_ptr<ICommand>&& command,
     std::unique_ptr<EmitInputEventCommand>&& emitInputEventCommand)

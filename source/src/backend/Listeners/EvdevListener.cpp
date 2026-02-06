@@ -1,13 +1,13 @@
 #include <csignal>
-#include <EvdevListener.h>
+#include "backend/Listeners/EvdevListener.h"
 
 #include <fcntl.h>
 #include <iostream>
 #include <linux/input.h>
 
-#include <ProfileManager.h>
-#include <InputEvent.h>
-#include <VirtualDeviceManager.h>
+#include "backend/Managers/ProfileManager.h"
+#include "backend/Managers/VirtualDeviceManager.h"
+#include "backend/Input/InputEvent.h"
 
 EvdevListener::EvdevListener(FileCodes&& fileCodes) : BaseListener(std::move(fileCodes))
 {}

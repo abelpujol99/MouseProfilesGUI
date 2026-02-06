@@ -1,12 +1,9 @@
 #pragma once
-#include <ICommand.h>
+#include "backend/Command/ICommand.h"
 
 #include <vector>
 
-#include <InputDevices.h>
-#include <InputEvent.h>
-
-#include "EmitData.h"
+#include "backend/Input/EmitData.h"
 
 class EmitInputEventCommand : public ICommand
 {

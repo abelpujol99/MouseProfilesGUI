@@ -1,5 +1,10 @@
 #pragma once
-#include <BaseEmitInputEventCommandDecorator.h>
+#include "backend/Command/Decorators/BaseEmitInputEventCommandDecorator.h"
+
+#include <memory>
+
+#include "backend/Command/ICommand.h"
+
 
 class EmitInputEventPreCommandDecorator : public BaseEmitInputEventCommandDecorator
 {

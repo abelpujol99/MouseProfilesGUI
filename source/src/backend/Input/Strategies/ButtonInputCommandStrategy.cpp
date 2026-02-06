@@ -1,11 +1,10 @@
-#include <ButtonInputCommandStrategy.h>
+#include "backend/Input/Strategies/ButtonInputCommandStrategy.h"
 
-#include <ButtonInputCommand.h>
-#include <IButtonInputStateAction.h>
-#include <ICommand.h>
-
-#include "ButtonPressStateAction.h"
-#include "ProfileManager.h"
+#include "backend/Managers/ProfileManager.h"
+#include "backend/Input/Button/ButtonInputCommand.h"
+#include "backend/State/Button/IButtonInputStateAction.h"
+#include "backend/State/Button/ButtonPressStateAction.h"
+#include "backend/Command/ICommand.h"
 
 ButtonInputCommandStrategy::ButtonInputCommandStrategy(std::vector<std::unique_ptr<ButtonInputCommand>>&& buttonInputCommands)
     : _buttonInputCommands(std::move(buttonInputCommands)), _buttonInputState(std::make_unique<ButtonPressStateAction>(this))

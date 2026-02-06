@@ -1,7 +1,7 @@
-#include <ShutdownApplicationCommand.h>
+#include "backend/Command/ShutdownApplicationCommand.h"
 
-#include <ApplicationManager.h>
 #include <iostream>
+#include "backend/Managers/ApplicationManager.h"
 
 void ShutdownApplicationCommand::Execute()
 {

@@ -1,11 +1,11 @@
-#include <EmitInputEventPreCommandDecorator.h>
+#include "backend/Command/Decorators/EmitInputEventPreCommandDecorator.h"
 
-#include "EmitInputEventCommand.h"
+#include "backend/Command/EmitInputEventCommand.h"
 
 
 EmitInputEventPreCommandDecorator::EmitInputEventPreCommandDecorator(std::unique_ptr<ICommand>&& command,
-                                                                     std::unique_ptr<EmitInputEventCommand>&& emitInputEventCommand)
-        : BaseEmitInputEventCommandDecorator(std::move(command), std::move(emitInputEventCommand))
+    std::unique_ptr<EmitInputEventCommand>&& emitInputEventCommand)
+    : BaseEmitInputEventCommandDecorator(std::move(command), std::move(emitInputEventCommand))
 {}
 
 void EmitInputEventPreCommandDecorator::Execute()

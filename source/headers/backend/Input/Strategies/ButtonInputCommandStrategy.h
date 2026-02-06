@@ -1,11 +1,12 @@
 #pragma once
-#include <IInputCommandStrategy.h>
-#include <IMouseInputState.h>
+#include "backend/Input/Strategies/IInputCommandStrategy.h"
 
 #include <memory>
 #include <vector>
 
-#include <IButtonInputStateAction.h>
+#include "backend/State/IMouseInputState.h"
+#include "backend/State/Button/IButtonInputStateAction.h"
+
 
 class ButtonInputCommand;
 

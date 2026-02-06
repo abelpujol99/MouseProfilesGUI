@@ -1,9 +1,9 @@
-#include <HidrawListener.h>
+#include "backend/Listeners/HidrawListener.h"
 
 #include <fcntl.h>
 #include <iostream>
 
-#include <VirtualDeviceManager.h>
+#include "backend/Managers/VirtualDeviceManager.h"
 
 HidrawListener::HidrawListener(FileCodes&& fileCodes)
     : BaseListener(std::move(fileCodes)), _numberOfInputs(_codes.size())

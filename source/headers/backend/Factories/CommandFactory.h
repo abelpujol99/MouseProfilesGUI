@@ -3,11 +3,11 @@
 #include <memory>
 #include <vector>
 
-#include <EmitData.h>
-#include <ButtonInputCommand.h>
-#include <WheelTiltInputCommand.h>
-#include <WheelScrollInputCommand.h>
-#include <TimeUsings.h>
+#include "backend/Input/EmitData.h"
+#include "backend/Input/Button/ButtonInputCommand.h"
+#include "backend/Input/Wheel/Scroll/WheelScrollInputCommand.h"
+#include "backend/Input/Wheel/Tilt/WheelTiltInputCommand.h"
+#include "TimeUsings.h"
 
 class ICommand;
 class WheelTiltInputCommand;

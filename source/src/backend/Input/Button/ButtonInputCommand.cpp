@@ -1,8 +1,8 @@
-#include <ButtonInputCommand.h>
+#include "backend/Input/Button/ButtonInputCommand.h"
 
-#include <ICommand.h>
+#include "backend/Command/ICommand.h"
 
-#include <ButtonPressStateAction.h>
+#include "backend/State/Button/ButtonPressStateAction.h"
 
 ButtonInputCommand::ButtonInputCommand(std::unique_ptr<ICommand>&& commandOnPress,
     std::unique_ptr<ICommand>&& commandOnHold, std::unique_ptr<ICommand>&& commandOnRelease, Duration&& firstDelayInMillis,

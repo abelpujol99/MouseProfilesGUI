@@ -1,9 +1,10 @@
 #pragma once
-#include <IInputCommandStrategy.h>
-#include <IMouseInputState.h>
+#include "backend/Input/Strategies/IInputCommandStrategy.h"
 
 #include <memory>
 #include <vector>
+
+#include "backend/State/IMouseInputState.h"
 
 class IWheelTiltInputStateAction;
 class WheelTiltInputCommand;

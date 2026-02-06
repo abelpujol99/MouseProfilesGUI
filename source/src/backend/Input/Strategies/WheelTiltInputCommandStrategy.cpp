@@ -1,15 +1,14 @@
-#include <WheelTiltInputCommandStrategy.h>
+#include "backend/Input/Strategies/WheelTiltInputCommandStrategy.h"
 
-#include <WheelTiltPressStateAction.h>
-#include <WheelTiltInputCommand.h>
-#include <ICommand.h>
-
-#include "ProfileManager.h"
+#include "backend/Managers/ProfileManager.h"
+#include "backend/Command/ICommand.h"
+#include "backend/State/Wheel/WheelTiltPressStateAction.h"
+#include "backend/Input/Wheel/Tilt/WheelTiltInputCommand.h"
 
 WheelTiltInputCommandStrategy::WheelTiltInputCommandStrategy(std::vector<std::unique_ptr<WheelTiltInputCommand>>&& wheelNegativeInputCommands,
-                                                             std::vector<std::unique_ptr<WheelTiltInputCommand>>&& wheelPositiveInputCommands) : _wheelNegativeInputCommands(std::move(wheelNegativeInputCommands)),
-                                                                                                                                                 _wheelPositiveInputCommands(std::move(wheelPositiveInputCommands)), _wheelNegativeTiltInputState(std::make_unique<WheelTiltPressStateAction>(this)),
-                                                                                                                                                 _wheelPositiveTiltInputState(std::make_unique<WheelTiltPressStateAction>(this))
+    std::vector<std::unique_ptr<WheelTiltInputCommand>>&& wheelPositiveInputCommands) : _wheelNegativeInputCommands(std::move(wheelNegativeInputCommands)),
+    _wheelPositiveInputCommands(std::move(wheelPositiveInputCommands)), _wheelNegativeTiltInputState(std::make_unique<WheelTiltPressStateAction>(this)),
+    _wheelPositiveTiltInputState(std::make_unique<WheelTiltPressStateAction>(this))
 {}
 
 void WheelTiltInputCommandStrategy::ChangeProfile(int profileIndex)

@@ -1,10 +1,10 @@
-#include <CommandFactory.h>
+#include "backend/Factories/CommandFactory.h"
 
-#include <StringCommand.h>
-#include <SwitchScrollModeCommand.h>
-#include <SwitchToProfileCommand.h>
-#include <ShutdownApplicationCommand.h>
-#include <EmitInputEventCommand.h>
+#include "backend/Command/StringCommand.h"
+#include "backend/Command/SwitchScrollModeCommand.h"
+#include "backend/Command/SwitchToProfileCommand.h"
+#include "backend/Command/ShutdownApplicationCommand.h"
+#include "backend/Command/EmitInputEventCommand.h"
 
 #define MAIN_PROFILE 0
 

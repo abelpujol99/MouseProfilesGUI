@@ -1,14 +1,13 @@
-#include <VirtualDeviceManager.h>
+#include "backend/Managers/VirtualDeviceManager.h"
 
 #include <fcntl.h>
-
-#include <InputEvent.h>
-#include <EvdevListener.h>
-#include <HidrawListener.h>
 #include <iostream>
-#include <ThreadsManager.h>
 
-#include "ProfileManager.h"
+#include "backend/Managers/ProfileManager.h"
+#include "backend/Managers/ThreadsManager.h"
+#include "backend/Input/InputEvent.h"
+#include "backend/Listeners/EvdevListener.h"
+#include "backend/Listeners/HidrawListener.h"
 
 std::unique_ptr<VirtualDeviceManager> VirtualDeviceManager::_virtualDeviceManagerInstance = nullptr;
 

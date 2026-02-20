@@ -1,9 +1,7 @@
 #pragma once
-#include "Managers/Gesture/MouseButton/MouseButtons.h"
 
-struct ImGuiIO;
-struct ImVec2;
-struct ImFont;
+#include "imgui.h"
+#include "Managers/Gesture/MouseButton/MouseButtons.h"
 
 class ImGuiFactory
 {
@@ -19,6 +17,12 @@ public:
     [[nodiscard]] static const bool IsMouseButtonReleased(MouseButtons mouseButton);
 
     [[nodiscard]] static ImVec2 GetMousePosition();
+
+#pragma endregion
+
+#pragma region Keyboard
+
+    [[nodiscard]] static ImGuiKey GetLastKeyPressed();
 
 #pragma endregion
 

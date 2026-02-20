@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Text::Text(const ImVec2& parentPosition, float positionX, float positionY, const char* text,
+Text::Text(const ImVec2& parentPosition, float positionX, float positionY, const std::string& text,
     TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment, ImFont* fontFamily,
     float fontSize, ImColor color, bool isHidden) : Drawable(parentPosition, positionX, positionY, isHidden),
     _text(text), _horizontalAlignment(horizontalAlignment), _verticalAlignment(verticalAlignment), _fontFamily(fontFamily),
@@ -16,9 +16,14 @@ void Text::SetColor(ImColor color)
     _color = color;
 }
 
-void Text::SetText(const char* text)
+void Text::SetText(const std::string& text)
 {
     _text = text;
+}
+
+void Text::AddText(const std::string& text)
+{
+
 }
 
 void Text::SetFontFamily(ImFont* fontFamily)
@@ -47,7 +52,7 @@ void Text::SetVerticalAlignment(TextVerticalAlignments verticalAlignment)
 
 void Text::CalculateTextSize()
 {
-    _size = _fontFamily->CalcTextSizeA(_fontSize, FLT_MAX, -1.0f, _text);
+    _size = _fontFamily->CalcTextSizeA(_fontSize, FLT_MAX, -1.0f, _text.c_str());
 
     UpdateTopLeftPosition();
 }
@@ -81,7 +86,7 @@ void Text::UpdateTopLeftPosition()
     }
 }
 
-const char* Text::GetText() const
+std::string Text::GetText() const
 {
     return _text;
 }
@@ -108,5 +113,5 @@ void Text::Draw(ImDrawList* drawList)
         return;
     }
 
-    drawList->AddText(_fontFamily, _fontSize, GetFinalPosition(), _color, _text);
+    drawList->AddText(_fontFamily, _fontSize, GetFinalPosition(), _color, _text.c_str());
 }

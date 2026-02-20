@@ -1,15 +1,17 @@
 #pragma once
+#include "UI/Drawable.h"
+
 #include <cstdint>
+#include <string>
 
 #include "TextHorizontalAlignments.h"
 #include "TextVerticalAlignments.h"
-#include "UI/Drawable.h"
 
 class Text : public Drawable
 {
 public:
 
-    Text(const ImVec2& parentPosition, float positionX, float positionY, const char* text,
+    Text(const ImVec2& parentPosition, float positionX, float positionY, const std::string& text,
         TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment, ImFont* fontFamily,
         float fontSize, ImColor color, bool isHidden = false);
 
@@ -17,7 +19,9 @@ public:
 
     void SetColor(ImColor color);
 
-    void SetText(const char* text);
+    void SetText(const std::string& text);
+
+    void AddText(const std::string& text);
 
     void SetFontFamily(ImFont* fontFamily);
 
@@ -27,7 +31,7 @@ public:
 
     void SetVerticalAlignment(TextVerticalAlignments verticalAlignment);
 
-    [[nodiscard]] const char* GetText() const;
+    [[nodiscard]] std::string GetText() const;
 
     [[nodiscard]] float GetFontSize() const;
 
@@ -43,9 +47,7 @@ private:
 
     void UpdateTopLeftPosition();
 
-
-private:
-    const char* _text;
+    std::string _text;
 
     TextHorizontalAlignments _horizontalAlignment;
 

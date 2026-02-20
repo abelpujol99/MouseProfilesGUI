@@ -1,7 +1,8 @@
 #pragma once
-#include <memory>
 
+#include <memory>
 #include "imgui.h"
+
 #include "Font/FontFamilyTypes.h"
 #include "UI/Text/TextHorizontalAlignments.h"
 #include "UI/Text/TextVerticalAlignments.h"
@@ -20,7 +21,7 @@ public:
         const char* textureFileName, bool isHidden = false);
 
     static std::unique_ptr<Text> CreateText(const ImVec2& parentPosition, float positionX, float positionY,
-        const char* text, TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment,
+        std::string text, TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment,
         ImFont* fontFamily, float fontSize, ImColor color, bool isHidden = false);
 
     static std::unique_ptr<TextBox> CreateTextBox(const ImVec2& parentPosition, float positionX, float positionY,

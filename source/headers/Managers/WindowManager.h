@@ -37,8 +37,6 @@ private:
 
     void SetupImGui() const;
 
-    void DrawElements(ImDrawList* drawList) const;
-
     static WindowManager _windowManagerInstance;
 
     int _width;

@@ -12,7 +12,7 @@ std::unique_ptr<Texture> DrawableFactory::CreateTexture(const ImVec2& parentPosi
 }
 
 std::unique_ptr<Text> DrawableFactory::CreateText(const ImVec2& parentPosition, float positionX, float positionY,
-    const char* text, TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment,
+    std::string text, TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment,
     ImFont* fontFamily, float fontSize, ImColor color, bool isHidden)
 {
     return std::make_unique<Text>(parentPosition, positionX, positionY, text, horizontalAlignment,

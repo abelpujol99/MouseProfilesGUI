@@ -1,7 +1,5 @@
 #include "Factories/ImGui/ImGuiFactory.h"
 
-#include "imgui.h"
-
 ImGuiIO& ImGuiFactory::GetIO()
 {
     return ImGui::GetIO();
@@ -27,6 +25,23 @@ const bool ImGuiFactory::IsMouseButtonReleased(MouseButtons mouseButton)
 ImVec2 ImGuiFactory::GetMousePosition()
 {
     return GetIO().MousePos;
+}
+
+ImGuiKey ImGuiFactory::GetLastKeyPressed()
+{
+    for (int key {ImGuiKey_NamedKey_BEGIN}; key < ImGuiKey_NamedKey_END; ++key)
+    {
+        const ImGuiKey& imGuiKey {static_cast<ImGuiKey>(key)};
+
+        if (!ImGui::IsKeyPressed(imGuiKey))
+        {
+            continue;
+        }
+
+        return imGuiKey;
+    }
+
+    return ImGuiKey_None;
 }
 
 #pragma endregion

@@ -1,7 +1,8 @@
 #pragma once
-#include <memory>
-
 #include "UI/RectDrawable.h"
+
+#include <memory>
+#include <functional>
 
 class Text;
 enum class TextHorizontalAlignments;
@@ -37,4 +38,9 @@ private:
 
     float _thickness;
 
+    std::weak_ptr<std::function<void(bool)>> _onLeftMouseButtonReleasedWeakAction;
+
+    bool _hasLeftMouseButtonReleased{false};
+
+    bool _isSelected{false};
 };

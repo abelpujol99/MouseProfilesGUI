@@ -8,7 +8,9 @@ class WheelScrollInputCommand
 {
 public:
 
-    WheelScrollInputCommand(std::unique_ptr<ICommand> command);
+    WheelScrollInputCommand(std::unique_ptr<ICommand>&& command);
+
+    ~WheelScrollInputCommand() = default;
 
     void ExecuteCommand() const;
 

@@ -5,7 +5,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "Managers/ApplicationManager.h"
+#include "backend/Managers/ApplicationManager.h"
 #include "Managers/DrawManager.h"
 
 WindowManager WindowManager::_windowManagerInstance{};

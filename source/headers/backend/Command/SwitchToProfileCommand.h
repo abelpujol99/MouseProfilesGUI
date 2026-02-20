@@ -8,6 +8,8 @@ public:
 
     SwitchToProfileCommand(int profileIndex);
 
+    ~SwitchToProfileCommand() override = default;
+
     void Execute() override;
 
 private:

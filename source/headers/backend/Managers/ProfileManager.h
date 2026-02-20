@@ -10,9 +10,6 @@
 
 class IMouseInputState;
 class IInputCommandStrategy;
-class IInputPacker;
-class WheelInputPacker;
-class ButtonInputPacker;
 
 class ProfileManager
 {
@@ -22,10 +19,12 @@ public:
 
     ProfileManager(const ProfileManager& other) = delete;
     ProfileManager& operator=(const ProfileManager& other) = delete;
+    ProfileManager(ProfileManager&& other) = delete;
+    ProfileManager& operator=(ProfileManager&& other) = delete;
 
     static ProfileManager& GetInstance();
 
-    void OnChangeApplicationInFocus();
+    void OnChangeApplicationFocus();
 
     void ChangeCurrentProfile(unsigned char profileIndex);
 

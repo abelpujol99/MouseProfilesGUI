@@ -9,6 +9,8 @@ public:
 
     EmitData(InputDevices inputDevice, InputEvent&& inputEvent);
 
+    ~EmitData() = default;
+
     InputDevices GetInputDevice() const;
 
     InputEvent GetInputEvent() const;

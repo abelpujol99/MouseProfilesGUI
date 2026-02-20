@@ -13,6 +13,8 @@ public:
     ButtonInputCommand(std::unique_ptr<ICommand>&& commandOnPress, std::unique_ptr<ICommand>&& commandOnHold,
         std::unique_ptr<ICommand>&& commandOnRelease, Duration&& firstDelayInMillis, Duration&& millisToRepeatInput);
 
+    ~ButtonInputCommand() = default;
+
     void Press() const;
 
     void Hold() const;

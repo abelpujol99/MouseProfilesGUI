@@ -6,8 +6,8 @@
 #include "backend/Managers/ProfileManager.h"
 #include "backend/Managers/ThreadsManager.h"
 #include "backend/Input/InputEvent.h"
-#include "backend/Listeners/EvdevListener.h"
-#include "backend/Listeners/HidrawListener.h"
+#include "backend/Listener/EvdevListener.h"
+#include "backend/Listener/HidrawListener.h"
 
 std::unique_ptr<VirtualDeviceManager> VirtualDeviceManager::_virtualDeviceManagerInstance = nullptr;
 

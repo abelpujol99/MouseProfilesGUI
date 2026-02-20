@@ -1,6 +1,6 @@
 #include "backend/State/Button/ButtonReleaseStateAction.h"
 
-#include "backend/Input/Strategies/ButtonInputCommandStrategy.h"
+#include "backend/Input/Strategy/ButtonInputCommandStrategy.h"
 #include "backend/State/Button/ButtonPressStateAction.h"
 
 ButtonReleaseStateAction::ButtonReleaseStateAction(ButtonInputCommandStrategy* buttonInputCommand)

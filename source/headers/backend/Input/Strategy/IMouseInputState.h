@@ -1,6 +1,6 @@
 #pragma once
-#include "backend/State/IHoldState.h"
-#include "backend/State/IReleaseState.h"
+#include "backend/Input/Strategy/IHoldState.h"
+#include "backend/Input/Strategy/IReleaseState.h"
 
 #include <TimeUsings.h>
 

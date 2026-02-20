@@ -1,4 +1,4 @@
-#include "backend/Command/Decorators/EmitInputEventPreCommandDecorator.h"
+#include "backend/Command/Decorator/EmitInputEventPreCommandDecorator.h"
 
 #include "backend/Command/EmitInputEventCommand.h"
 

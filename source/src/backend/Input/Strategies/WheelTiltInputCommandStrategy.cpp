@@ -1,4 +1,4 @@
-#include "backend/Input/Strategies/WheelTiltInputCommandStrategy.h"
+#include "backend/Input/Strategy/WheelTiltInputCommandStrategy.h"
 
 #include "backend/Managers/ProfileManager.h"
 #include "backend/Command/ICommand.h"

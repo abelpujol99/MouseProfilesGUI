@@ -1,4 +1,4 @@
-#include "backend/Input/Strategies/ButtonInputCommandStrategy.h"
+#include "backend/Input/Strategy/ButtonInputCommandStrategy.h"
 
 #include "backend/Managers/ProfileManager.h"
 #include "backend/Input/Button/ButtonInputCommand.h"

@@ -14,6 +14,8 @@ public:
         std::unique_ptr<ICommand>&& commandOnRelease, Duration&& firstDelayInMillis, Duration&& millisToRepeatInput,
             Duration&& millisUntilInputStops);
 
+    ~WheelTiltInputCommand() = default;
+
     void UpdateLastPressRegister();
 
     const Duration& GetMillisUntilInputStops() const;

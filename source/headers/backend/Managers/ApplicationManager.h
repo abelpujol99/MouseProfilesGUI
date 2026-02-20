@@ -1,6 +1,6 @@
 #pragma once
 
-#include "backend/Listeners/BaseListener.h"
+#include "backend/Listener/BaseListener.h"
 
 template <typename T>
 class ObserverSingleValue;
@@ -13,6 +13,8 @@ public:
 
     ApplicationManager(const ApplicationManager& other) = delete;
     ApplicationManager& operator=(const ApplicationManager& other) = delete;
+    ApplicationManager(ApplicationManager&& other) = delete;
+    ApplicationManager& operator=(ApplicationManager&& other) = delete;
 
     static ApplicationManager& GetInstance();
 

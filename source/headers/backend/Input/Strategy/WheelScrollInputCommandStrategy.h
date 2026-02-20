@@ -1,5 +1,5 @@
 #pragma once
-#include "backend/Input/Strategies/IInputCommandStrategy.h"
+#include "backend/Input/Strategy/IInputCommandStrategy.h"
 
 #include <memory>
 #include <vector>

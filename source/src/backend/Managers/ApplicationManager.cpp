@@ -3,10 +3,10 @@
 #include "backend/Managers/ThreadsManager.h"
 #include "backend/Managers/ProfileManager.h"
 #include "backend/Managers/VirtualDeviceManager.h"
-#include "backend/Listeners/EvdevListener.h"
-#include "backend/Listeners/HidrawListener.h"
+#include "backend/Listener/EvdevListener.h"
+#include "backend/Listener/HidrawListener.h"
 #include "backend/Observer/ObserverSingleValue.h"
-#include "backend/Profiles/FileCodes.h"
+#include "backend/Profile/FileCodes.h"
 
 #include "Managers/WindowManager.h"
 
@@ -37,7 +37,7 @@ ApplicationManager& ApplicationManager::GetInstance()
 
 void ApplicationManager::Start()
 {
-    ProfileManager::GetInstance().OnChangeApplicationInFocus();
+    ProfileManager::GetInstance().OnChangeApplicationFocus();
 
     VirtualDeviceManager::GetInstance().CreateListeners();
 

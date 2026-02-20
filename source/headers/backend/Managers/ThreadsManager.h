@@ -3,8 +3,8 @@
 #include <forward_list>
 #include <thread>
 
-#include "backend/Profiles/FileCodes.h"
-#include "backend/Listeners/BaseListener.h"
+#include "backend/Profile/FileCodes.h"
+#include "backend/Listener/BaseListener.h"
 
 template <class TBaseListener>
 concept DerivedFromBaseListener = std::is_base_of_v<BaseListener, TBaseListener>;

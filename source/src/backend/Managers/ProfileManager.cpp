@@ -6,12 +6,12 @@
 #include "backend/Managers/ApplicationManager.h"
 #include "backend/Managers/ThreadsManager.h"
 #include "backend/Managers/VirtualDeviceManager.h"
-#include "backend/Factories/CommandFactory.h"
+#include "backend/Factory/CommandFactory.h"
 #include "backend/Command/ICommand.h"
 #include "backend/Input/InputEvent.h"
-#include "backend/Input/Strategies/ButtonInputCommandStrategy.h"
-#include "backend/Input/Strategies/WheelScrollInputCommandStrategy.h"
-#include "backend/Input/Strategies/WheelTiltInputCommandStrategy.h"
+#include "backend/Input/Strategy/ButtonInputCommandStrategy.h"
+#include "backend/Input/Strategy/WheelScrollInputCommandStrategy.h"
+#include "backend/Input/Strategy/WheelTiltInputCommandStrategy.h"
 
 std::unique_ptr<ProfileManager> ProfileManager::_profileManagerInstance = nullptr;
 
@@ -32,7 +32,7 @@ ProfileManager& ProfileManager::GetInstance()
     return *_profileManagerInstance;
 }
 
-void ProfileManager::OnChangeApplicationInFocus()
+void ProfileManager::OnChangeApplicationFocus()
 {
     _allProfilesCodes.clear();
 
@@ -166,8 +166,10 @@ void ProfileManager::CreateProfile()
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonExtraInputCommands;
     buttonExtraInputCommands.reserve(PROFILES);
 
-    buttonExtraInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
-        CommandFactory::CreateSwitchScrollModeCommand(), nullptr, nullptr, Duration(500), Duration(20)));
+    /*buttonExtraInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
+        CommandFactory::CreateSwitchScrollModeCommand(), nullptr, nullptr, Duration(500), Duration(20)));*/
+
+    buttonExtraInputCommands.emplace_back(nullptr);
 
     buttonExtraInputCommands.emplace_back(nullptr);
 

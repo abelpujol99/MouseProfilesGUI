@@ -20,6 +20,10 @@ public:
 
 protected:
 
+    BaseListener(FileCodes&& fileCodes);
+
+    ssize_t ReadWithTimeout(int file, void* buffer, size_t size, int timeoutMillis);
+
     bool _keepLooping {true};
 
     std::weak_ptr<std::function<void(bool)>> _shouldRunListenerAction;
@@ -27,9 +31,5 @@ protected:
     std::string _filePath;
 
     std::unordered_set<Code> _codes;
-
-    BaseListener(FileCodes&& fileCodes);
-
-    ssize_t ReadWithTimeout(int file, void* buffer, size_t size, int timeoutMillis);
 
 };

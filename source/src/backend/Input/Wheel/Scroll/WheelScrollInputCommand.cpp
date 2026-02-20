@@ -2,7 +2,7 @@
 
 #include "backend/Command/ICommand.h"
 
-WheelScrollInputCommand::WheelScrollInputCommand(std::unique_ptr<ICommand> command) : _command(std::move(command))
+WheelScrollInputCommand::WheelScrollInputCommand(std::unique_ptr<ICommand>&& command) : _command(std::move(command))
 {}
 
 void WheelScrollInputCommand::ExecuteCommand() const

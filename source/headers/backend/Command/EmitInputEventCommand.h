@@ -11,6 +11,8 @@ public:
 
     EmitInputEventCommand(std::vector<EmitData>&& emitsData);
 
+    ~EmitInputEventCommand() override = default;
+
     void Execute() override;
 
 private:

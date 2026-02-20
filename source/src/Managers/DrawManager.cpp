@@ -1,7 +1,7 @@
 #include "Managers/DrawManager.h"
 
-#include "Factories/DrawableFactory.h"
-#include "Factories/Font/FontFactory.h"
+#include "Factory/DrawableFactory.h"
+#include "Factory/Font/FontFactory.h"
 #include "UI/Drawable.h"
 
 DrawManager DrawManager::_drawManagerInstance{};

@@ -24,10 +24,6 @@ public:
     CommandFactory(CommandFactory&& other) = delete;
     CommandFactory&& operator=(CommandFactory&& other) = delete;
 
-    [[nodiscard]] static std::unique_ptr<ICommand> CreateStringCommand(std::string&& commandLine);
-
-    [[nodiscard]] static std::unique_ptr<ICommand> CreateSwitchScrollModeCommand();
-
     [[nodiscard]] static std::unique_ptr<ICommand> CreateSwitchToProfileCommand(int profileIndex);
 
     [[nodiscard]] static std::unique_ptr<ICommand> CreateSwitchToMainProfileCommand();

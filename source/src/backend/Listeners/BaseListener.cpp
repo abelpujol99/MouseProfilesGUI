@@ -1,10 +1,10 @@
-#include "backend/Listeners/BaseListener.h"
+#include "backend/Listener/BaseListener.h"
 
 #include <iostream>
 #include <poll.h>
 
 #include "backend/Managers/ApplicationManager.h"
-#include "backend/Profiles/FileCodes.h"
+#include "backend/Profile/FileCodes.h"
 
 BaseListener::BaseListener(FileCodes&& fileCodes) : _filePath(std::move(fileCodes.GetFilePath())), _codes(std::move(fileCodes.GetCodes()))
 {

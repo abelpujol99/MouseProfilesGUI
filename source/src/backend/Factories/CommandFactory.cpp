@@ -1,22 +1,10 @@
-#include "backend/Factories/CommandFactory.h"
+#include "backend/Factory/CommandFactory.h"
 
-#include "backend/Command/StringCommand.h"
-#include "backend/Command/SwitchScrollModeCommand.h"
 #include "backend/Command/SwitchToProfileCommand.h"
 #include "backend/Command/ShutdownApplicationCommand.h"
 #include "backend/Command/EmitInputEventCommand.h"
 
 #define MAIN_PROFILE 0
-
-std::unique_ptr<ICommand> CommandFactory::CreateStringCommand(std::string&& commandLine)
-{
-    return std::make_unique<StringCommand>(std::move(commandLine));
-}
-
-std::unique_ptr<ICommand> CommandFactory::CreateSwitchScrollModeCommand()
-{
-    return std::make_unique<SwitchScrollModeCommand>();
-}
 
 std::unique_ptr<ICommand> CommandFactory::CreateSwitchToProfileCommand(int profileIndex)
 {

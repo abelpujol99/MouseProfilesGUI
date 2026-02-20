@@ -1,4 +1,4 @@
-#include "backend/Input/Strategies/WheelScrollInputCommandStrategy.h"
+#include "backend/Input/Strategy/WheelScrollInputCommandStrategy.h"
 
 #include "backend/Input/Wheel/Scroll/WheelScrollInputCommand.h"
 #include "backend/Command/ICommand.h"

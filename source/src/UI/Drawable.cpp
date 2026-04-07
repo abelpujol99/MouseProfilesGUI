@@ -1,5 +1,7 @@
 #include "UI/Drawable.h"
 
+#include "UI/Structs/DrawablePosition.h"
+
 Drawable::Drawable(DrawablePosition&& drawablePosition, bool isHidden) : _parentPosition(drawablePosition.parentPosition),
     _relativePosition(drawablePosition.positionX, drawablePosition.positionY),
     _finalPosition(_parentPosition.x + _relativePosition.x, _parentPosition.y + _relativePosition.y), _isHidden(isHidden)

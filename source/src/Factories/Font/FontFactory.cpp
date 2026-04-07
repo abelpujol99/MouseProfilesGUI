@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "Factories/ImGui/ImGuiFactory.h"
+#include "Factories/Font/FontFamilyTypes.h"
 
 std::unique_ptr<FontFactory> FontFactory::_fontFamilyInstance = nullptr;
 

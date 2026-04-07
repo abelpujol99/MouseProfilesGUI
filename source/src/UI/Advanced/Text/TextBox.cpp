@@ -1,17 +1,20 @@
 #include "UI/Advanced/Text/TextBox.h"
 
 #include "Factories/DrawableFactory.h"
-#include "Factories/Font/FontFactory.h"
 #include "Managers/Input/InputManager.h"
 #include "Managers/Input/SelectableManager.h"
+#include "UI/Basic/Rectangle.h"
 #include "UI/Basic/Text.h"
+#include "UI/Structs/DrawablePosition.h"
+#include "UI/Structs/RectangleData.h"
+#include "UI/Structs/TextData.h"
 
 TextBox::TextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData, TextData&& textData, bool isHidden) :
         RectDrawable(std::move(drawablePosition), isHidden),
         _rectangle(DrawableFactory::CreateRectangle(DrawablePosition{_finalPosition, 0, 0},
         RectangleData{rectangleData.size, rectangleData.color, rectangleData.rounding, rectangleData.thickness, rectangleData.isFilled})),
         _text(DrawableFactory::CreateText(DrawablePosition{_finalPosition, 0, 0},
-        TextData{"", textData.horizontalAlignment, textData.verticalAlignment, textData.fontFamily, textData.fontSize, textData.color}))
+        TextData{textData.text, textData.horizontalAlignment, textData.verticalAlignment, textData.fontFamily, textData.fontSize, textData.color}))
 {
     SetSize(rectangleData.size);
 

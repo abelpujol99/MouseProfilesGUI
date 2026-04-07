@@ -3,12 +3,11 @@
 #include "imgui.h"
 
 #include "TimeUsings.h"
-#include "MouseButton/MouseButtons.h"
 #include "Observers/ObserverMap.h"
 #include "Observers/ObserverSingleValue.h"
 
+enum class MouseButtons : char;
 class BaseMouseButtonState;
-struct ImVec2;
 
 class GestureManager
 {

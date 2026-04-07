@@ -1,9 +1,10 @@
 #include "Factories/DrawableFactory.h"
 
-#include "UI/Advanced/Button.h"
 #include "UI/Basic/Texture.h"
+#include "UI/Basic/Rectangle.h"
 #include "UI/Basic/Text.h"
 #include "UI/Advanced/Text/TextBox.h"
+#include "UI/Advanced/Button.h"
 
 std::unique_ptr<Texture> DrawableFactory::CreateTexture(DrawablePosition&& drawablePosition, const char* textureFileName,
     bool isHidden)
@@ -29,7 +30,8 @@ std::unique_ptr<TextBox> DrawableFactory::CreateTextBox(DrawablePosition&& drawa
 }
 
 std::unique_ptr<Button> DrawableFactory::CreateButton(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
-    TextData&& textData, bool isHidden)
+    TextData&& textData, std::function<void()>&& action, bool isHidden)
 {
-    return std::make_unique<Button>(std::move(drawablePosition), std::move(rectangleData), std::move(textData), isHidden);
+    return std::make_unique<Button>(std::move(drawablePosition), std::move(rectangleData), std::move(textData),
+        std::move(action), isHidden);
 }

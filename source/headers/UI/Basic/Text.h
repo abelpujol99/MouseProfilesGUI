@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include "UI/Advanced/Text/TextVerticalAlignments.h"
-#include "UI/Advanced/Text/TextHorizontalAlignments.h"
-#include "UI/Structs/TextData.h"
+class TextData;
+enum class TextHorizontalAlignments;
+enum class TextVerticalAlignments;
 
 class Text : public Drawable
 {

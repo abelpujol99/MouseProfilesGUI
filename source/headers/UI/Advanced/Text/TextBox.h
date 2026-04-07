@@ -6,13 +6,11 @@
 #include <functional>
 
 #include "KeyUsings.h"
-#include "UI/Basic/Rectangle.h"
-#include "UI/Structs/TextData.h"
 
 class Text;
-enum class TextHorizontalAlignments;
-enum class TextVerticalAlignments;
-enum class FontFamilyTypes;
+class Rectangle;
+class RectangleData;
+class TextData;
 
 class TextBox : public RectDrawable, public ISelectable
 {

@@ -1,12 +1,9 @@
 #pragma once
 #include <memory>
 #include <vector>
-
 #include "imgui.h"
 
-class Text;
 class Drawable;
-struct ImDrawList;
 
 class DrawManager
 {
@@ -40,9 +37,9 @@ private:
 
     std::unique_ptr<Drawable> _text;
 
-    std::unique_ptr<Drawable> _textBox1;
+    std::unique_ptr<Drawable> _textBox;
 
-    std::unique_ptr<Drawable> _textBox2;
+    std::unique_ptr<Drawable> _button;
 
     std::vector<Drawable*> _drawables;
 };

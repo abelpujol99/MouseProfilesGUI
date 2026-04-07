@@ -1,15 +1,16 @@
 #pragma once
 
+#include <functional>
 #include <memory>
-#include "UI/Structs/DrawablePosition.h"
-#include "UI/Structs/RectangleData.h"
-#include "UI/Structs/TextData.h"
 
 class Texture;
 class Rectangle;
 class Text;
 class TextBox;
 class Button;
+class DrawablePosition;
+class RectangleData;
+class TextData;
 
 class DrawableFactory
 {
@@ -29,5 +30,5 @@ public:
         TextData&& textData, bool isHidden = false);
 
     static std::unique_ptr<Button> CreateButton(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
-        TextData&& textData, bool isHidden = false);
+        TextData&& textData, std::function<void()>&& action, bool isHidden = false);
 };

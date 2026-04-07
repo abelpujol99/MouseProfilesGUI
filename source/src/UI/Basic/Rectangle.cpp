@@ -2,6 +2,7 @@
 
 #include "UI/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
 #include "UI/DrawStrategy/Rectangle/DrawFilledRectangle.h"
+#include "UI/Structs/RectangleData.h"
 
 Rectangle::Rectangle(DrawablePosition &&drawablePositon, RectangleData&& rectangleData, bool isHidden) :
         RectDrawable(std::move(drawablePositon), isHidden), _color(rectangleData.color), _rounding(rectangleData.rounding),

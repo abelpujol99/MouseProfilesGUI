@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Managers/Gesture/MouseButton/MouseButtons.h"
+enum class MouseButtons : char;
 
 class BaseMouseButtonState
 {

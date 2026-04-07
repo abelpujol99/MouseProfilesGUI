@@ -4,6 +4,7 @@
 
 #include "Factories/ImGui/ImGuiFactory.h"
 #include "Managers/Gesture/MouseButton/ClickedState.h"
+#include "Managers/Gesture/MouseButton/MouseButtons.h"
 #include "Managers/Gesture/MouseButton/ReleasedState.h"
 
 GestureManager GestureManager::_gestureManagerInstance{};

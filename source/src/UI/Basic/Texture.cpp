@@ -5,7 +5,6 @@
 #include "stb_image.h"
 
 #include "imgui.h"
-
 #include <filesystem>
 
 Texture::Texture(DrawablePosition&& drawablePosition, const char* fileName, bool isHidden) :

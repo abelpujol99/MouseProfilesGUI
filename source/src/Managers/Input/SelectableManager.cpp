@@ -2,6 +2,7 @@
 
 #include "Factories/ImGui/ImGuiFactory.h"
 #include "Managers/Gesture/GestureManager.h"
+#include "Managers/Gesture/MouseButton/MouseButtons.h"
 #include "UI/ISelectable.h"
 #include "Utilities/Boundaries.h"
 

@@ -1,7 +1,5 @@
 #pragma once
 
-class Texture;
-struct ImDrawList;
 struct GLFWwindow;
 
 class WindowManager

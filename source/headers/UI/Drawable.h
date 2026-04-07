@@ -1,8 +1,8 @@
 #pragma once
 
 #include "imgui.h"
-#include "Structs/DrawablePosition.h"
 
+class DrawablePosition;
 struct ImDrawList;
 
 class Drawable

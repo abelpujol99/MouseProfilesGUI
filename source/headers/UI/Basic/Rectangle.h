@@ -1,9 +1,11 @@
 #pragma once
+#include "UI/RectDrawable.h"
+
 #include <memory>
 
-#include "UI/RectDrawable.h"
 #include "UI/DrawStrategy/Rectangle/IDrawRectangleStrategy.h"
-#include "UI/Structs/RectangleData.h"
+
+class RectangleData;
 
 class Rectangle : public RectDrawable
 {

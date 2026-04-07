@@ -1,9 +1,9 @@
 #include "UI/Basic/Text.h"
 
 #include "Factories/Font/FontFactory.h"
-#include "UI/Advanced/Text/TextBox.h"
 #include "UI/Advanced/Text/TextVerticalAlignments.h"
 #include "UI/Advanced/Text/TextHorizontalAlignments.h"
+#include "UI/Structs/TextData.h"
 
 Text::Text(DrawablePosition &&drawablePosition, TextData &&textData, bool isHidden) :
         Drawable(std::move(drawablePosition), isHidden), _text(textData.text),

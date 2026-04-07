@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 
-#include "Managers/Gesture/MouseButton/MouseButtons.h"
+enum class MouseButtons : char;
 
 class ImGuiFactory
 {

@@ -1,5 +1,7 @@
 #include "Factories/ImGui/ImGuiFactory.h"
 
+#include "Managers/Gesture/MouseButton/MouseButtons.h"
+
 ImGuiIO& ImGuiFactory::GetIO()
 {
     return ImGui::GetIO();

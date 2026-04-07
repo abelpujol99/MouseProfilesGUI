@@ -2,9 +2,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "FontFamilyTypes.h"
-
 struct ImFont;
+enum class FontFamilyTypes;
 
 class FontFactory
 {

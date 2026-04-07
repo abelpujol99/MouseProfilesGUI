@@ -1,15 +1,18 @@
 #pragma once
 #include "UI/RectDrawable.h"
+#include "UI/ISelectable.h"
 
 #include <memory>
 #include <functional>
+
+#include "KeyUsings.h"
 
 class Text;
 enum class TextHorizontalAlignments;
 enum class TextVerticalAlignments;
 enum class FontFamilyTypes;
 
-class TextBox : public RectDrawable
+class TextBox : public RectDrawable, public ISelectable
 {
 public:
 
@@ -23,6 +26,17 @@ public:
     void UpdatePosition() override;
 
     void Draw(ImDrawList* drawList) override;
+
+    bool CanBeSelected() override;
+
+    const ImVec2& GetPosition() override;
+
+    const ImVec2& GetBottomRightPosition() override;
+
+    void OnSelect() override;
+
+    void OnUnselect() override;
+
 
 private:
 
@@ -38,9 +52,5 @@ private:
 
     float _thickness;
 
-    std::weak_ptr<std::function<void(bool)>> _onLeftMouseButtonReleasedWeakAction;
-
-    bool _hasLeftMouseButtonReleased{false};
-
-    bool _isSelected{false};
+    std::weak_ptr<std::function<void(KeyChain)>> _onTypingWeakAction;
 };

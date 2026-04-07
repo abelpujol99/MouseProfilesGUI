@@ -1,4 +1,3 @@
-#include "imgui.h"
 #include "Managers/ApplicationManager.h"
 
 int main()

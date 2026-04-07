@@ -40,7 +40,9 @@ private:
 
     std::unique_ptr<Drawable> _text;
 
-    std::unique_ptr<Drawable> _textBox;
+    std::unique_ptr<Drawable> _textBox1;
+
+    std::unique_ptr<Drawable> _textBox2;
 
     std::vector<Drawable*> _drawables;
 };

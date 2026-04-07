@@ -1,7 +1,6 @@
 #pragma once
 #include "UI/Drawable.h"
 
-#include <cstdint>
 #include <string>
 
 #include "TextHorizontalAlignments.h"

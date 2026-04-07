@@ -1,7 +1,5 @@
 #include "UI/Text/Text.h"
 
-#include <iostream>
-
 Text::Text(const ImVec2& parentPosition, float positionX, float positionY, const std::string& text,
     TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment, ImFont* fontFamily,
     float fontSize, ImColor color, bool isHidden) : Drawable(parentPosition, positionX, positionY, isHidden),
@@ -23,7 +21,7 @@ void Text::SetText(const std::string& text)
 
 void Text::AddText(const std::string& text)
 {
-
+    _text.append(text);
 }
 
 void Text::SetFontFamily(ImFont* fontFamily)

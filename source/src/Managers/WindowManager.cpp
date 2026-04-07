@@ -6,10 +6,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Factories/Font/FontFactory.h"
-#include "Managers/DrawManager.h"
 #include "Managers/Gesture/GestureManager.h"
-#include "UI/Texture.h"
+#include "Managers/Input/InputManager.h"
+#include "Managers/Input/SelectableManager.h"
+#include "Managers/DrawManager.h"
 
 WindowManager WindowManager::_windowManagerInstance{};
 
@@ -88,9 +88,13 @@ void WindowManager::SetupImGui() const
 
 void WindowManager::Update()
 {
-    DrawManager& drawManager {DrawManager::GetInstance()};
-
     GestureManager& gestureManager {GestureManager::GetInstance()};
+
+    InputManager& inputManager {InputManager::GetInstance()};
+
+    SelectableManager& selectableManager {SelectableManager::GetInstance()};
+
+    DrawManager& drawManager {DrawManager::GetInstance()};
 
     drawManager.Start();
 
@@ -105,6 +109,10 @@ void WindowManager::Update()
         ImDrawList* drawList {ImGui::GetBackgroundDrawList()};
 
         gestureManager.Update();
+
+        inputManager.Update();
+
+        selectableManager.Update();
 
         drawManager.DrawElements(drawList);
 

@@ -1,8 +1,7 @@
 #include "Managers/Gesture/GestureManager.h"
 
-#include <iostream>
-
 #include "imgui.h"
+
 #include "Factories/ImGui/ImGuiFactory.h"
 #include "Managers/Gesture/MouseButton/ClickedState.h"
 #include "Managers/Gesture/MouseButton/ReleasedState.h"

@@ -2,7 +2,6 @@
 
 #include "Factories/ImGui/ImGuiFactory.h"
 #include "Managers/Gesture/GestureManager.h"
-#include "Managers/Gesture/MouseButton/ClickedState.h"
 
 ReleasedState::ReleasedState(MouseButtons mouseButton) : BaseMouseButtonState(mouseButton)
 {}

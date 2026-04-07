@@ -7,7 +7,6 @@
 #include "imgui.h"
 
 #include <filesystem>
-#include <iostream>
 
 Texture::Texture(const ImVec2& parentPosition, float positionX, float positionY, const char* fileName, bool isHidden) :
     RectDrawable(parentPosition, positionX, positionY, isHidden)

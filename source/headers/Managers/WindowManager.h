@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 
 class Texture;
 struct ImDrawList;
@@ -25,7 +24,6 @@ public:
     void Update();
 
     void Cleanse() const;
-
 
 private:
 

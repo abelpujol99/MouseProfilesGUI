@@ -1,7 +1,9 @@
 #pragma once
 #include "Observers/IObserver.h"
 
+#include <functional>
 #include <list>
+#include <memory>
 
 template<typename T>
 class ObserverSingleValue : public IObserver
@@ -28,7 +30,7 @@ public:
 	void SetValue(T data);
 
 	std::weak_ptr<TEventHandler> Subscribe(TEventHandler action);
-	void Unsubscribe(std::weak_ptr<TEventHandler> weakAction);
+	void Unsubscribe(const std::weak_ptr<TEventHandler>& weakAction);
 	void UnsubscribeAll() override;
 
 private:
@@ -39,10 +41,8 @@ private:
 };
 
 template<typename T>
-ObserverSingleValue<T>::ObserverSingleValue()
-{
-	_action = [](T data){return data;};
-}
+ObserverSingleValue<T>::ObserverSingleValue() : _action([](T data){return data;})
+{}
 
 template <typename T>
 ObserverSingleValue<T>::ObserverSingleValue(TAction action) : _action(action)
@@ -88,7 +88,7 @@ std::weak_ptr<typename ObserverSingleValue<T>::TEventHandler> ObserverSingleValu
 }
 
 template <typename T>
-void ObserverSingleValue<T>::Unsubscribe(std::weak_ptr<TEventHandler> weakAction)
+void ObserverSingleValue<T>::Unsubscribe(const std::weak_ptr<TEventHandler>& weakAction)
 {
 	if (const auto action {weakAction.lock()})
 	{

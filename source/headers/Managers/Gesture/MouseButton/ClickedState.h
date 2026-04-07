@@ -1,4 +1,5 @@
 #pragma once
+
 #include "BaseMouseButtonState.h"
 
 class ClickedState : public BaseMouseButtonState

@@ -1,7 +1,7 @@
 #include "UI/Drawable.h"
 
-Drawable::Drawable(const ImVec2& parentPosition, float relativePositionX, float relativePositionY, bool isHidden = false) :
-    _parentPosition(parentPosition), _relativePosition(relativePositionX, relativePositionY),
+Drawable::Drawable(DrawablePosition&& drawablePosition, bool isHidden) : _parentPosition(drawablePosition.parentPosition),
+    _relativePosition(drawablePosition.positionX, drawablePosition.positionY),
     _finalPosition(_parentPosition.x + _relativePosition.x, _parentPosition.y + _relativePosition.y), _isHidden(isHidden)
 {}
 
@@ -27,7 +27,5 @@ const ImVec2& Drawable::GetFinalPosition() const
 
 void Drawable::UpdatePosition()
 {
-    const ImVec2& relativePosition {GetRelativePosition()};
-
-    _finalPosition = {_parentPosition.x + relativePosition.x, _parentPosition.y + relativePosition.y};
+    _finalPosition = {_parentPosition.x + _relativePosition.x, _parentPosition.y + _relativePosition.y};
 }

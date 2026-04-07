@@ -3,16 +3,15 @@
 
 #include <string>
 
-#include "TextHorizontalAlignments.h"
-#include "TextVerticalAlignments.h"
+#include "UI/Advanced/Text/TextVerticalAlignments.h"
+#include "UI/Advanced/Text/TextHorizontalAlignments.h"
+#include "UI/Structs/TextData.h"
 
 class Text : public Drawable
 {
 public:
 
-    Text(const ImVec2& parentPosition, float positionX, float positionY, const std::string& text,
-        TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment, ImFont* fontFamily,
-        float fontSize, ImColor color, bool isHidden = false);
+    Text(DrawablePosition&& drawablePosition, TextData&& textData, bool isHidden = false);
 
     ~Text() override = default;
 

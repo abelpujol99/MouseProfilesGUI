@@ -1,4 +1,4 @@
-#include "UI/Texture.h"
+#include "UI/Basic/Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
@@ -8,8 +8,8 @@
 
 #include <filesystem>
 
-Texture::Texture(const ImVec2& parentPosition, float positionX, float positionY, const char* fileName, bool isHidden) :
-    RectDrawable(parentPosition, positionX, positionY, isHidden)
+Texture::Texture(DrawablePosition&& drawablePosition, const char* fileName, bool isHidden) :
+    RectDrawable(std::move(drawablePosition), isHidden)
 {
     _texture = LoadTexture(fileName);
 }
@@ -32,7 +32,7 @@ GLuint Texture::LoadTexture(const char* fileName)
         return 0;
     }
 
-    SetSize(width, height);
+    SetSize(ImVec2(static_cast<float>(width), static_cast<float>(height)));
 
     GLuint texture;
     glGenTextures(1, &texture);

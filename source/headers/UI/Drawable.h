@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imgui.h"
+#include "Structs/DrawablePosition.h"
 
 struct ImDrawList;
 
@@ -24,11 +25,11 @@ public:
 
 protected:
 
+    Drawable(DrawablePosition&& drawablePosition, bool isHidden);
+
     const ImVec2& _parentPosition;
     ImVec2 _relativePosition;
     ImVec2 _finalPosition;
 
     bool _isHidden;
-
-    Drawable(const ImVec2& parentPosition, float relativePositionX, float relativePositionY, bool isHidden);
 };

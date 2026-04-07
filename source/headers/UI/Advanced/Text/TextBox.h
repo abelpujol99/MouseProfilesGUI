@@ -6,6 +6,8 @@
 #include <functional>
 
 #include "KeyUsings.h"
+#include "UI/Basic/Rectangle.h"
+#include "UI/Structs/TextData.h"
 
 class Text;
 enum class TextHorizontalAlignments;
@@ -16,16 +18,11 @@ class TextBox : public RectDrawable, public ISelectable
 {
 public:
 
-    TextBox(const ImVec2& parentPosition, float positionX, float positionY, int width, int height,
-        float verticalPadding, float horizontalPadding, ImColor color, float rounding, float thickness,
-        TextHorizontalAlignments textHorizontalAlignment, TextVerticalAlignments textVerticalAlignment, FontFamilyTypes textFont,
-        float fontSize, ImColor textColor, bool isHidden = false);
+    TextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData, TextData&& textData, bool isHidden = false);
 
     ~TextBox() override = default;
 
     void UpdatePosition() override;
-
-    void Draw(ImDrawList* drawList) override;
 
     bool CanBeSelected() override;
 
@@ -37,20 +34,18 @@ public:
 
     void OnUnselect() override;
 
+    void Draw(ImDrawList* drawList) override;
+
 
 private:
 
-    std::unique_ptr<Text> _text;
+    std::unique_ptr<Rectangle> _rectangle;
 
-    ImColor _color;
+    std::unique_ptr<Text> _text;
 
     float _verticalPadding;
 
     float _horizontalPadding;
-
-    float _rounding;
-
-    float _thickness;
 
     std::weak_ptr<std::function<void(KeyChain)>> _onTypingWeakAction;
 };

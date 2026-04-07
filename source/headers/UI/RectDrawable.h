@@ -9,12 +9,14 @@ public:
 
     void UpdatePosition() override;
 
+    [[nodiscard]] const ImVec2& GetSize() const;
+
 protected:
 
-    RectDrawable(const ImVec2& parentPosition, float positionX, float positionY, bool isHidden);
+    RectDrawable(DrawablePosition&& drawablePosition, bool isHidden);
+
+    void SetSize(const ImVec2& size);
 
     ImVec2 _size;
     ImVec2 _bottomRightPosition;
-
-    void SetSize(int width, int height);
 };

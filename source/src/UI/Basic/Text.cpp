@@ -1,10 +1,14 @@
-#include "UI/Text/Text.h"
+#include "UI/Basic/Text.h"
 
-Text::Text(const ImVec2& parentPosition, float positionX, float positionY, const std::string& text,
-    TextHorizontalAlignments horizontalAlignment, TextVerticalAlignments verticalAlignment, ImFont* fontFamily,
-    float fontSize, ImColor color, bool isHidden) : Drawable(parentPosition, positionX, positionY, isHidden),
-    _text(text), _horizontalAlignment(horizontalAlignment), _verticalAlignment(verticalAlignment), _fontFamily(fontFamily),
-    _fontSize(fontSize), _color(color)
+#include "Factories/Font/FontFactory.h"
+#include "UI/Advanced/Text/TextBox.h"
+#include "UI/Advanced/Text/TextVerticalAlignments.h"
+#include "UI/Advanced/Text/TextHorizontalAlignments.h"
+
+Text::Text(DrawablePosition &&drawablePosition, TextData &&textData, bool isHidden) :
+        Drawable(std::move(drawablePosition), isHidden), _text(textData.text),
+        _horizontalAlignment(textData.horizontalAlignment), _verticalAlignment(textData.verticalAlignment),
+        _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize), _color(textData.color)
 {
     CalculateTextSize();
 }

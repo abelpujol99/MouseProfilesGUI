@@ -1,9 +1,10 @@
 #include "Managers/DrawManager.h"
 
 #include "Factories/DrawableFactory.h"
-#include "UI/Texture.h"
-#include "UI/Text/Text.h"
-#include "UI/Text/TextBox.h"
+#include "Factories/Font/FontFamilyTypes.h"
+#include "UI/Basic/Texture.h"
+#include "UI/Basic/Text.h"
+#include "UI/Advanced/Text/TextBox.h"
 
 DrawManager DrawManager::_drawManagerInstance{};
 
@@ -25,12 +26,12 @@ void DrawManager::DrawElements(ImDrawList* drawList)
         drawable->UpdatePosition();
     }
 
-    _rootPosition.x += 0.01f;
+    _rootPosition.x += 0.1f;
 }
 
 void DrawManager::Start()
 {
-    _texture = DrawableFactory::CreateTexture(_rootPosition, 300, 300, "images/cat.jpg");
+    _texture = DrawableFactory::CreateTexture(DrawablePosition{_rootPosition, 300, 300}, "images/cat.jpg");
 
     AddDrawable(_texture.get());
 
@@ -39,15 +40,15 @@ void DrawManager::Start()
 
     AddDrawable(_text.get());*/
 
-    std::unique_ptr<TextBox> textBox {std::move(DrawableFactory::CreateTextBox(_rootPosition, 100, 100, 300, 190, 10, 10, {255, 0, 0, 255}, 0, 1,
-        TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}))};
+    std::unique_ptr<TextBox> textBox {std::move(DrawableFactory::CreateTextBox(DrawablePosition{_rootPosition, 100, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, true},
+        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}}))};
 
     _textBox1 = std::move(textBox);
 
     AddDrawable(_textBox1.get());
 
-    std::unique_ptr<TextBox> textBox1 {std::move(DrawableFactory::CreateTextBox(_rootPosition, 800, 100, 300, 190, 10, 10, {255, 0, 0, 255}, 0, 1,
-        TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}))};
+    std::unique_ptr<TextBox> textBox1 {std::move(DrawableFactory::CreateTextBox(DrawablePosition{_rootPosition, 800, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, false},
+        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}}))};
 
     _textBox2 = std::move(textBox1);
 

@@ -34,7 +34,6 @@ CopyResourcesToBuild(${SOURCE_DIR})
 #Includes
 set(INCLUDES
         headers
-        headers/backend
         usings
         libraries)
 

@@ -5,7 +5,7 @@ class RectDrawable : public Drawable
 {
 public:
 
-    virtual ~RectDrawable() = default;
+    ~RectDrawable() override = default;
 
     void UpdatePosition() override;
 

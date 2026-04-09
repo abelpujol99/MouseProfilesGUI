@@ -1,6 +1,6 @@
 #pragma once
 
-#include "KeyUsings.h"
+#include "Frontend/KeyUsings.h"
 
 #include "Utilities/Observer/ObserverSingleValue.h"
 
@@ -20,14 +20,23 @@ public:
 
     void Update();
 
-    std::weak_ptr<std::function<void(KeyChain)>> SubscribeToCurrentKeyChainObserver(std::function<void(KeyChain)>&& action);
-    void UnsubscribeToCurrentKeyChainObserver(const std::weak_ptr<std::function<void(KeyChain)>>& weakAction);
+    std::weak_ptr<std::function<void(Key)>> SubscribeToCurrentTypedKeyObserver(std::function<void(Key)>&& action);
+    void UnsubscribeToCurrentTypedKeyObserver(const std::weak_ptr<std::function<void(Key)>>& weakAction);
+
+    std::weak_ptr<std::function<void(char)>> SubscribeToCurrentTypedCharObserver(std::function<void(char)>&& action);
+    void UnsubscribeToCurrentTypedCharObserver(const std::weak_ptr<std::function<void(char)>>& weakAction);
 
 private:
 
     InputManager() = default;
 
+    void UpdateLastKeyPressed();
+
+    void UpdateLastCharTyped();
+
     static InputManager _inputManagerInstance;
 
-    ObserverSingleValue<KeyChain> _currentKeyChainObserver;
+    ObserverSingleValue<Key> _currentPressedKeyObserver;
+
+    ObserverSingleValue<char> _currentTypedCharObserver;
 };

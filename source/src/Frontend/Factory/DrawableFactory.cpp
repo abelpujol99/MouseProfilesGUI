@@ -1,5 +1,7 @@
 #include "Frontend/Factory/DrawableFactory.h"
 
+#include "Frontend/UI/Structs/DrawablePosition.h"
+
 std::unique_ptr<Texture> DrawableFactory::CreateTexture(DrawablePosition&& drawablePosition, const char* textureFileName,
     bool isHidden)
 {
@@ -17,10 +19,28 @@ std::unique_ptr<Text> DrawableFactory::CreateText(DrawablePosition&& drawablePos
     return std::make_unique<Text>(std::move(drawablePosition), std::move(textData), isHidden);
 }
 
-std::unique_ptr<TextBox> DrawableFactory::CreateTextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
+std::unique_ptr<TextBox<char, ApplyKey>> DrawableFactory::CreateTextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
     TextData&& textData, bool isHidden)
 {
-    return std::make_unique<TextBox>(std::move(drawablePosition), std::move(rectangleData), std::move(textData), isHidden);
+    std::unique_ptr<TextBox<char, ApplyKey>> textBox {std::make_unique<TextBox<char, ApplyKey>>(std::move(drawablePosition))};
+
+    textBox->SetRectangle(CreateRectangle(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(rectangleData), isHidden));
+
+    textBox->SetText(CreateText(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(textData), isHidden));
+
+    return textBox;
+}
+
+std::unique_ptr<TextBox<Key, DisplayKey>> DrawableFactory::CreateDisplayTextBox(DrawablePosition &&drawablePosition,
+    RectangleData&& rectangleData, TextData&& textData, bool isHidden)
+{
+    std::unique_ptr<TextBox<Key, DisplayKey>> textBox {std::make_unique<TextBox<Key, DisplayKey>>(std::move(drawablePosition))};
+
+    textBox->SetRectangle(CreateRectangle(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(rectangleData), isHidden));
+
+    textBox->SetText(CreateText(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(textData), isHidden));
+
+    return textBox;
 }
 
 std::unique_ptr<Button> DrawableFactory::CreateButton(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,

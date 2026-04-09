@@ -10,9 +10,9 @@
 Button::Button(DrawablePosition&& drawablePosition, RectangleData&& rectangleData, TextData&& textData,
     std::function<void()>&& action, bool isHidden) :
         RectDrawable(std::move(drawablePosition), isHidden),
-        _rectangle(DrawableFactory::CreateRectangle(DrawablePosition{_finalPosition, 0, 0},
+        _rectangle(DrawableFactory::CreateRectangle(DrawablePosition{*_position, 0, 0},
         RectangleData{rectangleData.size, rectangleData.color, rectangleData.rounding, rectangleData.thickness, rectangleData.isFilled})),
-        _text(DrawableFactory::CreateText(DrawablePosition{_finalPosition, 0, 0},
+        _text(DrawableFactory::CreateText(DrawablePosition{*_position, 0, 0},
         TextData{textData.text, textData.horizontalAlignment, textData.verticalAlignment, textData.fontFamily, textData.fontSize, textData.color})),
         _action(action)
 {

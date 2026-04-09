@@ -1,16 +1,15 @@
 #pragma once
+#include "IPosition.h"
 
 struct ImVec2;
 
-class ISelectable
+class ISelectable : public IPosition
 {
     public:
 
-    virtual ~ISelectable() = default;
+    ~ISelectable() override = default;
 
     virtual bool CanBeSelected() = 0;
-
-    virtual const ImVec2& GetPosition() = 0;
 
     virtual const ImVec2& GetBottomRightPosition() = 0;
 

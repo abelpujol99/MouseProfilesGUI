@@ -34,7 +34,9 @@ void SelectableManager::Update()
 
     for (auto selectable : _selectables)
     {
-        if (!selectable->CanBeSelected() || selectable == _currentSelection || !Utilities::Boundaries::IsPositionInsideBoundaries(mousePosition, selectable->GetPosition(), selectable->GetBottomRightPosition()))
+        if (!selectable->CanBeSelected() ||
+            selectable == _currentSelection ||
+            !Utilities::Boundaries::IsPositionInsideBoundaries(mousePosition, *selectable->GetPosition(), selectable->GetBottomRightPosition()))
         {
             continue;
         }

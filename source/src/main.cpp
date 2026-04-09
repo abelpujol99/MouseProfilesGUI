@@ -1,4 +1,4 @@
-#include "../headers/Backend/Managers/ApplicationManager.h"
+#include "Backend/Managers/ApplicationManager.h"
 
 int main()
 {

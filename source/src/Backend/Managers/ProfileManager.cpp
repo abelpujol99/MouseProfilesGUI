@@ -161,10 +161,8 @@ void ProfileManager::CreateProfile()
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonExtraInputCommands;
     buttonExtraInputCommands.reserve(PROFILES);
 
-    /*buttonExtraInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
-        CommandFactory::CreateSwitchScrollModeCommand(), nullptr, nullptr, Duration(500), Duration(20)));*/
-
-    buttonExtraInputCommands.emplace_back(nullptr);
+    buttonExtraInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
+        CommandFactory::CreateShutdownApplicationCommand(), nullptr, nullptr, Duration(500), Duration(20)));
 
     buttonExtraInputCommands.emplace_back(nullptr);
 

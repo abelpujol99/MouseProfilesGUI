@@ -51,5 +51,5 @@ void Texture::Draw(ImDrawList* drawList)
         return;
     }
 
-    drawList->AddImage(_texture, GetFinalPosition(), _bottomRightPosition);
+    drawList->AddImage(_texture, *GetPosition(), _bottomRightPosition);
 }

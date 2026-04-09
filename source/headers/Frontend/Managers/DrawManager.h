@@ -32,13 +32,13 @@ private:
 
     static DrawManager _drawManagerInstance;
 
-    ImVec2 _rootPosition {0, 0};
+    std::unique_ptr<ImVec2> _rootPosition {std::make_unique<ImVec2>(0, 0)};
 
     std::unique_ptr<Drawable> _texture;
 
-    std::unique_ptr<Drawable> _text;
-
     std::unique_ptr<Drawable> _textBox;
+
+    std::unique_ptr<Drawable> _textBox2;
 
     std::unique_ptr<Drawable> _button;
 

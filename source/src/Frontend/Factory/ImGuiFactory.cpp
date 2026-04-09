@@ -1,5 +1,8 @@
 #include "Frontend/Factory/ImGuiFactory.h"
 
+#include <iostream>
+
+#include "Frontend/KeyUsings.h"
 #include "Frontend/Managers/Gesture/MouseButton/MouseButtons.h"
 
 ImGuiIO& ImGuiFactory::GetIO()
@@ -29,6 +32,8 @@ ImVec2 ImGuiFactory::GetMousePosition()
     return GetIO().MousePos;
 }
 
+#pragma endregion
+
 ImGuiKey ImGuiFactory::GetLastKeyPressed()
 {
     for (int key {ImGuiKey_NamedKey_BEGIN}; key < ImGuiKey_NamedKey_END; ++key)
@@ -46,7 +51,31 @@ ImGuiKey ImGuiFactory::GetLastKeyPressed()
     return ImGuiKey_None;
 }
 
-#pragma endregion
+char ImGuiFactory::GetLastCharTyped()
+{
+    ImGuiIO& io {GetIO()};
+
+    for (int i {0}; i < io.InputQueueCharacters.Size; ++i)
+    {
+        ImWchar character {io.InputQueueCharacters[i]};
+
+        if ((character < CHAR_0 || character > CHAR_9) &&
+            (character < CHAR_A || character > CHAR_Z) &&
+            character != CHAR_PLUS)
+        {
+            continue;
+        }
+
+        return static_cast<char>(character);
+    }
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Backspace))
+    {
+        return Backspace;
+    }
+
+    return 0;
+}
 
 ImFont* ImGuiFactory::CreateFont(const char* fontPath)
 {

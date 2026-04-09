@@ -25,6 +25,8 @@ public:
 
     [[nodiscard]] static ImGuiKey GetLastKeyPressed();
 
+    [[nodiscard]] static char GetLastCharTyped();
+
 #pragma endregion
 
     [[nodiscard]] static ImFont* CreateFont(const char* fontPath);

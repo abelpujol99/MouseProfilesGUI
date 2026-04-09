@@ -8,6 +8,8 @@
 #include "Frontend/UI/Basic/Rectangle.h"
 #include "Frontend/UI/Basic/Text.h"
 #include "Frontend/UI/Basic/Texture.h"
+#include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
+#include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
 
 struct DrawablePosition;
 struct RectangleData;
@@ -27,7 +29,10 @@ public:
 
     static std::unique_ptr<Text> CreateText(DrawablePosition&& drawablePosition, TextData&& textData, bool isHidden = false);
 
-    static std::unique_ptr<TextBox> CreateTextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
+    static std::unique_ptr<TextBox<char, ApplyKey>> CreateTextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
+        TextData&& textData, bool isHidden = false);
+
+    static std::unique_ptr<TextBox<Key, DisplayKey>> CreateDisplayTextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
         TextData&& textData, bool isHidden = false);
 
     static std::unique_ptr<Button> CreateButton(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,

@@ -1,7 +1,7 @@
 #include "Frontend/UI/Basic/Rectangle.h"
 
-#include "Frontend/UI/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
-#include "Frontend/UI/DrawStrategy/Rectangle/DrawFilledRectangle.h"
+#include "Frontend/UI/Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
+#include "Frontend/UI/Strategies/DrawStrategy/Rectangle/DrawFilledRectangle.h"
 #include "Frontend/UI/Structs/RectangleData.h"
 
 Rectangle::Rectangle(DrawablePosition&& drawablePositon, RectangleData&& rectangleData, bool isHidden) :
@@ -26,5 +26,5 @@ void Rectangle::Draw(ImDrawList* drawList)
         return;
     }
 
-    _drawRectangleStrategy->DrawRectangle(drawList, _finalPosition, _bottomRightPosition, _color, _rounding, _thickness);
+    _drawRectangleStrategy->DrawRectangle(drawList, *_position, _bottomRightPosition, _color, _rounding, _thickness);
 }

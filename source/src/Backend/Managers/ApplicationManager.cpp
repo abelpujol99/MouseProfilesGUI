@@ -16,7 +16,7 @@ ApplicationManager::ApplicationManager()
 
     _shouldGUIRunObserver = std::make_unique<ObserverSingleValue<bool>>();
 
-    _shouldGUIRunObserver->SetValue(false);
+    _shouldGUIRunObserver->SetValue(true);
 
     _scrollWheelModeHidrawPath = "/sys/class/hidraw/hidraw0/device/scroll_mode";
 }
@@ -38,20 +38,6 @@ void ApplicationManager::Start()
     VirtualDeviceManager::GetInstance().CreateListeners();
 
     ThreadsManager::GetInstance().Start();
-}
-
-void ApplicationManager::TurnOnGUI()
-{
-    _shouldGUIRunObserver->SetValue(true);
-}
-
-void ApplicationManager::StartGUI()
-{
-    WindowManager& windowManager {WindowManager::GetInstance()};
-
-    windowManager.SetSizes(1500, 700);
-    windowManager.Start();
-    windowManager.Update();
 }
 
 std::string ApplicationManager::GetPathToSwitchScrollMode() const
@@ -91,7 +77,21 @@ void ApplicationManager::UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::fu
     _shouldGUIRunObserver->Unsubscribe(std::move(action));
 }
 
-void ApplicationManager::TurnOffGUI()
+void ApplicationManager::StartGUI()
+{
+    WindowManager& windowManager {WindowManager::GetInstance()};
+
+    windowManager.SetSizes(1500, 700);
+    windowManager.Start();
+    windowManager.Update();
+}
+
+void ApplicationManager::TurnOnGUI() const
+{
+    _shouldGUIRunObserver->SetValue(true);
+}
+
+void ApplicationManager::TurnOffGUI() const
 {
     _shouldGUIRunObserver->SetValue(false);
 }

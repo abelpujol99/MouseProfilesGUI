@@ -4,7 +4,7 @@
 
 struct DrawablePosition
 {
-    const ImVec2& parentPosition;
+    ImVec2& parentPosition;
     float positionX;
     float positionY;
 };

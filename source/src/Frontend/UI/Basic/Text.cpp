@@ -28,6 +28,11 @@ void Text::AddText(const std::string& text)
     _text.append(text);
 }
 
+void Text::EraseLastChar()
+{
+    _text.pop_back();
+}
+
 void Text::SetFontFamily(ImFont* fontFamily)
 {
     _fontFamily = fontFamily;
@@ -115,5 +120,5 @@ void Text::Draw(ImDrawList* drawList)
         return;
     }
 
-    drawList->AddText(_fontFamily, _fontSize, GetFinalPosition(), _color, _text.c_str());
+    drawList->AddText(_fontFamily, _fontSize, *GetPosition(), _color, _text.c_str());
 }

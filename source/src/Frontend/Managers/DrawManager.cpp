@@ -24,34 +24,33 @@ void DrawManager::AddDrawable(Drawable* drawable)
 
 void DrawManager::DrawElements(ImDrawList* drawList)
 {
-    for (auto drawable : _drawables)
+    auto itEnd {_drawables.cend()};
+
+    for (auto it {_drawables.begin()}; it != itEnd; ++it)
     {
-        drawable->Draw(drawList);
-        drawable->UpdatePosition();
+        (*it)->Draw(drawList);
+        (*it)->UpdatePosition();
     }
 
-    _rootPosition.x += 0.1f;
+    _rootPosition->x += 0.1f;
 }
 
 void DrawManager::Start()
 {
-    _texture = DrawableFactory::CreateTexture(DrawablePosition{_rootPosition, 300, 300}, "images/cat.jpg");
+    _texture = DrawableFactory::CreateTexture(DrawablePosition{*_rootPosition, 300, 300}, "images/cat.jpg");
 
-    AddDrawable(_texture.get());
+    _textBox = DrawableFactory::CreateTextBox(DrawablePosition{*_rootPosition, 100, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, true},
+        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}});
 
-    std::unique_ptr<TextBox> textBox {std::move(DrawableFactory::CreateTextBox(DrawablePosition{_rootPosition, 100, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, true},
-        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}}))};
+    _textBox2 = DrawableFactory::CreateDisplayTextBox(DrawablePosition{*_rootPosition, 800, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, true},
+        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}});
 
-    _textBox = std::move(textBox);
-
-    AddDrawable(_textBox.get());
-
-    std::unique_ptr<Button> button {std::move(DrawableFactory::CreateButton(DrawablePosition{_rootPosition, 800, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, false},
+    _button = DrawableFactory::CreateButton(DrawablePosition{*_rootPosition, 800, 100}, RectangleData{{300, 190}, {255, 0, 0, 255}, 0, 1, false},
         TextData{"Button", TextHorizontalAlignments::LEFT, TextVerticalAlignments::TOP, FontFamilyTypes::ROBOTO_REGULAR, 20.f, {0, 0, 255, 255}}, []() {
             std::cout << "Button" << std::endl;
-        }))};
+        });
 
-    _button = std::move(button);
-
-    AddDrawable(_button.get());
+    AddDrawable(_texture.get());
+    AddDrawable(_textBox.get());
+    AddDrawable(_textBox2.get());
 }

@@ -3,10 +3,7 @@
 #include <forward_list>
 #include <thread>
 
-#include "Backend/Listener/BaseListener.h"
-
-template <class TBaseListener>
-concept DerivedFromBaseListener = std::is_base_of_v<BaseListener, TBaseListener>;
+#include "Utilities/Concepts/DerivedFromBaseListener.h"
 
 class ThreadsManager
 {

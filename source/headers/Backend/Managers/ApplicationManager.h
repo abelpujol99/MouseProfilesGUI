@@ -17,10 +17,6 @@ public:
 
     void Start();
 
-    void TurnOnGUI();
-
-    void StartGUI();
-
     std::string GetPathToSwitchScrollMode() const;
 
     std::weak_ptr<std::function<void(bool)>> SubscribeToShouldRunObserver(std::function<void(bool)> action) const;
@@ -32,7 +28,11 @@ public:
     std::weak_ptr<std::function<void(bool)>> SubscribeToShouldGUIRunObserver(std::function<void(bool)> action) const;
     void UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::function<void(bool)>> action) const;
 
-    void TurnOffGUI();
+    void StartGUI();
+
+    void TurnOnGUI() const;
+
+    void TurnOffGUI() const;
 
 private:
 

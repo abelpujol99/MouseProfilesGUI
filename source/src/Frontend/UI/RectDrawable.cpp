@@ -18,7 +18,7 @@ void RectDrawable::UpdatePosition()
 {
     Drawable::UpdatePosition();
 
-    _bottomRightPosition = {_finalPosition.x + _size.x, _finalPosition.y + _size.y};
+    _bottomRightPosition = {_position->x + _size.x, _position->y + _size.y};
 }
 
 const ImVec2& RectDrawable::GetSize() const

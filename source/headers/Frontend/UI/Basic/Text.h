@@ -21,6 +21,8 @@ public:
 
     void AddText(const std::string& text);
 
+    void EraseLastChar();
+
     void SetFontFamily(ImFont* fontFamily);
 
     void SetFontSize(float fontSize);

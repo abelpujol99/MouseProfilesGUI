@@ -34,6 +34,8 @@ private:
 
     std::unique_ptr<ImVec2> _rootPosition {std::make_unique<ImVec2>(0, 0)};
 
+    std::unique_ptr<Drawable> _currentScreen;
+
     std::unique_ptr<Drawable> _texture;
 
     std::unique_ptr<Drawable> _textBox;

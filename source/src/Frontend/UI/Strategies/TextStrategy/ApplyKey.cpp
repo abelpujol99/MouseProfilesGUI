@@ -1,5 +1,6 @@
 #include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
 
+#include "Frontend/KeyDefines.h"
 #include "Frontend/Managers/Input/InputManager.h"
 #include "Frontend/UI/Basic/Text.h"
 

@@ -21,7 +21,7 @@ protected:
 
     std::weak_ptr<std::function<void(T)>> _onTypingWeakAction;
 
-    Text* _text;
+    Text* _text{nullptr};
 };
 
 template<typename T>

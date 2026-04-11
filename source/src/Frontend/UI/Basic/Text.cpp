@@ -30,6 +30,11 @@ void Text::AddText(const std::string& text)
 
 void Text::EraseLastChar()
 {
+    if (_text.empty())
+    {
+        return;
+    }
+
     _text.pop_back();
 }
 
@@ -83,7 +88,7 @@ void Text::UpdateTopLeftPosition()
     {
         _currentRelativePosition.y = _relativePosition.y;
     }
-    else if (_verticalAlignment == TextVerticalAlignments::CENTER)
+    else if (_verticalAlignment == TextVerticalAlignments::MIDDLE)
     {
         _currentRelativePosition.y = _relativePosition.y - _size.y / 2;
     }

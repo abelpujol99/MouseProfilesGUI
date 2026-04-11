@@ -33,6 +33,7 @@ CopyResourcesToBuild(${SOURCE_DIR})
 
 #Includes
 set(INCLUDES
+        defines
         headers
         usings
         libraries)

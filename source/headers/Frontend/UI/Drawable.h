@@ -10,7 +10,7 @@ class Drawable : public IPosition
 {
 public:
 
-    virtual ~Drawable() = default;
+    ~Drawable() override = default;
 
     void SetIsHidden(bool isHidden);
 

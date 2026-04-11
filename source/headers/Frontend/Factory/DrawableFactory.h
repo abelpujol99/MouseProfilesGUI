@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 
+#include "Frontend/UI/Screen.h"
 #include "Frontend/UI/Advanced/Button.h"
 #include "Frontend/UI/Advanced/Text/TextBox.h"
 #include "Frontend/UI/Basic/Rectangle.h"
@@ -37,4 +38,6 @@ public:
 
     static std::unique_ptr<Button> CreateButton(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
         TextData&& textData, std::function<void()>&& action, bool isHidden = false);
+
+    static std::unique_ptr<Screen> CreateScreen(DrawablePosition&& drawablePosition, bool isHidden = false);
 };

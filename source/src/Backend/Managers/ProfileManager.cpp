@@ -7,6 +7,7 @@
 #include "Backend/Input/Strategy/ButtonInputCommandStrategy.h"
 #include "Backend/Input/Strategy/WheelScrollInputCommandStrategy.h"
 #include "Backend/Input/Strategy/WheelTiltInputCommandStrategy.h"
+#include "TimeDefines.h"
 
 std::unique_ptr<ProfileManager> ProfileManager::_profileManagerInstance = nullptr;
 

@@ -104,7 +104,7 @@ void VirtualDeviceManager::CreateListeners()
 
     std::forward_list<FileCodes> hidrawFilesCodes;
     hidrawFilesCodes.emplace_front(FileCodes{"/dev/hidraw0", {32, 64}});
-    hidrawFilesCodes.emplace_front(FileCodes{"/dev/hidraw1", {80, 81, 82, 84}});
+    //hidrawFilesCodes.emplace_front(FileCodes{"/dev/hidraw1", {80, 81, 82, 84}});
     ThreadsManager::GetInstance().CreateListenersThreads<HidrawListener>(std::move(hidrawFilesCodes));
 }
 

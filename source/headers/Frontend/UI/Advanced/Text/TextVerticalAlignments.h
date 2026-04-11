@@ -3,6 +3,6 @@
 enum class TextVerticalAlignments
 {
     TOP,
-    CENTER,
+    MIDDLE,
     BOTTOM
 };

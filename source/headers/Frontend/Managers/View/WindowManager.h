@@ -17,6 +17,10 @@ public:
 
     void SetSizes(int width, int height);
 
+    [[nodiscard]] int GetWidth() const;
+
+    [[nodiscard]] int GetHeight() const;
+
     void Start();
 
     void Update();

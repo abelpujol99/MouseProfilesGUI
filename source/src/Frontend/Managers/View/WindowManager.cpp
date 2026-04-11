@@ -1,4 +1,4 @@
-#include "Frontend/Managers/WindowManager.h"
+#include "Frontend/Managers/View/WindowManager.h"
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -9,7 +9,7 @@
 #include "Frontend/Managers/Gesture/GestureManager.h"
 #include "Frontend/Managers/Input/InputManager.h"
 #include "Frontend/Managers/Input/SelectableManager.h"
-#include "Frontend/Managers/DrawManager.h"
+#include "Frontend/Managers/View/DrawManager.h"
 #include "Backend/Managers/ApplicationManager.h"
 
 WindowManager WindowManager::_windowManagerInstance{};
@@ -28,6 +28,16 @@ void WindowManager::SetSizes(int width, int height)
 {
     _width = width;
     _height = height;
+}
+
+int WindowManager::GetWidth() const
+{
+    return _width;
+}
+
+int WindowManager::GetHeight() const
+{
+    return _height;
 }
 
 void WindowManager::GlfwErrorCallback(int error, const char* description)

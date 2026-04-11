@@ -2,6 +2,7 @@
 
 #include "Backend/Managers/ApplicationManager.h"
 #include "TimeUsings.h"
+#include "TimeDefines.h"
 
 std::unique_ptr<ThreadsManager> ThreadsManager::_threadsManagerInstance = nullptr;
 

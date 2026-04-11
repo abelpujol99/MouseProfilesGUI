@@ -4,7 +4,7 @@
 #include "Backend/Managers/ProfileManager.h"
 #include "Backend/Managers/VirtualDeviceManager.h"
 
-#include "Frontend/Managers/WindowManager.h"
+#include "Frontend/Managers/View/WindowManager.h"
 
 std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInstance = nullptr;
 

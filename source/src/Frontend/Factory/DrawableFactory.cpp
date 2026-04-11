@@ -49,3 +49,8 @@ std::unique_ptr<Button> DrawableFactory::CreateButton(DrawablePosition&& drawabl
     return std::make_unique<Button>(std::move(drawablePosition), std::move(rectangleData), std::move(textData),
         std::move(action), isHidden);
 }
+
+std::unique_ptr<Screen> DrawableFactory::CreateScreen(DrawablePosition &&drawablePosition, bool isHidden)
+{
+    return std::make_unique<Screen>(std::move(drawablePosition), isHidden);
+}

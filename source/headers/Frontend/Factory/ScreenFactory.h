@@ -1,13 +1,10 @@
 #pragma once
-#include <memory>
-#include <string>
 
-#include "Frontend/UI/Drawable.h"
-
-struct DrawablePosition;
+#include "Frontend/UI/Elements/Complex/Screen.h"
 
 class ScreenFactory
 {
 public:
-    [[nodiscard]] static std::unique_ptr<Drawable> CreateProfileScreen(DrawablePosition&& screenDrawablePosition, std::string peripheralName);
+
+    [[nodiscard]] static std::unique_ptr<Screen> CreateProfileScreen(ImVec2&& position, bool isHidden);
 };

@@ -11,6 +11,7 @@
 #include "Frontend/Managers/Input/SelectableManager.h"
 #include "Frontend/Managers/View/DrawManager.h"
 #include "Backend/Managers/ApplicationManager.h"
+#include "Frontend/Managers/View/ResolutionManager.h"
 
 WindowManager WindowManager::_windowManagerInstance{};
 
@@ -30,14 +31,19 @@ void WindowManager::SetSizes(int width, int height)
     _height = height;
 }
 
-int WindowManager::GetWidth() const
+ImVec2 WindowManager::GetSize() const
 {
-    return _width;
+    return {GetWidth(), GetHeight()};
 }
 
-int WindowManager::GetHeight() const
+float WindowManager::GetWidth() const
 {
-    return _height;
+    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_width));
+}
+
+float WindowManager::GetHeight() const
+{
+    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_height));
 }
 
 void WindowManager::GlfwErrorCallback(int error, const char* description)

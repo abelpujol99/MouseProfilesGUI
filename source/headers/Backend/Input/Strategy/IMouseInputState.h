@@ -9,9 +9,9 @@ class IMouseInputState : public IHoldState, public IReleaseState
 
 public:
 
-    virtual ~IMouseInputState() = default;
+    ~IMouseInputState() override = default;
 
-    virtual const Duration& GetFirstTimeDelay() const = 0;
+    [[nodiscard]] virtual const Duration& GetFirstTimeDelay() const = 0;
 
-    virtual const Duration& GetMillisToRepeatInput() const = 0;
+    [[nodiscard]] virtual const Duration& GetMillisToRepeatInput() const = 0;
 };

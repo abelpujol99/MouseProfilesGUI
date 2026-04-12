@@ -8,5 +8,5 @@ public:
 
     virtual void Hold() = 0;
 
-    virtual bool IsHolding() const = 0;
+    [[nodiscard]] virtual bool IsHolding() const = 0;
 };

@@ -8,11 +8,11 @@ public:
 
     InputEvent(unsigned short type, Code code, int value);
 
-    unsigned short GetType() const;
+    [[nodiscard]] unsigned short GetType() const;
 
-    Code GetCode() const;
+    [[nodiscard]] Code GetCode() const;
 
-    int GetValue() const;
+    [[nodiscard]] int GetValue() const;
 
 private:
     unsigned short _type;

@@ -9,8 +9,6 @@ public:
 
     void ListenerUpdate() override;
 
-    void CloseFile();
-
 private:
 
     int _file;

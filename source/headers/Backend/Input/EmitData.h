@@ -11,9 +11,9 @@ public:
 
     ~EmitData() = default;
 
-    InputDevices GetInputDevice() const;
+    [[nodiscard]] InputDevices GetInputDevice() const;
 
-    InputEvent GetInputEvent() const;
+    [[nodiscard]] InputEvent GetInputEvent() const;
 
 private:
     InputDevices _inputDevice;

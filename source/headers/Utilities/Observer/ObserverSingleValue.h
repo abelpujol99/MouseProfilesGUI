@@ -20,7 +20,9 @@ private:
 public:
 
 	ObserverSingleValue();
+	ObserverSingleValue(T data);
 	ObserverSingleValue(TAction action);
+	ObserverSingleValue(T data, TAction action);
 
 	~ObserverSingleValue() override;
 
@@ -44,8 +46,16 @@ template<typename T>
 ObserverSingleValue<T>::ObserverSingleValue() : _action([](T data){return data;})
 {}
 
+template<typename T>
+ObserverSingleValue<T>::ObserverSingleValue(T data) : _data(data), _action([](T data){return data;})
+{}
+
 template <typename T>
-ObserverSingleValue<T>::ObserverSingleValue(TAction action) : _action(action)
+ObserverSingleValue<T>::ObserverSingleValue(TAction action) : _data({}), _action(action)
+{}
+
+template<typename T>
+ObserverSingleValue<T>::ObserverSingleValue(T data, TAction action) : _data(data), _action(action)
 {}
 
 template <typename T>

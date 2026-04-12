@@ -9,9 +9,9 @@ public:
 
     ~InputCommand() = default;
 
-    const Duration& GetFirstDelayInMillis() const;
+    [[nodiscard]] const Duration& GetFirstDelayInMillis() const;
 
-    const Duration& GetMillisToRepeatInput() const;
+    [[nodiscard]] const Duration& GetMillisToRepeatInput() const;
 
 private:
 

@@ -1,56 +1,60 @@
 #include "Frontend/Factory/DrawableFactory.h"
 
-#include "Frontend/UI/Structs/DrawablePosition.h"
-
-std::unique_ptr<Texture> DrawableFactory::CreateTexture(DrawablePosition&& drawablePosition, const char* textureFileName,
-    bool isHidden)
+std::unique_ptr<Screen> DrawableFactory::CreateScreen(ImVec2&& position, ImVec2&& size, bool isHidden)
 {
-    return std::make_unique<Texture>(std::move(drawablePosition), textureFileName, isHidden);
+    return std::make_unique<Screen>(std::move(position), std::move(size), isHidden);
 }
 
-std::unique_ptr<Rectangle> DrawableFactory::CreateRectangle(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
-    bool isHidden)
+std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(ImVec2&& relativePosition, ImVec2&& size, bool isHidden)
 {
-    return std::make_unique<Rectangle>(std::move(drawablePosition), std::move(rectangleData), isHidden);
+    return std::make_unique<RectDrawable>(std::move(relativePosition), std::move(size), isHidden);
 }
 
-std::unique_ptr<Text> DrawableFactory::CreateText(DrawablePosition&& drawablePosition, TextData&& textData, bool isHidden)
+std::unique_ptr<Texture> DrawableFactory::CreateTexture(const char* textureFileName, bool isHidden)
 {
-    return std::make_unique<Text>(std::move(drawablePosition), std::move(textData), isHidden);
+    return std::make_unique<Texture>(textureFileName, isHidden);
 }
 
-std::unique_ptr<TextBox<char, ApplyKey>> DrawableFactory::CreateTextBox(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
-    TextData&& textData, bool isHidden)
+std::unique_ptr<Rectangle> DrawableFactory::CreateRectangle(RectangleData&& rectangleData, bool isHidden)
 {
-    std::unique_ptr<TextBox<char, ApplyKey>> textBox {std::make_unique<TextBox<char, ApplyKey>>(std::move(drawablePosition))};
+    return std::make_unique<Rectangle>(std::move(rectangleData), isHidden);
+}
 
-    textBox->SetRectangle(CreateRectangle(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(rectangleData), isHidden));
+std::unique_ptr<Text> DrawableFactory::CreateText(TextData&& textData, bool isHidden)
+{
+    return std::make_unique<Text>(std::move(textData), isHidden);
+}
 
-    textBox->SetText(CreateText(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(textData), isHidden));
+std::unique_ptr<TextBox<char, ApplyKey>> DrawableFactory::CreateTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
+{
+    std::unique_ptr<TextBox<char, ApplyKey>> textBox {std::make_unique<TextBox<char, ApplyKey>>(isHidden)};
+
+    textBox->SetRectangle(CreateRectangle(std::move(rectangleData), isHidden));
+
+    textBox->SetText(CreateText(std::move(textData), isHidden));
 
     return textBox;
 }
 
-std::unique_ptr<TextBox<Key, DisplayKey>> DrawableFactory::CreateDisplayTextBox(DrawablePosition &&drawablePosition,
-    RectangleData&& rectangleData, TextData&& textData, bool isHidden)
+std::unique_ptr<TextBox<Key, DisplayKey>> DrawableFactory::CreateDisplayTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
 {
-    std::unique_ptr<TextBox<Key, DisplayKey>> textBox {std::make_unique<TextBox<Key, DisplayKey>>(std::move(drawablePosition))};
+    std::unique_ptr<TextBox<Key, DisplayKey>> textBox {std::make_unique<TextBox<Key, DisplayKey>>(isHidden)};
 
-    textBox->SetRectangle(CreateRectangle(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(rectangleData), isHidden));
+    textBox->SetRectangle(CreateRectangle(std::move(rectangleData), isHidden));
 
-    textBox->SetText(CreateText(DrawablePosition{*textBox->GetPosition(), 0, 0}, std::move(textData), isHidden));
+    textBox->SetText(CreateText(std::move(textData), isHidden));
 
     return textBox;
 }
 
-std::unique_ptr<Button> DrawableFactory::CreateButton(DrawablePosition&& drawablePosition, RectangleData&& rectangleData,
-    TextData&& textData, std::function<void()>&& action, bool isHidden)
+std::unique_ptr<Button> DrawableFactory::CreateButton(RectangleData&& rectangleData, TextData&& textData,
+    std::function<void()>&& action, bool isHidden)
 {
-    return std::make_unique<Button>(std::move(drawablePosition), std::move(rectangleData), std::move(textData),
-        std::move(action), isHidden);
-}
+    std::unique_ptr<Button> button {std::make_unique<Button>(std::move(action), isHidden)};
 
-std::unique_ptr<Screen> DrawableFactory::CreateScreen(DrawablePosition &&drawablePosition, bool isHidden)
-{
-    return std::make_unique<Screen>(std::move(drawablePosition), isHidden);
+    button->SetRectangle(CreateRectangle(std::move(rectangleData), isHidden));
+
+    button->SetText(CreateText(std::move(textData), isHidden));
+
+    return button;
 }

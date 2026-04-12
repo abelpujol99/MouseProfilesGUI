@@ -2,8 +2,6 @@
 #include "Backend/Input/Strategy/IInputCommandStrategy.h"
 #include "Backend/Input/Strategy/IMouseInputState.h"
 
-#include <memory>
-#include <vector>
 
 #include "Backend/Input/Button/ButtonInputCommand.h"
 #include "Backend/State/Button/IButtonInputStateAction.h"
@@ -23,9 +21,9 @@ public:
 
     void Press();
 
-    void Hold();
+    void Hold() override;
 
-    void Release();
+    void Release() override;
 
     void DelegateHoldCommand();
 
@@ -33,11 +31,11 @@ public:
 
     void SwitchToOffState();
 
-    const Duration& GetFirstTimeDelay() const override;
+    [[nodiscard]] const Duration& GetFirstTimeDelay() const override;
 
-    const Duration& GetMillisToRepeatInput() const override;
+    [[nodiscard]] const Duration& GetMillisToRepeatInput() const override;
 
-    bool IsHolding() const override;
+    [[nodiscard]] bool IsHolding() const override;
 
 private:
 

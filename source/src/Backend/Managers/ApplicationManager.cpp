@@ -33,9 +33,12 @@ ApplicationManager& ApplicationManager::GetInstance()
 
 void ApplicationManager::Start()
 {
+#ifdef NDEBUG
     ProfileManager::GetInstance().OnChangeApplicationFocus();
 
     VirtualDeviceManager::GetInstance().CreateListeners();
+
+#endif
 
     ThreadsManager::GetInstance().Start();
 }

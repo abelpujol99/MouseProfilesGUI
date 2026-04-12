@@ -4,7 +4,6 @@
 
 struct RectangleData
 {
-    const ImVec2& size;
     ImColor color;
     float rounding;
     float thickness;

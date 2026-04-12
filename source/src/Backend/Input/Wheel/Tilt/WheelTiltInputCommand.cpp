@@ -1,7 +1,5 @@
 #include "Backend/Input/Wheel/Tilt/WheelTiltInputCommand.h"
 
-#include "Backend/Command/ICommand.h"
-
 WheelTiltInputCommand::WheelTiltInputCommand(std::unique_ptr<ICommand>&& commandOnPress, std::unique_ptr<ICommand>&& commandOnHold,
     std::unique_ptr<ICommand>&& commandOnRelease, Duration&& firstDelayInMillis, Duration&& millisToRepeatInput,
     Duration&& millisUntilInputStops) :

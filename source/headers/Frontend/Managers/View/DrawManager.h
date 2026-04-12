@@ -1,10 +1,8 @@
 #pragma once
-#include <memory>
+
 #include <vector>
-#include "imgui.h"
 
-#include "Frontend/UI/Drawable.h"
-
+#include "Frontend/UI/Elements/Complex/Screen.h"
 
 class DrawManager
 {
@@ -19,7 +17,7 @@ public:
 
     static DrawManager& GetInstance();
 
-    void AddDrawable(Drawable* drawable);
+    void AddScreen(Screen* screen);
 
     void DrawElements(ImDrawList* drawList);
 
@@ -32,17 +30,15 @@ private:
 
     static DrawManager _drawManagerInstance;
 
-    std::unique_ptr<ImVec2> _rootPosition {std::make_unique<ImVec2>(0, 0)};
+    std::unique_ptr<Screen> _currentScreen;
 
-    std::unique_ptr<Drawable> _currentScreen;
+    std::unique_ptr<BaseDrawable> _texture;
 
-    std::unique_ptr<Drawable> _texture;
+    std::unique_ptr<BaseDrawable> _textBox;
 
-    std::unique_ptr<Drawable> _textBox;
+    std::unique_ptr<BaseDrawable> _textBox2;
 
-    std::unique_ptr<Drawable> _textBox2;
+    std::unique_ptr<BaseDrawable> _button;
 
-    std::unique_ptr<Drawable> _button;
-
-    std::vector<Drawable*> _drawables;
+    std::vector<Screen*> _screens;
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui.h"
+
 class ResolutionManager
 {
 public:    
@@ -12,6 +14,8 @@ public:
     ResolutionManager& operator=(ResolutionManager&& other) = delete;
 
     static ResolutionManager& GetInstance();
+
+    ImVec2 AdaptSize(ImVec2&& size);
 
     float AdaptWidth(float width);
 

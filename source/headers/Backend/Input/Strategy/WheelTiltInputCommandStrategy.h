@@ -2,7 +2,6 @@
 #include "Backend/Input/Strategy/IInputCommandStrategy.h"
 #include "Backend/Input/Strategy/IMouseInputState.h"
 
-#include <memory>
 #include <vector>
 
 #include "Backend/Input/Wheel/Tilt/WheelTiltInputCommand.h"
@@ -24,9 +23,9 @@ public:
 
     void Press() const;
 
-    void Hold();
+    void Hold() override;
 
-    void Release();
+    void Release() override;
 
     void DelegateHoldCommand();
 
@@ -34,13 +33,13 @@ public:
 
     void UpdateWheelTiltInputCommandPressRegister() const;
 
-    const Duration& GetMillisUntilInputStops() const;
+    [[nodiscard]] const Duration& GetMillisUntilInputStops() const;
 
-    const Duration& GetFirstTimeDelay() const override;
+    [[nodiscard]] const Duration& GetFirstTimeDelay() const override;
 
-    const Duration& GetMillisToRepeatInput() const override;
+    [[nodiscard]] const Duration& GetMillisToRepeatInput() const override;
 
-    bool IsHolding() const;
+    [[nodiscard]] bool IsHolding() const override;
 
 private:
 

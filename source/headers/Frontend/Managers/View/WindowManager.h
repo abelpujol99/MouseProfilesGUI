@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui.h"
+
 struct GLFWwindow;
 
 class WindowManager
@@ -17,9 +19,11 @@ public:
 
     void SetSizes(int width, int height);
 
-    [[nodiscard]] int GetWidth() const;
+    [[nodiscard]] ImVec2 GetSize() const;
 
-    [[nodiscard]] int GetHeight() const;
+    [[nodiscard]] float GetWidth() const;
+
+    [[nodiscard]] float GetHeight() const;
 
     void Start();
 

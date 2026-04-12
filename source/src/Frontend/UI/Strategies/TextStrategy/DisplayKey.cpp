@@ -1,7 +1,7 @@
 #include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
 
 #include "Frontend/Managers/Input/InputManager.h"
-#include "Frontend/UI/Basic/Text.h"
+#include "Frontend/UI/Elements/Intermediate/Text.h"
 
 void DisplayKey::StartProcessData()
 {

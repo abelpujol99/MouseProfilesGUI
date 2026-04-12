@@ -5,7 +5,6 @@
 
 #include "Backend/Command/ICommand.h"
 
-
 class WheelTiltInputCommand : public InputCommand
 {
 public:

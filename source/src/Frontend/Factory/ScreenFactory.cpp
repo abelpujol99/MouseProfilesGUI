@@ -1,38 +1,50 @@
 #include "Frontend/Factory/ScreenFactory.h"
 
+#include <filesystem>
+
 #include "Frontend/Factory/DrawableFactory.h"
 #include "Frontend/Factory/Font/FontFamilyTypes.h"
-#include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/Managers/View/WindowManager.h"
-#include "Frontend/UI/Screen.h"
-#include "Frontend/UI/Advanced/Text/TextHorizontalAlignments.h"
-#include "Frontend/UI/Advanced/Text/TextVerticalAlignments.h"
-#include "Frontend/UI/Structs/DrawablePosition.h"
+#include "Frontend/UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
+#include "Frontend/UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "Frontend/UI/Structs/RectangleData.h"
 #include "Frontend/UI/Structs/TextData.h"
 #include "Frontend/ColorDefines.h"
 
-std::unique_ptr<Drawable> ScreenFactory::CreateProfileScreen(DrawablePosition&& screenDrawablePosition, std::string peripheralName)
+std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bool isHidden)
 {
-    std::unique_ptr<Screen> profileScreen {new Screen(std::move(screenDrawablePosition), false)};
+    std::filesystem::path resourceDir = RESOURCE_DIR;
+
+    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(std::move(position),
+        WindowManager::GetInstance().GetSize(), isHidden)};
 
     WindowManager& windowManager {WindowManager::GetInstance()};
 
-    ResolutionManager& resolutionManager {ResolutionManager::GetInstance()};
+    std::unique_ptr<RectDrawable> rectDrawable1 {DrawableFactory::CreateRectDrawable({50, 50},{700, 700}, isHidden)};
 
-    std::unique_ptr<Text> title {DrawableFactory::CreateText(DrawablePosition{*profileScreen->GetPosition(), 0, 0},
-        TextData{peripheralName, TextHorizontalAlignments::RIGHT, TextVerticalAlignments::BOTTOM, FontFamilyTypes::ROBOTO_REGULAR,
-        35.f, WHITE},
-        false)};
+    std::unique_ptr<Text> title {DrawableFactory::CreateText(TextData{"peripheralName",
+        TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        35.f, WHITE}, isHidden)};
 
-    profileScreen->AddDrawable(std::move(title));
+    std::unique_ptr<RectDrawable> rectDrawable2 {DrawableFactory::CreateRectDrawable({0, 0},{300, 100}, isHidden)};
 
-    std::unique_ptr<TextBox<char, ApplyKey>> profileName {DrawableFactory::CreateTextBox(DrawablePosition{*profileScreen->GetPosition(),
-        static_cast<float>(windowManager.GetWidth() / 2), static_cast<float>(100)}, RectangleData{ImVec2{200, 100}, WHITE, 0, 10, false},
+    auto catPath {resourceDir / "images/cat.jpg"};
+
+    std::unique_ptr<Texture> texture {DrawableFactory::CreateTexture(catPath.c_str(), isHidden)};
+
+    std::unique_ptr<Rectangle> rectangle {DrawableFactory::CreateRectangle(RectangleData{WHITE, 0, 10}, isHidden)};
+
+    std::unique_ptr<TextBox<char, ApplyKey>> profileName {DrawableFactory::CreateTextBox(RectangleData{WHITE, 0, 10, isHidden},
         TextData{"Holi", TextHorizontalAlignments::RIGHT, TextVerticalAlignments::BOTTOM, FontFamilyTypes::ROBOTO_REGULAR, 20.f, RED},
-        false)};
+        isHidden)};
 
-    profileScreen->AddDrawable(std::move(profileName));
+    rectDrawable2->AddDrawableComponent(std::move(texture));
+
+    rectDrawable1->AddRectDrawable(std::move(rectDrawable2));
+
+    rectDrawable1->AddDrawableComponent(std::move(title));
+
+    profileScreen->AddRectDrawable(std::move(rectDrawable1));
 
     return profileScreen;
 }

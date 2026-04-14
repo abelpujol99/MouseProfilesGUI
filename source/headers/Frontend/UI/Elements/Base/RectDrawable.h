@@ -5,29 +5,24 @@
 #include <memory>
 
 #include "Frontend/UI/Elements/Base/DrawableComponent.h"
+#include "Frontend/Utilities/Anchors.h"
 #include "Frontend/Utilities/Concepts/DerivedFromBaseDrawable.h"
 
 class RectDrawable : public BaseDrawable
 {
 public:
 
-    RectDrawable(ImVec2&& relativePosition, ImVec2&& size, bool isHidden);
+    RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
 
     ~RectDrawable() override = default;
+
+    void SetDesiredSize(ImVec2&& desiredSize);
+
+    void UpdateSize() const;
 
     void SetRelativePosition(ImVec2&& relativePosition);
 
     void UpdatePosition() const;
-
-    void SetSize(ImVec2&& size);
-
-    void UpdateSize() const;
-
-    [[nodiscard]] ImVec2 GetSize() const override;
-
-    void UpdateBottomRightPosition() const;
-
-    [[nodiscard]] ImVec2 GetBottomRightPosition() const override;
 
     void UpdateRectDrawables() const;
 
@@ -42,13 +37,19 @@ protected:
     template<DerivedFromBaseDrawable TDrawable>
     static void DrawDrawables(const std::forward_list<std::unique_ptr<TDrawable>>& drawables, ImDrawList* drawList);
 
-    std::unique_ptr<ImVec2> _position {std::make_unique<ImVec2>()};
+    Anchors _anchors;
 
-    std::unique_ptr<ImVec2> _size {std::make_unique<ImVec2>()};
+    ImVec2 _pivot;
 
     ImVec2 _relativePosition;
 
+    ImVec2 _desiredSize;
+
+    std::unique_ptr<ImVec2> _position {std::make_unique<ImVec2>()};
+
     std::unique_ptr<ImVec2> _bottomRightPosition {std::make_unique<ImVec2>()};
+
+    std::unique_ptr<ImVec2> _size {std::make_unique<ImVec2>()};
 
     std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
 

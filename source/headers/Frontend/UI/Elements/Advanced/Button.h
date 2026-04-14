@@ -16,9 +16,7 @@ public:
 
     void SetText(std::unique_ptr<Text>&& text);
 
-    void SetParentTransform(ImVec2 *parentPosition, ImVec2 *parentSize) override;
-
-    void SetBottomRightPositionPointer(ImVec2 *bottomRightPositionPointer) override;
+    void SetParentTransform(ImVec2 *parentPosition, ImVec2 *parentBottomRightPosition, ImVec2 *parentSize) override;
 
     void Draw(ImDrawList *drawList) override;
 

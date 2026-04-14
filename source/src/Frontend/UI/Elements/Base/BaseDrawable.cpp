@@ -3,19 +3,26 @@
 BaseDrawable::BaseDrawable(bool isHidden): BaseDisplay(isHidden)
 {}
 
-ImVec2 BaseDrawable::GetPosition() const
+void BaseDrawable::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
+{
+    _parentPosition = parentPosition;
+
+    _parentBottomRightPosition = parentBottomRightPosition;
+
+    _parentSize = parentSize;
+}
+
+ImVec2 BaseDrawable::GetParentPosition() const
 {
     return *_parentPosition;
 }
 
-ImVec2 BaseDrawable::GetSize() const
+ImVec2 BaseDrawable::GetParentBottomRightPosition() const
 {
-    return *_parentSize;
+    return *_parentBottomRightPosition;
 }
 
-void BaseDrawable::SetParentTransform(ImVec2* parentPosition, ImVec2* parentSize)
+ImVec2 BaseDrawable::GetParentSize() const
 {
-    _parentPosition = parentPosition;
-
-    _parentSize = parentSize;
+    return *_parentSize;
 }

@@ -2,11 +2,26 @@
 
 #include "Frontend/Managers/View/ResolutionManager.h"
 
-RectDrawable::RectDrawable(ImVec2&& relativePosition, ImVec2&& size, bool isHidden) :
-        BaseDrawable(isHidden), _relativePosition(ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
-        ResolutionManager::GetInstance().AdaptHeight(relativePosition.y))
+RectDrawable::RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden) :
+        BaseDrawable(isHidden), _anchors(anchors), _pivot(pivot),
+        _relativePosition(ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
+        ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)), _desiredSize(desiredSize)
+{}
+
+void RectDrawable::SetDesiredSize(ImVec2&& desiredSize)
 {
-    *_size = size;
+    _desiredSize = desiredSize;
+
+    UpdatePosition();
+
+    UpdateSize();
+
+    UpdateRectDrawables();
+}
+
+void RectDrawable::UpdateSize() const
+{
+    *_size = {_bottomRightPosition->x - _position->x, _bottomRightPosition->y - _position->y};
 }
 
 void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
@@ -14,42 +29,21 @@ void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
     _relativePosition = relativePosition;
 
     UpdatePosition();
-}
-
-void RectDrawable::UpdatePosition() const
-{
-    *_position = {GetPosition().x + _relativePosition.x, GetPosition().y + _relativePosition.y};
-
-    UpdateBottomRightPosition();
-}
-
-void RectDrawable::SetSize(ImVec2&& size)
-{
-    //TODO ANCHORS
-}
-
-void RectDrawable::UpdateSize() const
-{
-    //*_size = BaseDrawable::GetSize();
-
-    UpdateBottomRightPosition();
-}
-
-ImVec2 RectDrawable::GetSize() const
-{
-    return *_size;
-}
-
-void RectDrawable::UpdateBottomRightPosition() const
-{
-    *_bottomRightPosition = {_position->x + _size->x, _position->y + _size->y};
 
     UpdateRectDrawables();
 }
 
-ImVec2 RectDrawable::GetBottomRightPosition() const
+void RectDrawable::UpdatePosition() const
 {
-    return *_bottomRightPosition;
+    const ImVec2& parentPosition {GetParentPosition()};
+    const ImVec2& parentBottomRightPosition {GetParentBottomRightPosition()};
+    const ImVec2& parentSize {GetParentSize()};
+
+    *_position = {_anchors.CalculatePositionLeft(parentPosition.x, parentSize.x, _relativePosition.x, _desiredSize.x, _pivot.x),
+        _anchors.CalculatePositionTop(parentPosition.y, parentSize.y, _relativePosition.y, _desiredSize.y, _pivot.y)};
+
+    *_bottomRightPosition = {_anchors.CalculatePositionRight(parentBottomRightPosition.x, parentSize.x, _relativePosition.x, _desiredSize.x, _pivot.x),
+        _anchors.CalculatePositionBottom(parentBottomRightPosition.y, parentSize.y, _relativePosition.y, _desiredSize.y, _pivot.y)};
 }
 
 void RectDrawable::UpdateRectDrawables() const
@@ -71,16 +65,14 @@ void RectDrawable::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
         return;
     }
 
-    rectDrawable->SetParentTransform(_position.get(), _size.get());
+    rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 
     _rectDrawables.push_front(std::move(rectDrawable));
 }
 
 void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& componentDrawable)
 {
-    componentDrawable->SetParentTransform(_position.get(), _size.get());
-
-    componentDrawable->SetBottomRightPositionPointer(_bottomRightPosition.get());
+    componentDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 
     _drawableComponents.push_front(std::move(componentDrawable));
 }

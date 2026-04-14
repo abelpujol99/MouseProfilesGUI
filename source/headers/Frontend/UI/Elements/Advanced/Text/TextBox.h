@@ -21,9 +21,7 @@ public:
 
     void SetText(std::unique_ptr<Text> text);
 
-    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentSize) override;
-
-    void SetBottomRightPositionPointer(ImVec2 *bottomRightPositionPointer) override;
+    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
 
     bool CanBeSelected() override;
 
@@ -66,23 +64,13 @@ void TextBox<T, TProcessData>::SetText(std::unique_ptr<Text> text)
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPosition, ImVec2* parentSize)
+void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentSize);
+    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 
-    _rectangle->SetParentTransform(parentPosition, parentSize);
+    _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 
-    _text->SetParentTransform(parentPosition, parentSize);
-}
-
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetBottomRightPositionPointer(ImVec2* bottomRightPositionPointer)
-{
-    DrawableComponent::SetBottomRightPositionPointer(bottomRightPositionPointer);
-
-    _rectangle->SetBottomRightPositionPointer(bottomRightPositionPointer);
-
-    _text->SetBottomRightPositionPointer(bottomRightPositionPointer);
+    _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

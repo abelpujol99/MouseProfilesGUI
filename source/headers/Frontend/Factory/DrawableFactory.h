@@ -12,6 +12,8 @@
 #include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
 #include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
 
+class Anchors;
+
 class DrawableFactory
 {
 public:
@@ -20,7 +22,8 @@ public:
 
     static std::unique_ptr<Screen> CreateScreen(ImVec2&& position, ImVec2&& size, bool isHidden = false);
 
-    static std::unique_ptr<RectDrawable> CreateRectDrawable(ImVec2&& relativePosition, ImVec2&& size, bool isHidden);
+    static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,
+    ImVec2&& desiredSize, bool isHidden);
 
     static std::unique_ptr<Texture> CreateTexture(const char* textureFileName, bool isHidden = false);
 

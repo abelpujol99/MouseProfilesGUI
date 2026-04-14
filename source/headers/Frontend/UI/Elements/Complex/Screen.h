@@ -13,17 +13,19 @@ public:
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
-    [[nodiscard]] ImVec2 GetPosition() const override;
+    [[nodiscard]] ImVec2 GetParentPosition() const override;
 
-    [[nodiscard]] ImVec2 GetBottomRightPosition() const override;
+    [[nodiscard]] ImVec2 GetParentBottomRightPosition() const override;
 
-    [[nodiscard]] ImVec2 GetSize() const override;
+    [[nodiscard]] ImVec2 GetParentSize() const override;
 
     void Draw(ImDrawList* drawList) override;
 
 private:
 
     std::unique_ptr<ImVec2> _position;
+
+    std::unique_ptr<ImVec2> _bottomRightPosition;
 
     std::unique_ptr<ImVec2> _size;
 

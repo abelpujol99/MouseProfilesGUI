@@ -24,5 +24,5 @@ void Rectangle::Draw(ImDrawList* drawList)
         return;
     }
 
-    _drawRectangleStrategy->DrawRectangle(drawList, GetPosition(), GetBottomRightPosition(), _color, _rounding, _thickness);
+    _drawRectangleStrategy->DrawRectangle(drawList, GetParentPosition(), GetParentBottomRightPosition(), _color, _rounding, _thickness);
 }

@@ -1,13 +1,17 @@
 #include "Frontend/Factory/DrawableFactory.h"
 
+#include "Frontend/Utilities/Anchors.h"
+
 std::unique_ptr<Screen> DrawableFactory::CreateScreen(ImVec2&& position, ImVec2&& size, bool isHidden)
 {
     return std::make_unique<Screen>(std::move(position), std::move(size), isHidden);
 }
 
-std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(ImVec2&& relativePosition, ImVec2&& size, bool isHidden)
+std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,
+    ImVec2&& desiredSize, bool isHidden)
 {
-    return std::make_unique<RectDrawable>(std::move(relativePosition), std::move(size), isHidden);
+    return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
+        std::move(desiredSize), isHidden);
 }
 
 std::unique_ptr<Texture> DrawableFactory::CreateTexture(const char* textureFileName, bool isHidden)

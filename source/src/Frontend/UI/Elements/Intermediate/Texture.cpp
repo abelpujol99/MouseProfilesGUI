@@ -48,5 +48,5 @@ void Texture::Draw(ImDrawList* drawList)
         return;
     }
 
-    drawList->AddImage(_texture, GetPosition(), GetBottomRightPosition());
+    drawList->AddImage(_texture, GetParentPosition(), GetParentBottomRightPosition());
 }

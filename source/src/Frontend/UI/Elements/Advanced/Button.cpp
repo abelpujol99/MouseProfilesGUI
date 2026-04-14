@@ -22,22 +22,13 @@ void Button::SetText(std::unique_ptr<Text>&& text)
     _text = std::move(text);
 }
 
-void Button::SetParentTransform(ImVec2* parentPosition, ImVec2* parentSize)
+void Button::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentSize);
+    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 
-    _rectangle->SetParentTransform(parentPosition, parentSize);
+    _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 
-    _text->SetParentTransform(parentPosition, parentSize);
-}
-
-void Button::SetBottomRightPositionPointer(ImVec2* bottomRightPositionPointer)
-{
-    DrawableComponent::SetBottomRightPositionPointer(bottomRightPositionPointer);
-
-    _rectangle->SetBottomRightPositionPointer(bottomRightPositionPointer);
-
-    _text->SetBottomRightPositionPointer(bottomRightPositionPointer);
+    _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 }
 
 void Button::Draw(ImDrawList* drawList)

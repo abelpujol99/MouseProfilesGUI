@@ -11,9 +11,9 @@ Text::Text(TextData&& textData, bool isHidden) :
         _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize), _color(textData.color)
 {}
 
-void Text::SetParentTransform(ImVec2* parentPosition, ImVec2* parentSize)
+void Text::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentSize);
+    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 
     CalculateTextSize();
 }
@@ -89,38 +89,38 @@ void Text::UpdateRelativePosition()
     if (_horizontalAlignment == TextHorizontalAlignments::LEFT)
     {
         _getPositionXAction = [&]() {
-            return GetPosition().x;
+            return GetParentPosition().x;
         };
     }
     else if (_horizontalAlignment == TextHorizontalAlignments::CENTER)
     {
         _getPositionXAction = [&]() {
-            return GetPosition().x - _textSize.x / 2 + GetSize().x / 2;
+            return GetParentPosition().x - _textSize.x / 2 + GetParentSize().x / 2;
         };
     }
     else if (_horizontalAlignment == TextHorizontalAlignments::RIGHT)
     {
         _getPositionXAction = [&]() {
-            return GetPosition().x - _textSize.x + GetSize().x;
+            return GetParentPosition().x - _textSize.x + GetParentSize().x;
         };
     }
 
     if (_verticalAlignment == TextVerticalAlignments::TOP)
     {
         _getPositionYAction = [&]() {
-            return GetPosition().y;
+            return GetParentPosition().y;
         };
     }
     else if (_verticalAlignment == TextVerticalAlignments::MIDDLE)
     {
         _getPositionYAction = [&]() {
-            return GetPosition().y - _textSize.y / 2 + GetSize().y / 2;
+            return GetParentPosition().y - _textSize.y / 2 + GetParentSize().y / 2;
         };
     }
     else if (_verticalAlignment == TextVerticalAlignments::BOTTOM)
     {
         _getPositionYAction = [&]() {
-            return GetPosition().y - _textSize.y + GetSize().y;
+            return GetParentPosition().y - _textSize.y + GetParentSize().y;
         };
     }
 }

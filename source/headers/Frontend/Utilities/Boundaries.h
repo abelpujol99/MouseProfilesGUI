@@ -2,7 +2,8 @@
 
 struct ImVec2;
 
-namespace Utilities::Boundaries {
+namespace Utilities::Boundaries
+{
 
     [[nodiscard]] static bool IsPositionInsideBoundaries(const ImVec2& position, const ImVec2& topLeftPoint,
         const ImVec2& bottomLeftPoint);

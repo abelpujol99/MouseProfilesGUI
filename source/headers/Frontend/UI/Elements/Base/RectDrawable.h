@@ -16,6 +16,10 @@ public:
 
     ~RectDrawable() override = default;
 
+    void SetAnchors(Anchors&& anchors);
+
+    void SetPivot(ImVec2&& pivot);
+
     void SetDesiredSize(ImVec2&& desiredSize);
 
     void UpdateSize() const;
@@ -32,7 +36,21 @@ public:
 
     void Draw(ImDrawList* drawList) override;
 
-protected:
+private:
+
+    float CalculatePositionLeft() const;
+
+    float CalculatePositionTop() const;
+
+    float CalculatePositionRight() const;
+
+    float CalculatePositionBottom() const;
+
+    static float CalculateStartPoint(float parentPosition, float parentSize, float multiplier);
+
+    static float CalculateRelativePoint(float relativePosition, float size);
+
+    static float CalculateSize(float desiredSize, float parentSize, float maxAnchor, float minAnchor);
 
     template<DerivedFromBaseDrawable TDrawable>
     static void DrawDrawables(const std::forward_list<std::unique_ptr<TDrawable>>& drawables, ImDrawList* drawList);

@@ -1,10 +1,12 @@
 #pragma once
 
-class ISelectable
+#include "Frontend/UI/IPosition.h"
+
+class ISelectable : public IPosition
 {
 public:
 
-    virtual ~ISelectable() = default;
+    ~ISelectable() override = default;
 
     virtual bool CanBeSelected() = 0;
 

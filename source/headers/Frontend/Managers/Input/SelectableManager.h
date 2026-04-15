@@ -25,7 +25,6 @@ public:
 
     void RemoveSelectable(ISelectable* selectable);
 
-
 private:
 
     SelectableManager();

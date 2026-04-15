@@ -15,13 +15,17 @@ public:
 
     TextBox(bool isHidden = false);
 
-    ~TextBox() override = default;
+    ~TextBox() noexcept override;
 
     void SetRectangle(std::unique_ptr<Rectangle> rectangle);
 
     void SetText(std::unique_ptr<Text> text);
 
     void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
+
+    [[nodiscard]] ImVec2 GetParentPosition() const override;
+
+    [[nodiscard]] ImVec2 GetParentBottomRightPosition() const override;
 
     bool CanBeSelected() override;
 
@@ -38,8 +42,6 @@ private:
     std::unique_ptr<TProcessData> _processDataStrategy;
 
     std::unique_ptr<Text> _text;
-
-    std::weak_ptr<std::function<void(Key)>> _onTypingWeakAction;
 };
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -47,6 +49,12 @@ TextBox<T, TProcessData>::TextBox(bool isHidden) :
         DrawableComponent(isHidden), _processDataStrategy(std::make_unique<TProcessData>())
 {
     SelectableManager::GetInstance().AddSelectable(this);
+}
+
+template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+TextBox<T, TProcessData>::~TextBox() noexcept
+{
+    SelectableManager::GetInstance().RemoveSelectable(this);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -71,6 +79,18 @@ void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPosition, ImVec2
     _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
 
     _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+}
+
+template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+ImVec2 TextBox<T, TProcessData>::GetParentPosition() const
+{
+    return DrawableComponent::GetParentPosition();
+}
+
+template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+ImVec2 TextBox<T, TProcessData>::GetParentBottomRightPosition() const
+{
+    return DrawableComponent::GetParentBottomRightPosition();
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

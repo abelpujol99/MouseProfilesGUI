@@ -32,13 +32,5 @@ private:
 
     std::unique_ptr<Screen> _currentScreen;
 
-    std::unique_ptr<BaseDrawable> _texture;
-
-    std::unique_ptr<BaseDrawable> _textBox;
-
-    std::unique_ptr<BaseDrawable> _textBox2;
-
-    std::unique_ptr<BaseDrawable> _button;
-
     std::vector<Screen*> _screens;
 };

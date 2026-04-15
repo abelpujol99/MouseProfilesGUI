@@ -1,17 +1,20 @@
 #include "Frontend/Managers/View/WindowManager.h"
 
+#include <iostream>
+
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 
 #include <GLFW/glfw3.h>
 
+#include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/Managers/Gesture/GestureManager.h"
 #include "Frontend/Managers/Input/InputManager.h"
+#include "Frontend/Managers/Input/ClickableManager.h"
 #include "Frontend/Managers/Input/SelectableManager.h"
 #include "Frontend/Managers/View/DrawManager.h"
 #include "Backend/Managers/ApplicationManager.h"
-#include "Frontend/Managers/View/ResolutionManager.h"
 
 WindowManager WindowManager::_windowManagerInstance{};
 
@@ -27,23 +30,23 @@ WindowManager& WindowManager::GetInstance()
 
 void WindowManager::SetSizes(int width, int height)
 {
-    _width = width;
-    _height = height;
+    _desiredWidth = width;
+    _desiredHeight = height;
 }
 
 ImVec2 WindowManager::GetSize() const
 {
-    return {GetWidth(), GetHeight()};
+    return {GetDesiredWidth(), GetDesiredHeight()};
 }
 
-float WindowManager::GetWidth() const
+float WindowManager::GetDesiredWidth() const
 {
-    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_width));
+    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_desiredWidth));
 }
 
-float WindowManager::GetHeight() const
+float WindowManager::GetDesiredHeight() const
 {
-    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_height));
+    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_desiredHeight));
 }
 
 void WindowManager::GlfwErrorCallback(int error, const char* description)
@@ -73,7 +76,7 @@ void WindowManager::SetupGLFW()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Tell GLFW to use OpenGL *.3
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Tell GLFW to use OpenGL *.* Core Profile
 
-    _window = glfwCreateWindow(_width, _height, "Mouse Profile GUI", nullptr, nullptr);
+    _window = glfwCreateWindow(_desiredWidth, _desiredHeight, "Mouse Profile GUI", nullptr, nullptr);
 
     if (!_window)
     {
@@ -109,6 +112,8 @@ void WindowManager::Update()
 
     InputManager& inputManager {InputManager::GetInstance()};
 
+    ClickableManager& clickableManager {ClickableManager::GetInstance()};
+
     SelectableManager& selectableManager {SelectableManager::GetInstance()};
 
     DrawManager& drawManager {DrawManager::GetInstance()};
@@ -128,6 +133,8 @@ void WindowManager::Update()
         gestureManager.Update();
 
         inputManager.Update();
+
+        clickableManager.Update();
 
         selectableManager.Update();
 

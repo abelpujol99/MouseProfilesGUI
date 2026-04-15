@@ -1,6 +1,7 @@
 #include "Frontend/Factory/ScreenFactory.h"
 
 #include <filesystem>
+#include <iostream>
 
 #include "Frontend/Factory/DrawableFactory.h"
 #include "Frontend/Factory/Font/FontFamilyTypes.h"
@@ -12,44 +13,68 @@
 #include "Frontend/ColorDefines.h"
 #include "Frontend/AnchorsDefines.h"
 #include "Frontend/PivotDefines.h"
+#include "Frontend/TextDefines.h"
+#include "Frontend/RectangleDefines.h"
 
 std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bool isHidden)
 {
     std::filesystem::path resourceDir = RESOURCE_DIR;
 
-    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(std::move(position),
-        WindowManager::GetInstance().GetSize(), isHidden)};
-
     WindowManager& windowManager {WindowManager::GetInstance()};
 
-    std::unique_ptr<RectDrawable> rectDrawable1 {DrawableFactory::CreateRectDrawable(ANCHORS_MIDDLE_LEFT, PIVOT_MIDDLE_LEFT,
-        {0, 0},{750, 350}, isHidden)};
+    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(std::move(position),
+        windowManager.GetSize(), isHidden)};
 
-    std::unique_ptr<Rectangle> rectangle {DrawableFactory::CreateRectangle(RectangleData{WHITE, 0, 1, false}, isHidden)};
+#pragma region Profile Name
 
-    auto catPath {resourceDir / "images/cat.jpg"};
+    std::unique_ptr<Text> profileNameText {DrawableFactory::CreateText(TextData{"Profile name", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
 
-    std::unique_ptr<Rectangle> texture {DrawableFactory::CreateRectangle(RectangleData{RED, 0, 1, false}, isHidden)};
+    std::unique_ptr<RectDrawable> profileNameTextRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {0.5, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RectDrawable> rectDrawable2 {DrawableFactory::CreateRectDrawable(ANCHORS_MIDDLE_CENTER, PIVOT_TOP_LEFT,
-        {0, 0},{200, 100}, isHidden)};
+    profileNameTextRect->AddDrawableComponent(std::move(profileNameText));
 
-    std::unique_ptr<Rectangle> texture2 {DrawableFactory::CreateRectangle(RectangleData{PURPLE, 0, 1, false}, isHidden)};
+    std::unique_ptr<Button> button {DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, true}, TextData{"", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, 10, WHITE}, []() {
+        std::cout << "Click" << std::endl;
+    }, false)};
 
-    std::unique_ptr<RectDrawable> rectDrawable3 {DrawableFactory::CreateRectDrawable(ANCHORS_BOTTOM_STRETCH, PIVOT_BOTTOM_CENTER,
-        {0, 0},{400, 100}, isHidden)};
+    std::unique_ptr<TextBox<char, ApplyKey>> profileNameTextBox {DrawableFactory::CreateTextBox(RectangleData{GREY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE})};
 
-    rectDrawable3->AddDrawableComponent(std::move(texture2));
+    std::unique_ptr<RectDrawable> profileNameTextBoxRect {DrawableFactory::CreateRectDrawable(Anchors{{0.5, 0}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
 
-    rectDrawable2->AddDrawableComponent(std::move(texture));
+    //profileNameTextBoxRect->AddDrawableComponent(std::move(profileNameTextBox));
+    profileNameTextBoxRect->AddDrawableComponent(std::move(button));
 
-    rectDrawable1->AddRectDrawable(std::move(rectDrawable3));
+    std::unique_ptr<RectDrawable> profileNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.1}, {0.6, 0.1}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
 
-    rectDrawable1->AddRectDrawable(std::move(rectDrawable2));
+    profileNameRect->AddRectDrawable(std::move(profileNameTextRect));
+    profileNameRect->AddRectDrawable(std::move(profileNameTextBoxRect));
 
-    rectDrawable1->AddDrawableComponent(std::move(rectangle));
+#pragma endregion
 
-    profileScreen->AddRectDrawable(std::move(rectDrawable1));
+    //ShowLinesX(rectDrawable1.get());
+
+    profileScreen->AddRectDrawable(std::move(profileNameRect));
 
     return profileScreen;
+}
+
+void ScreenFactory::ShowLinesX(void* rect)
+{
+    for (float i = 0; i < 10; i += 0.5f)
+    {
+        std::unique_ptr<Rectangle> rectangle {DrawableFactory::CreateRectangle(RectangleData{PURPLE, 0, 1, false}, false)};
+
+        std::unique_ptr<RectDrawable> rectDrawable {DrawableFactory::CreateRectDrawable({{static_cast<float>(i / 10), 0}, {static_cast<float>(i / 10), 1}}, PIVOT_MIDDLE_CENTER,
+            {0, 0},{0, 100}, false)};
+
+        rectDrawable->AddDrawableComponent(std::move(rectangle));
+
+        static_cast<RectDrawable*>(rect)->AddRectDrawable(std::move(rectDrawable));
+    }
 }

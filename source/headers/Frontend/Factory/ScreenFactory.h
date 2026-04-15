@@ -7,4 +7,8 @@ class ScreenFactory
 public:
 
     [[nodiscard]] static std::unique_ptr<Screen> CreateProfileScreen(ImVec2&& position, bool isHidden);
+
+private:
+
+    static void ShowLinesX(void* rect);
 };

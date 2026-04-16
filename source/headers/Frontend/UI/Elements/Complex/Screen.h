@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+
 #include "Frontend/UI/Elements/Complex/Screen.h"
 
 #include "Frontend/UI/Elements/Base/RectDrawable.h"
@@ -7,7 +9,7 @@ class Screen : public BaseDisplay
 {
 public:
 
-    Screen(ImVec2&& position, ImVec2&& size, bool isHidden);
+    Screen(bool isHidden);
 
     ~Screen() override = default;
 
@@ -23,9 +25,13 @@ public:
 
 private:
 
+    void UpdateRectDrawables() const;
+
     std::unique_ptr<ImVec2> _position;
 
     std::unique_ptr<ImVec2> _bottomRightPosition;
+
+    std::weak_ptr<std::function<void(ImVec2)>> _onSizeChangeWeakAction;
 
     std::unique_ptr<ImVec2> _size;
 

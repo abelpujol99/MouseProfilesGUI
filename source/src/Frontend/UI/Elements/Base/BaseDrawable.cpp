@@ -9,7 +9,7 @@ void BaseDrawable::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBott
 
     _parentBottomRightPosition = parentBottomRightPosition;
 
-    _parentSize = parentSize;
+    SetParentSize(parentSize);
 }
 
 ImVec2 BaseDrawable::GetParentPosition() const
@@ -20,9 +20,4 @@ ImVec2 BaseDrawable::GetParentPosition() const
 ImVec2 BaseDrawable::GetParentBottomRightPosition() const
 {
     return *_parentBottomRightPosition;
-}
-
-ImVec2 BaseDrawable::GetParentSize() const
-{
-    return *_parentSize;
 }

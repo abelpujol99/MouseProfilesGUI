@@ -17,8 +17,7 @@ std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bo
 {
     std::filesystem::path resourceDir = RESOURCE_DIR;
 
-    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(std::move(position),
-        WindowManager::GetInstance().GetSize(), isHidden)};
+    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(isHidden)};
 
     WindowManager& windowManager {WindowManager::GetInstance()};
 

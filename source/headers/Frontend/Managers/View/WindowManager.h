@@ -1,6 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include "imgui.h"
+#include "Utilities/Observer/ObserverSingleValue.h"
 
 struct GLFWwindow;
 
@@ -17,17 +20,15 @@ public:
 
     static WindowManager& GetInstance();
 
-    void SetSizes(int width, int height);
-
-    [[nodiscard]] ImVec2 GetSize() const;
-
-    [[nodiscard]] float GetWidth() const;
-
-    [[nodiscard]] float GetHeight() const;
+    void SetInitialSize(int width, int height);
 
     void Start();
 
     void Update();
+
+    std::weak_ptr<std::function<void(ImVec2)>> SubscribeToSizeObserver(std::function<void(ImVec2)> action);
+
+    void UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(ImVec2)>> weakAction);
 
     void Cleanse() const;
 
@@ -41,10 +42,14 @@ private:
 
     void SetupImGui() const;
 
+    void Render();
+
     static WindowManager _windowManagerInstance;
 
-    int _width;
-    int _height;
+    int _initialWidth;
+    int _initialHeight;
+
+    ObserverSingleValue<ImVec2> _sizeObserver;
 
     GLFWwindow* _window;
 };

@@ -25,25 +25,10 @@ WindowManager& WindowManager::GetInstance()
     return _windowManagerInstance;
 }
 
-void WindowManager::SetSizes(int width, int height)
+void WindowManager::SetInitialSize(int width, int height)
 {
-    _width = width;
-    _height = height;
-}
-
-ImVec2 WindowManager::GetSize() const
-{
-    return {GetWidth(), GetHeight()};
-}
-
-float WindowManager::GetWidth() const
-{
-    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_width));
-}
-
-float WindowManager::GetHeight() const
-{
-    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_height));
+    _initialWidth = width;
+    _initialHeight = height;
 }
 
 void WindowManager::GlfwErrorCallback(int error, const char* description)
@@ -73,7 +58,9 @@ void WindowManager::SetupGLFW()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Tell GLFW to use OpenGL *.3
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Tell GLFW to use OpenGL *.* Core Profile
 
-    _window = glfwCreateWindow(_width, _height, "Mouse Profile GUI", nullptr, nullptr);
+    _window = glfwCreateWindow(_initialWidth, _initialHeight, "Mouse Profile GUI", nullptr, nullptr);
+
+    _sizeObserver.SetValue({static_cast<float>(_initialWidth), static_cast<float>(_initialHeight)});
 
     if (!_window)
     {
@@ -133,23 +120,41 @@ void WindowManager::Update()
 
         drawManager.DrawElements(drawList);
 
-        ImGui::Render();
-
-        int displayWidth;
-        int displayHeight;
-
-        glfwGetFramebufferSize(_window, &displayWidth, &displayHeight);
-        glViewport(0, 0, displayWidth, displayHeight);
-        glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        glfwSwapBuffers(_window);
+        Render();
     }
 
     Cleanse();
 
     ApplicationManager::GetInstance().TurnOffGUI();
+}
+
+void WindowManager::Render()
+{
+    ImGui::Render();
+
+    int displayWidth;
+    int displayHeight;
+
+    glfwGetFramebufferSize(_window, &displayWidth, &displayHeight);
+    glViewport(0, 0, displayWidth, displayHeight);
+    glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    glfwSwapBuffers(_window);
+
+
+    _sizeObserver.SetValue({static_cast<float>(displayWidth), static_cast<float>(displayHeight)});
+}
+
+std::weak_ptr<std::function<void(ImVec2)>> WindowManager::SubscribeToSizeObserver(std::function<void(ImVec2)> action)
+{
+    return _sizeObserver.Subscribe(action);
+}
+
+void WindowManager::UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(ImVec2)>> weakAction)
+{
+    _sizeObserver.Unsubscribe(weakAction);
 }
 
 void WindowManager::Cleanse() const

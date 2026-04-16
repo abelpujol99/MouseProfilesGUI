@@ -17,13 +17,9 @@ protected:
 
     [[nodiscard]] ImVec2 GetParentBottomRightPosition() const override;
 
-    [[nodiscard]] ImVec2 GetParentSize() const override;
-
 private:
 
     ImVec2* _parentPosition {nullptr};
 
     ImVec2* _parentBottomRightPosition {nullptr};
-
-    ImVec2* _parentSize {nullptr};
 };

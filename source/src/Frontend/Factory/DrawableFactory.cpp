@@ -2,9 +2,9 @@
 
 #include "Frontend/Utilities/Anchors.h"
 
-std::unique_ptr<Screen> DrawableFactory::CreateScreen(ImVec2&& position, ImVec2&& size, bool isHidden)
+std::unique_ptr<Screen> DrawableFactory::CreateScreen(bool isHidden)
 {
-    return std::make_unique<Screen>(std::move(position), std::move(size), isHidden);
+    return std::make_unique<Screen>(isHidden);
 }
 
 std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,

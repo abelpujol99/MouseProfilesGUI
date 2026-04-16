@@ -84,7 +84,7 @@ void ApplicationManager::StartGUI()
 {
     WindowManager& windowManager {WindowManager::GetInstance()};
 
-    windowManager.SetSizes(1500, 700);
+    windowManager.SetInitialSize(1500, 700);
     windowManager.Start();
     windowManager.Update();
 }

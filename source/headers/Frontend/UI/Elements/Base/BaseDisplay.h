@@ -16,5 +16,13 @@ public:
 
 protected:
 
+    virtual void SetParentSize(ImVec2* parentSize);
+
+    [[nodiscard]] ImVec2 GetParentSize() const override;
+
     bool _isHidden;
+
+private:
+
+    ImVec2* _parentSize {nullptr};
 };

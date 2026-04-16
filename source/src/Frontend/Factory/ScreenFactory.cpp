@@ -20,10 +20,7 @@ std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bo
 {
     std::filesystem::path resourceDir = RESOURCE_DIR;
 
-    WindowManager& windowManager {WindowManager::GetInstance()};
-
-    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(std::move(position),
-    windowManager.GetSize(), isHidden)};
+    std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(isHidden)};
 
 #pragma region Device Name
 

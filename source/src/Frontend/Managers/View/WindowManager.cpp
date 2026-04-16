@@ -1,14 +1,11 @@
 #include "Frontend/Managers/View/WindowManager.h"
 
-#include <iostream>
-
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 
 #include <GLFW/glfw3.h>
 
-#include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/Managers/Gesture/GestureManager.h"
 #include "Frontend/Managers/Input/InputManager.h"
 #include "Frontend/Managers/Input/ClickableManager.h"
@@ -28,25 +25,10 @@ WindowManager& WindowManager::GetInstance()
     return _windowManagerInstance;
 }
 
-void WindowManager::SetSizes(int width, int height)
+void WindowManager::SetInitialSize(int width, int height)
 {
-    _desiredWidth = width;
-    _desiredHeight = height;
-}
-
-ImVec2 WindowManager::GetSize() const
-{
-    return {GetDesiredWidth(), GetDesiredHeight()};
-}
-
-float WindowManager::GetDesiredWidth() const
-{
-    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_desiredWidth));
-}
-
-float WindowManager::GetDesiredHeight() const
-{
-    return ResolutionManager::GetInstance().AdaptWidth(static_cast<float>(_desiredHeight));
+    _initialWidth = width;
+    _initialHeight = height;
 }
 
 void WindowManager::GlfwErrorCallback(int error, const char* description)
@@ -76,7 +58,9 @@ void WindowManager::SetupGLFW()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Tell GLFW to use OpenGL *.3
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Tell GLFW to use OpenGL *.* Core Profile
 
-    _window = glfwCreateWindow(_desiredWidth, _desiredHeight, "Mouse Profile GUI", nullptr, nullptr);
+    _window = glfwCreateWindow(_initialWidth, _initialHeight, "Mouse Profile GUI", nullptr, nullptr);
+
+    _sizeObserver.SetValue({static_cast<float>(_initialWidth), static_cast<float>(_initialHeight)});
 
     if (!_window)
     {
@@ -148,7 +132,7 @@ void WindowManager::Update()
     ApplicationManager::GetInstance().TurnOffGUI();
 }
 
-void WindowManager::RenderWindow() const
+void WindowManager::RenderWindow()
 {
     ImGui::Render();
 
@@ -162,6 +146,18 @@ void WindowManager::RenderWindow() const
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(_window);
+
+    _sizeObserver.SetValue({static_cast<float>(displayWidth), static_cast<float>(displayHeight)});
+}
+
+std::weak_ptr<std::function<void(ImVec2)>> WindowManager::SubscribeToSizeObserver(std::function<void(ImVec2)> action)
+{
+    return _sizeObserver.Subscribe(action);
+}
+
+void WindowManager::UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(ImVec2)>> weakAction)
+{
+    _sizeObserver.Unsubscribe(weakAction);
 }
 
 void WindowManager::Cleanse() const

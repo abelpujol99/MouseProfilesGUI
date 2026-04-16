@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+
 #include "BaseDisplay.h"
 
 class BaseDrawable : public BaseDisplay
@@ -7,7 +9,8 @@ public:
 
     ~BaseDrawable() override = default;
 
-    virtual void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize);
+    virtual void SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+        bool* isParentHidden);
 
 protected:
 

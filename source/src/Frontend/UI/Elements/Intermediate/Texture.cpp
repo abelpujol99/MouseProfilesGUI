@@ -43,7 +43,7 @@ GLuint Texture::LoadTexture(const char* fileName)
 
 void Texture::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (MustBeHidden())
     {
         return;
     }

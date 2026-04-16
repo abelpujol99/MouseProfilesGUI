@@ -1,11 +1,11 @@
 #pragma once
 
-#include "IPosition.h"
-#include "ISize.h"
+#include "IParentPosition.h"
+#include "IParentSize.h"
 
 struct ImDrawList;
 
-class IDrawable : public IPosition, public ISize
+class IDrawable : public IParentPosition, public IParentSize
 {
 public:
 

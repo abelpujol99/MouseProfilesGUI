@@ -2,11 +2,11 @@
 
 #include "imgui.h"
 
-class IPosition
+class IParentPosition
 {
 public:
 
-    virtual ~IPosition() = default;
+    virtual ~IParentPosition() = default;
 
     [[nodiscard]] virtual ImVec2 GetParentPosition() const = 0;
 

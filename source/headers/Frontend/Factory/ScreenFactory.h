@@ -9,7 +9,7 @@ class ScreenFactory
 {
 public:
 
-    [[nodiscard]] static std::unique_ptr<Screen> CreateProfileScreen(ImVec2&& position, bool isHidden);
+    [[nodiscard]] static std::unique_ptr<Screen> CreateProfileScreen(bool isHidden);
 
 private:
 

@@ -25,13 +25,14 @@ void Button::SetText(std::unique_ptr<Text>&& text)
     _text = std::move(text);
 }
 
-void Button::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
+void Button::SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+        bool* isParentHidden)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    DrawableComponent::SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
 
-    _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _rectangle->SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
 
-    _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _text->SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
 }
 
 ImVec2 Button::GetParentPosition() const
@@ -56,7 +57,7 @@ void Button::Click()
 
 void Button::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (MustBeHidden())
     {
         return;
     }

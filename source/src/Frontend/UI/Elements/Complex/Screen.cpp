@@ -20,13 +20,7 @@ Screen::Screen(bool isHidden) :
 
 void Screen::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 {
-    rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    rectDrawable->UpdatePosition();
-
-    rectDrawable->UpdateSize();
-
-    rectDrawable->UpdateRectDrawables();
+    rectDrawable->SetParentAttributes(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rectDrawables.push_front(std::move(rectDrawable));
 }
@@ -48,7 +42,7 @@ ImVec2 Screen::GetParentSize() const
 
 void Screen::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (MustBeHidden())
     {
         return;
     }
@@ -67,10 +61,6 @@ void Screen::UpdateRectDrawables() const
 
     for (auto it{_rectDrawables.begin()}; it != itEnd; ++it)
     {
-        (*it)->UpdatePosition();
-
-        (*it)->UpdateSize();
-
-        (*it)->UpdateRectDrawables();
+        (*it)->UpdateAttributes();
     }
 }

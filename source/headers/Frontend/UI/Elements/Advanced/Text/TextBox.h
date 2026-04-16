@@ -21,7 +21,8 @@ public:
 
     void SetText(std::unique_ptr<Text> text);
 
-    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
+    void SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+        bool* isParentHidden) override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 
@@ -72,13 +73,14 @@ void TextBox<T, TProcessData>::SetText(std::unique_ptr<Text> text)
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
+void TextBox<T, TProcessData>::SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+        bool* isParentHidden)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    DrawableComponent::SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
 
-    _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _rectangle->SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
 
-    _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _text->SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -114,7 +116,7 @@ void TextBox<T, TProcessData>::OnUnselect()
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 void TextBox<T, TProcessData>::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (MustBeHidden())
     {
         return;
     }

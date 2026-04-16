@@ -1,22 +1,64 @@
 #include "Frontend/UI/Elements/Base/RectDrawable.h"
 
+#include "Frontend/Managers/View/DrawManager.h"
 #include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/Utilities/Math.h"
 
-RectDrawable::RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden) :
-        BaseDrawable(isHidden), _anchors(anchors), _pivot(pivot),
+RectDrawable::RectDrawable(uint8_t layer, uint8_t order, Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden) :
+        BaseDrawable(isHidden), _layer(layer), _order(order), _anchors(anchors), _pivot(pivot),
         _relativePosition(ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
         ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)), _desiredSize(desiredSize)
-{}
+{
+    DrawManager::GetInstance().AddDrawable(this, layer, order);
+}
+
+RectDrawable::~RectDrawable() noexcept
+{
+    DrawManager::GetInstance().RemoveDrawable(_layer, _order);
+}
+
+void RectDrawable::SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+    bool* isParentHidden)
+{
+    BaseDrawable::SetParentAttributes(parentPosition, parentBottomRightPosition, parentSize, isParentHidden);
+
+    UpdatePosition();
+
+    UpdateSize();
+
+    UpdateRectDrawables();
+}
 
 void RectDrawable::SetAnchors(Anchors&& anchors)
 {
     _anchors = anchors;
+
+    UpdatePosition();
+
+    UpdateSize();
 }
 
 void RectDrawable::SetPivot(ImVec2&& pivot)
 {
     _pivot = pivot;
+
+    UpdatePosition();
+}
+
+void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
+{
+    _relativePosition = relativePosition;
+
+    UpdatePosition();
+
+    UpdateRectDrawablesPosition();
+}
+
+void RectDrawable::UpdatePosition() const
+{
+    *_position = {CalculatePositionLeft(), CalculatePositionTop()};
+
+    *_bottomRightPosition = {CalculatePositionRight(), CalculatePositionBottom()};
 }
 
 void RectDrawable::SetDesiredSize(ImVec2&& desiredSize)
@@ -30,25 +72,25 @@ void RectDrawable::SetDesiredSize(ImVec2&& desiredSize)
     UpdateRectDrawables();
 }
 
+void RectDrawable::UpdateAttributes() const
+{
+    UpdatePosition();
+
+    UpdateSize();
+
+    UpdateRectDrawables();
+}
+
 void RectDrawable::UpdateSize() const
 {
     *_size = {_bottomRightPosition->x - _position->x, _bottomRightPosition->y - _position->y};
 }
 
-void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
+void RectDrawable::UpdateVisibility()
 {
-    _relativePosition = relativePosition;
+    BaseDrawable::UpdateVisibility();
 
-    UpdatePosition();
-
-    UpdateRectDrawables();
-}
-
-void RectDrawable::UpdatePosition() const
-{
-    *_position = {CalculatePositionLeft(), CalculatePositionTop()};
-
-    *_bottomRightPosition = {CalculatePositionRight(), CalculatePositionBottom()};
+    UpdateRectDrawablesVisibility();
 }
 
 void RectDrawable::UpdateRectDrawables() const
@@ -65,6 +107,40 @@ void RectDrawable::UpdateRectDrawables() const
     }
 }
 
+void RectDrawable::UpdateRectDrawablesPosition() const
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdatePosition();
+
+        (*it)->UpdateRectDrawablesPosition();
+    }
+}
+
+void RectDrawable::UpdateRectDrawablesSize() const
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdateSize();
+
+        (*it)->UpdateRectDrawablesSize();
+    }
+}
+
+void RectDrawable::UpdateRectDrawablesVisibility() const
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdateVisibility();
+    }
+}
+
 void RectDrawable::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 {
     if (rectDrawable.get() == this)
@@ -72,28 +148,26 @@ void RectDrawable::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
         return;
     }
 
-    rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    rectDrawable->SetParentAttributes(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rectDrawables.push_front(std::move(rectDrawable));
 }
 
 void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& componentDrawable)
 {
-    componentDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    componentDrawable->SetParentAttributes(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _drawableComponents.push_front(std::move(componentDrawable));
 }
 
 void RectDrawable::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (MustBeHidden())
     {
         return;
     }
 
     DrawDrawables(_drawableComponents, drawList);
-
-    DrawDrawables(_rectDrawables, drawList);
 }
 
 float RectDrawable::CalculatePositionLeft() const

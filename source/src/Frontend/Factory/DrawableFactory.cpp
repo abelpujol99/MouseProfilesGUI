@@ -7,10 +7,10 @@ std::unique_ptr<Screen> DrawableFactory::CreateScreen(bool isHidden)
     return std::make_unique<Screen>(isHidden);
 }
 
-std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,
-    ImVec2&& desiredSize, bool isHidden)
+std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(uint8_t layer, uint8_t order, Anchors&& anchors,
+    ImVec2&& pivot ,ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden)
 {
-    return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
+    return std::make_unique<RectDrawable>(layer, order, std::move(anchors), std::move(pivot), std::move(relativePosition),
         std::move(desiredSize), isHidden);
 }
 
@@ -19,7 +19,7 @@ std::unique_ptr<Texture> DrawableFactory::CreateTexture(const char* textureFileN
     return std::make_unique<Texture>(textureFileName, isHidden);
 }
 
-std::unique_ptr<Rectangle> DrawableFactory::CreateRectangle(RectangleData&& rectangleData, bool isHidden)
+std::unique_ptr<Rectangle> DrawableFactory::CreateRectangle(RectangleData&& rectangleData,  bool isHidden)
 {
     return std::make_unique<Rectangle>(std::move(rectangleData), isHidden);
 }
@@ -29,7 +29,8 @@ std::unique_ptr<Text> DrawableFactory::CreateText(TextData&& textData, bool isHi
     return std::make_unique<Text>(std::move(textData), isHidden);
 }
 
-std::unique_ptr<TextBox<char, ApplyKey>> DrawableFactory::CreateTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
+std::unique_ptr<TextBox<char, ApplyKey>> DrawableFactory::CreateTextBox(RectangleData&& rectangleData,
+    TextData&& textData, bool isHidden)
 {
     std::unique_ptr<TextBox<char, ApplyKey>> textBox {std::make_unique<TextBox<char, ApplyKey>>(isHidden)};
 
@@ -40,7 +41,8 @@ std::unique_ptr<TextBox<char, ApplyKey>> DrawableFactory::CreateTextBox(Rectangl
     return textBox;
 }
 
-std::unique_ptr<TextBox<Key, DisplayKey>> DrawableFactory::CreateDisplayTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
+std::unique_ptr<TextBox<Key, DisplayKey>> DrawableFactory::CreateDisplayTextBox(RectangleData&& rectangleData,
+    TextData&& textData, bool isHidden)
 {
     std::unique_ptr<TextBox<Key, DisplayKey>> textBox {std::make_unique<TextBox<Key, DisplayKey>>(isHidden)};
 

@@ -16,7 +16,8 @@ public:
 
     ~Text() override = default;
 
-    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
+    void SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+        bool* isParentHidden) override;
 
     void SetColor(ImColor color);
 

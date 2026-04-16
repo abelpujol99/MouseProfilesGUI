@@ -12,23 +12,22 @@ class RectDrawable : public BaseDrawable
 {
 public:
 
-    RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
+    RectDrawable(uint8_t layer, uint8_t order, Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition,
+        ImVec2&& desiredSize, bool isHidden);
 
-    ~RectDrawable() override = default;
+    ~RectDrawable() noexcept override;
+
+    void SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize, bool* isParentHidden) override;
 
     void SetAnchors(Anchors&& anchors);
 
     void SetPivot(ImVec2&& pivot);
 
-    void SetDesiredSize(ImVec2&& desiredSize);
-
-    void UpdateSize() const;
-
     void SetRelativePosition(ImVec2&& relativePosition);
 
-    void UpdatePosition() const;
+    void SetDesiredSize(ImVec2&& desiredSize);
 
-    void UpdateRectDrawables() const;
+    void UpdateAttributes() const;
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
@@ -37,6 +36,20 @@ public:
     void Draw(ImDrawList* drawList) override;
 
 private:
+
+    void UpdatePosition() const;
+
+    void UpdateSize() const;
+
+    void UpdateVisibility() override;
+
+    void UpdateRectDrawables() const;
+
+    void UpdateRectDrawablesPosition() const;
+
+    void UpdateRectDrawablesSize() const;
+
+    void UpdateRectDrawablesVisibility() const;
 
     float CalculatePositionLeft() const;
 
@@ -54,6 +67,10 @@ private:
 
     template<DerivedFromBaseDrawable TDrawable>
     static void DrawDrawables(const std::forward_list<std::unique_ptr<TDrawable>>& drawables, ImDrawList* drawList);
+
+    uint8_t _layer;
+
+    uint8_t _order;
 
     Anchors _anchors;
 

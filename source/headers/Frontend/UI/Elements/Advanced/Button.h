@@ -17,7 +17,8 @@ public:
 
     void SetText(std::unique_ptr<Text>&& text);
 
-    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
+    void SetParentAttributes(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize,
+        bool* isParentHidden) override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 

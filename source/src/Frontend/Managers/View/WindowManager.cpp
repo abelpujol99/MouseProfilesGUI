@@ -29,6 +29,13 @@ void WindowManager::SetInitialSize(int width, int height)
 {
     _initialWidth = width;
     _initialHeight = height;
+
+    _sizeObserver.SetValue({static_cast<float>(_initialWidth), static_cast<float>(_initialHeight)});
+}
+
+ImVec2 WindowManager::GetSize() const
+{
+    return _sizeObserver.GetValue();
 }
 
 void WindowManager::GlfwErrorCallback(int error, const char* description)
@@ -59,8 +66,6 @@ void WindowManager::SetupGLFW()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Tell GLFW to use OpenGL *.* Core Profile
 
     _window = glfwCreateWindow(_initialWidth, _initialHeight, "Mouse Profile GUI", nullptr, nullptr);
-
-    _sizeObserver.SetValue({static_cast<float>(_initialWidth), static_cast<float>(_initialHeight)});
 
     if (!_window)
     {

@@ -116,7 +116,7 @@ std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bo
             std::cout << "Record" << std::endl;
         }, isHidden)};
 
-    std::unique_ptr<RectDrawable> inputRecordButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.05, 0}, {0.45, 0}}, PIVOT_MIDDLE_CENTER,
+    std::unique_ptr<RectDrawable> inputRecordButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.05, 0}, {0.45, 0}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
     inputRecordButtonRect->AddDrawableComponent(std::move(inputRecordButton));
@@ -127,7 +127,7 @@ std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bo
             std::cout << "Delete" << std::endl;
         }, isHidden)};
 
-    std::unique_ptr<RectDrawable> inputDeleteButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.55, 0}, {0.95, 0}}, PIVOT_MIDDLE_CENTER,
+    std::unique_ptr<RectDrawable> inputDeleteButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.55, 0}, {0.95, 0}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
     inputDeleteButtonRect->AddDrawableComponent(std::move(inputDeleteButton));
@@ -164,7 +164,7 @@ std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bo
 
     outputTitleRect->AddDrawableComponent(std::move(outputTitle));
 
-    std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(Anchors{{0.3, 0.2}, {0.7, 0.2}}, PIVOT_MIDDLE_CENTER,
+    std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(Anchors{{0.3, 0.2}, {0.7, 0.2}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
     outputTypeRect->AddDrawableComponent(GetRectangle(BROWN));

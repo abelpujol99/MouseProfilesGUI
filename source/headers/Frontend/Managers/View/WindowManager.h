@@ -20,6 +20,8 @@ public:
 
     void SetInitialSize(int width, int height);
 
+    [[nodiscard]] ImVec2 GetSize() const;
+
     void Start();
 
     void Update();

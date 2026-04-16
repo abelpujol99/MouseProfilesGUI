@@ -29,11 +29,11 @@ private:
 
     std::unique_ptr<ImVec2> _position;
 
-    std::unique_ptr<ImVec2> _bottomRightPosition;
-
     std::weak_ptr<std::function<void(ImVec2)>> _onSizeChangeWeakAction;
 
     std::unique_ptr<ImVec2> _size;
+
+    std::unique_ptr<ImVec2> _bottomRightPosition;
 
     std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
 };

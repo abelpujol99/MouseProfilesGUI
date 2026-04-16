@@ -4,14 +4,18 @@
 
 Screen::Screen(bool isHidden) :
         BaseDisplay(isHidden), _position(std::make_unique<ImVec2>(ImVec2{0, 0})),
-        _size(std::make_unique<ImVec2>(ImVec2{1500, 700})), _bottomRightPosition(std::make_unique<ImVec2>())
+        _size(std::make_unique<ImVec2>()), _bottomRightPosition(std::make_unique<ImVec2>())
 {
     _onSizeChangeWeakAction = WindowManager::GetInstance().SubscribeToSizeObserver([&](ImVec2 size) {
+
+        if (_size->x == size.x && _size->y == size.y) {
+            return;
+        }
+
         *_size = size;
+        *_bottomRightPosition = {_position->x + _size->x, _position->y + _size->y};
         UpdateRectDrawables();
     });
-
-    *_bottomRightPosition = {_position->x + _size->x, _position->y + _size->y};
 }
 
 void Screen::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)

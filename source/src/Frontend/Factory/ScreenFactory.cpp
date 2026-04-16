@@ -23,43 +23,180 @@ std::unique_ptr<Screen> ScreenFactory::CreateProfileScreen(ImVec2&& position, bo
     WindowManager& windowManager {WindowManager::GetInstance()};
 
     std::unique_ptr<Screen> profileScreen {DrawableFactory::CreateScreen(std::move(position),
-        windowManager.GetSize(), isHidden)};
+    windowManager.GetSize(), isHidden)};
+
+#pragma region Device Name
+
+    std::unique_ptr<Text> deviceNameText {DrawableFactory::CreateText(TextData{"Razer Basilisk V3", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE, WHITE})};
+
+    std::unique_ptr<RectDrawable> deviceNameRect {DrawableFactory::CreateRectDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
+        {0, 10}, {0, 50}, isHidden)};
+
+    deviceNameRect->AddDrawableComponent(std::move(deviceNameText));
+
+#pragma endregion
 
 #pragma region Profile Name
 
-    std::unique_ptr<Text> profileNameText {DrawableFactory::CreateText(TextData{"Profile name", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
-
-    std::unique_ptr<RectDrawable> profileNameTextRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {0.5, 1}}, PIVOT_MIDDLE_CENTER,
-        {0, 0}, {0, 0}, isHidden)};
-
-    profileNameTextRect->AddDrawableComponent(std::move(profileNameText));
-
-    std::unique_ptr<Button> button {DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, true}, TextData{"", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, 10, WHITE}, []() {
-        std::cout << "Click" << std::endl;
-    }, false)};
-
-    std::unique_ptr<TextBox<char, ApplyKey>> profileNameTextBox {DrawableFactory::CreateTextBox(RectangleData{GREY, LOW_ROUNDING, THIN_BORDER, false},
-        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE})};
-
-    std::unique_ptr<RectDrawable> profileNameTextBoxRect {DrawableFactory::CreateRectDrawable(Anchors{{0.5, 0}, {1, 1}}, PIVOT_MIDDLE_CENTER,
-        {0, 0}, {0, 0}, isHidden)};
-
-    //profileNameTextBoxRect->AddDrawableComponent(std::move(profileNameTextBox));
-    profileNameTextBoxRect->AddDrawableComponent(std::move(button));
+    std::unique_ptr<TextBox<char, ApplyKey>> profileNameTextBox {DrawableFactory::CreateTextBox(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE})};
 
     std::unique_ptr<RectDrawable> profileNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.1}, {0.6, 0.1}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
-    profileNameRect->AddRectDrawable(std::move(profileNameTextRect));
-    profileNameRect->AddRectDrawable(std::move(profileNameTextBoxRect));
+    profileNameRect->AddDrawableComponent(std::move(profileNameTextBox));
 
 #pragma endregion
 
-    //ShowLinesX(rectDrawable1.get());
+#pragma region Profile Buttons
 
+    std::unique_ptr<Button> profileLoadButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Load", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, WHITE}, []() {
+            std::cout << "Load" << std::endl;
+        }, isHidden)};
+
+    std::unique_ptr<RectDrawable> profileLoadButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.1, 0},{0.3, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    profileLoadButtonRect->AddDrawableComponent(std::move(profileLoadButton));
+
+    std::unique_ptr<Button> profileUnloadButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, WHITE}, []() {
+            std::cout << "Unload" << std::endl;
+        }, isHidden)};
+
+    std::unique_ptr<RectDrawable> profileUnloadButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0},{0.6, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    profileUnloadButtonRect->AddDrawableComponent(std::move(profileUnloadButton));
+
+    std::unique_ptr<Button> profileLinkButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Link", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, WHITE}, []() {
+            std::cout << "Link" << std::endl;
+        }, isHidden)};
+
+    std::unique_ptr<RectDrawable> profileLinkButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.7, 0},{0.9, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    profileLinkButtonRect->AddDrawableComponent(std::move(profileLinkButton));
+
+    std::unique_ptr<RectDrawable> profileButtonsRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.2}, {1, 0.2}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    profileButtonsRect->AddRectDrawable(std::move(profileLoadButtonRect));
+    profileButtonsRect->AddRectDrawable(std::move(profileUnloadButtonRect));
+    profileButtonsRect->AddRectDrawable(std::move(profileLinkButtonRect));
+
+#pragma endregion
+
+#pragma region SubProfile
+
+    std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.3}, {0.6, 0.3}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    subProfileRect->AddDrawableComponent(GetRectangle(RED));
+    subProfileRect->AddDrawableComponent(GetText("SubProfiles Dropdown"));
+
+#pragma endregion
+
+#pragma region Input
+
+    std::unique_ptr<Text> inputTitle {DrawableFactory::CreateText(TextData{"Input", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
+
+    std::unique_ptr<RectDrawable> inputTitleRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 70}, isHidden)};
+
+    inputTitleRect->AddDrawableComponent(std::move(inputTitle));
+
+    std::unique_ptr<Button> inputRecordButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Record", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
+        []() {
+            std::cout << "Record" << std::endl;
+        }, isHidden)};
+
+    std::unique_ptr<RectDrawable> inputRecordButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.05, 0}, {0.45, 0}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    inputRecordButtonRect->AddDrawableComponent(std::move(inputRecordButton));
+
+    std::unique_ptr<Button> inputDeleteButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Delete", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
+        []() {
+            std::cout << "Delete" << std::endl;
+        }, isHidden)};
+
+    std::unique_ptr<RectDrawable> inputDeleteButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.55, 0}, {0.95, 0}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    inputDeleteButtonRect->AddDrawableComponent(std::move(inputDeleteButton));
+
+    std::unique_ptr<RectDrawable> inputButtonsRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.2}, {1, 0.2}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    inputButtonsRect->AddRectDrawable(std::move(inputRecordButtonRect));
+    inputButtonsRect->AddRectDrawable(std::move(inputDeleteButtonRect));
+
+    std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    inputListRect->AddDrawableComponent(GetRectangle(BROWN));
+    inputListRect->AddDrawableComponent(GetText("Input List"));
+
+    std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {0.5, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    inputRect->AddRectDrawable(std::move(inputTitleRect));
+    inputRect->AddRectDrawable(std::move(inputButtonsRect));
+    inputRect->AddRectDrawable(std::move(inputListRect));
+    inputRect->AddDrawableComponent(GetRectangle(RED));
+
+#pragma endregion
+
+#pragma region Output
+
+    std::unique_ptr<Text> outputTitle {DrawableFactory::CreateText(TextData{"Output", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
+
+    std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 70}, isHidden)};
+
+    outputTitleRect->AddDrawableComponent(std::move(outputTitle));
+
+    std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(Anchors{{0.3, 0.2}, {0.7, 0.2}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    outputTypeRect->AddDrawableComponent(GetRectangle(BROWN));
+    outputTypeRect->AddDrawableComponent(GetText("Output Types Dropdown"));
+
+    std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+{0, 0}, {0, 0}, isHidden)};
+
+    outputTypeDetailsRect->AddDrawableComponent(GetRectangle(BROWN));
+    outputTypeDetailsRect->AddDrawableComponent(GetText("Output Type Details"));
+
+    std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(Anchors{{0.5, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    outputRect->AddRectDrawable(std::move(outputTitleRect));
+    outputRect->AddRectDrawable(std::move(outputTypeRect));
+    outputRect->AddRectDrawable(std::move(outputTypeDetailsRect));
+    outputRect->AddDrawableComponent(GetRectangle(RED));
+
+#pragma endregion
+
+    //ShowLinesX(inputRect.get());
+
+    profileScreen->AddRectDrawable(std::move(deviceNameRect));
     profileScreen->AddRectDrawable(std::move(profileNameRect));
+    profileScreen->AddRectDrawable(std::move(profileButtonsRect));
+    profileScreen->AddRectDrawable(std::move(subProfileRect));
+    profileScreen->AddRectDrawable(std::move(inputRect));
+    profileScreen->AddRectDrawable(std::move(outputRect));
 
     return profileScreen;
 }
@@ -70,11 +207,23 @@ void ScreenFactory::ShowLinesX(void* rect)
     {
         std::unique_ptr<Rectangle> rectangle {DrawableFactory::CreateRectangle(RectangleData{PURPLE, 0, 1, false}, false)};
 
-        std::unique_ptr<RectDrawable> rectDrawable {DrawableFactory::CreateRectDrawable({{static_cast<float>(i / 10), 0}, {static_cast<float>(i / 10), 1}}, PIVOT_MIDDLE_CENTER,
+        std::unique_ptr<RectDrawable> rectDrawable {DrawableFactory::CreateRectDrawable({{static_cast<float>(i / 10), 0},
+            {static_cast<float>(i / 10), 1}}, PIVOT_MIDDLE_CENTER,
             {0, 0},{0, 100}, false)};
 
         rectDrawable->AddDrawableComponent(std::move(rectangle));
 
         static_cast<RectDrawable*>(rect)->AddRectDrawable(std::move(rectDrawable));
     }
+}
+
+std::unique_ptr<Rectangle> ScreenFactory::GetRectangle(ImColor color)
+{
+    return std::make_unique<Rectangle>(RectangleData{color, 0, 1, false}, false);
+}
+
+std::unique_ptr<Text> ScreenFactory::GetText(std::string string)
+{
+    return std::make_unique<Text>(TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
+        FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, false);
 }

@@ -43,6 +43,8 @@ private:
 
     void SetupImGui() const;
 
+    void RenderWindow() const;
+
     static WindowManager _windowManagerInstance;
 
     int _desiredWidth;

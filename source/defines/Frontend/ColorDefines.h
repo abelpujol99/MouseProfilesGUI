@@ -2,12 +2,12 @@
 
 #include "imgui.h"
 
-#define WHITE ImColor{255, 255, 255, 255}
-#define YELLOW ImColor{0, 255, 255, 255}
-#define PURPLE ImColor{255, 0, 255, 255}
-#define BROWN ImColor{255, 255, 0, 255}
-#define BLUE ImColor{0, 0, 255, 255}
-#define GREEN ImColor{0, 255, 0, 255}
-#define RED ImColor{255, 0, 0, 255}
-#define GREY ImColor{127, 127, 127, 255}
-#define BLACK ImColor{0, 0, 0, 255}
+#define WHITE ImColor{1.f, 1.f, 1.f, 1.f}
+#define YELLOW ImColor{0.f, 1.f, 1.f, 1.f}
+#define PURPLE ImColor{1.f, 0.f, 1.f, 1.f}
+#define BROWN ImColor{1.f, 1.f, 0.f, 1.f}
+#define BLUE ImColor{0.f, 0.f, 1.f, 1.f}
+#define GREEN ImColor{0.f, 1.f, 0.f, 1.f}
+#define RED ImColor{1.f, 0.f, 0.f, 1.f}
+#define GRAY ImColor{0.5f, 0.5f, 0.5f, 1.f}
+#define BLACK ImColor{0.f, 0.f, 0.f, 1.f}

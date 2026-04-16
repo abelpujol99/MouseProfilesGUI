@@ -140,23 +140,28 @@ void WindowManager::Update()
 
         drawManager.DrawElements(drawList);
 
-        ImGui::Render();
-
-        int displayWidth;
-        int displayHeight;
-
-        glfwGetFramebufferSize(_window, &displayWidth, &displayHeight);
-        glViewport(0, 0, displayWidth, displayHeight);
-        glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        glfwSwapBuffers(_window);
+        RenderWindow();
     }
 
     Cleanse();
 
     ApplicationManager::GetInstance().TurnOffGUI();
+}
+
+void WindowManager::RenderWindow() const
+{
+    ImGui::Render();
+
+    int displayWidth;
+    int displayHeight;
+
+    glfwGetFramebufferSize(_window, &displayWidth, &displayHeight);
+    glViewport(0, 0, displayWidth, displayHeight);
+    glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    glfwSwapBuffers(_window);
 }
 
 void WindowManager::Cleanse() const

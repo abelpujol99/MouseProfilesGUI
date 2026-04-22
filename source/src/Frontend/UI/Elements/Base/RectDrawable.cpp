@@ -9,14 +9,45 @@ RectDrawable::RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativeP
         ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)), _desiredSize(desiredSize)
 {}
 
+void RectDrawable::UpdateAttributes()
+{
+    UpdatePosition();
+
+    UpdateSize();
+
+    UpdateRectDrawables();
+}
+
+void RectDrawable::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer)
+{
+    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+
+    UpdatePosition();
+
+    UpdateSize();
+
+    UpdateRectDrawables();
+}
+
 void RectDrawable::SetAnchors(Anchors&& anchors)
 {
     _anchors = anchors;
+
+    UpdatePosition();
+
+    UpdateSize();
+
+    UpdateRectDrawables();
 }
 
 void RectDrawable::SetPivot(ImVec2&& pivot)
 {
     _pivot = pivot;
+
+    UpdatePosition();
+
+    UpdateRectDrawablesPosition();
 }
 
 void RectDrawable::SetDesiredSize(ImVec2&& desiredSize)
@@ -33,6 +64,13 @@ void RectDrawable::SetDesiredSize(ImVec2&& desiredSize)
 void RectDrawable::UpdateSize() const
 {
     *_size = {_bottomRightPosition->x - _position->x, _bottomRightPosition->y - _position->y};
+
+    auto itEnd {_drawableComponents.cend()};
+
+    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
+    {
+        (*it)->OnParentSizeUpdated();
+    }
 }
 
 void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
@@ -44,14 +82,40 @@ void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
     UpdateRectDrawables();
 }
 
+ImVec2 RectDrawable::GetRelativePosition() const
+{
+    return _relativePosition;
+}
+
 void RectDrawable::UpdatePosition() const
 {
     *_position = {CalculatePositionLeft(), CalculatePositionTop()};
 
     *_bottomRightPosition = {CalculatePositionRight(), CalculatePositionBottom()};
+
+    auto itEnd {_drawableComponents.cend()};
+
+    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
+    {
+        (*it)->OnParentPositionUpdated();
+
+        (*it)->OnParentBottomRightPositionUpdated();
+    }
 }
 
-void RectDrawable::UpdateRectDrawables() const
+void RectDrawable::UpdateRectDrawablesPosition()
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdatePosition();
+
+        (*it)->UpdateRectDrawablesPosition();
+    }
+}
+
+void RectDrawable::UpdateRectDrawables()
 {
     auto itEnd {_rectDrawables.cend()};
 

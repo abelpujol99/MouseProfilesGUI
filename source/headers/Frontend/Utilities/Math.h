@@ -4,12 +4,24 @@ namespace Utilities::Math
 {
     [[nodiscard]] static float Absolute(float value);
 
+    [[nodiscard]] static int Absolute(int value);
+
     [[nodiscard]] static float Clamp(float value);
 }
 
 inline float Utilities::Math::Absolute(float value)
 {
     if (value < 0.f)
+    {
+        value *= -1;
+    }
+
+    return value;
+}
+
+inline int Utilities::Math::Absolute(int value)
+{
+    if (value < 0)
     {
         value *= -1;
     }

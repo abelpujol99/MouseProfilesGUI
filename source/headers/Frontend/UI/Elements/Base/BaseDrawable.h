@@ -1,5 +1,9 @@
 #pragma once
+
 #include "BaseDisplay.h"
+
+class DrawableTransform;
+class ISubscriptionPosition;
 
 class BaseDrawable : public BaseDisplay
 {
@@ -7,7 +11,8 @@ public:
 
     ~BaseDrawable() override = default;
 
-    virtual void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize);
+    virtual void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+        ImVec2* parentSizePointer);
 
 protected:
 

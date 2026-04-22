@@ -6,7 +6,7 @@ class ResolutionManager
 {
 public:    
 
-    ~ResolutionManager() = default;
+    ~ResolutionManager() noexcept;
 
     ResolutionManager(const ResolutionManager& other) = delete;
     ResolutionManager& operator=(const ResolutionManager& other) = delete;
@@ -25,6 +25,6 @@ private:
 
     ResolutionManager();
 
-    static ResolutionManager _resolutionManagerInstance;
+    static ResolutionManager* _resolutionManagerInstance;
     
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Frontend/UI/IClickable.h"
+#include "Frontend/UI/Helpers/IClickable.h"
 #include "Frontend/UI/Elements/Intermediate/Rectangle.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
 
@@ -17,7 +17,7 @@ public:
 
     void SetText(std::unique_ptr<Text>&& text);
 
-    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
+    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 
@@ -27,9 +27,7 @@ public:
 
     void Click() override;
 
-    void Draw(ImDrawList *drawList) override;
-
-
+    void Draw(ImDrawList* drawList) override;
 
 private:
 

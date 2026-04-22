@@ -10,7 +10,7 @@ class SelectableManager
 
 public:
 
-    ~SelectableManager() = default;
+    ~SelectableManager() noexcept;
 
     SelectableManager(const SelectableManager& other) = delete;
     SelectableManager& operator=(const SelectableManager& other) = delete;
@@ -29,7 +29,7 @@ private:
 
     SelectableManager();
 
-    static SelectableManager _selectableManagerInstance;
+    static SelectableManager* _selectableManagerInstance;
 
     std::weak_ptr<std::function<void(bool)>> _onLeftMouseButtonReleasedWeakAction;
 

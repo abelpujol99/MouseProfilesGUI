@@ -1,11 +1,11 @@
 #include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
 
-#include "Frontend/Managers/Input/InputManager.h"
+#include "Frontend/Managers/Input/TypeManager.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
 
 void DisplayKey::StartProcessData()
 {
-    _onTypingWeakAction = InputManager::GetInstance().SubscribeToCurrentTypedKeyObserver([&](Key key) {
+    _onTypingWeakAction = TypeManager::GetInstance().SubscribeToCurrentTypedKeyObserver([&](Key key) {
 
         if (!_text->GetText().empty())
         {
@@ -18,5 +18,5 @@ void DisplayKey::StartProcessData()
 
 void DisplayKey::StopProcessData()
 {
-    InputManager::GetInstance().UnsubscribeToCurrentTypedKeyObserver(_onTypingWeakAction);
+    TypeManager::GetInstance().UnsubscribeToCurrentTypedKeyObserver(_onTypingWeakAction);
 }

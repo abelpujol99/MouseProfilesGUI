@@ -6,23 +6,30 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Frontend/Managers/Gesture/GestureManager.h"
 #include "Frontend/Managers/Input/InputManager.h"
-#include "Frontend/Managers/Input/ClickableManager.h"
-#include "Frontend/Managers/Input/SelectableManager.h"
+#include "Frontend/Managers/Input/TypeManager.h"
+#include "Frontend/Managers/Gestures/ClickableManager.h"
+#include "Frontend/Managers/Gestures/SelectableManager.h"
+#include "Frontend/Managers/Gestures/ScrollableManager.h"
 #include "Frontend/Managers/View/DrawManager.h"
 #include "Backend/Managers/ApplicationManager.h"
 
-WindowManager WindowManager::_windowManagerInstance{};
+WindowManager* WindowManager::_windowManagerInstance {nullptr};
 
 WindowManager::~WindowManager()
 {
     glfwDestroyWindow(_window);
+    delete _windowManagerInstance;
 }
 
 WindowManager& WindowManager::GetInstance()
 {
-    return _windowManagerInstance;
+    if (_windowManagerInstance == nullptr)
+    {
+        _windowManagerInstance = new WindowManager();
+    }
+
+    return *_windowManagerInstance;
 }
 
 void WindowManager::SetInitialSize(int width, int height)
@@ -97,13 +104,15 @@ void WindowManager::SetupImGui() const
 
 void WindowManager::Update()
 {
-    GestureManager& gestureManager {GestureManager::GetInstance()};
-
     InputManager& inputManager {InputManager::GetInstance()};
+
+    TypeManager& typeManager {TypeManager::GetInstance()};
 
     ClickableManager& clickableManager {ClickableManager::GetInstance()};
 
     SelectableManager& selectableManager {SelectableManager::GetInstance()};
+
+    ScrollableManager& scrollableManager {ScrollableManager::GetInstance()};
 
     DrawManager& drawManager {DrawManager::GetInstance()};
 
@@ -119,13 +128,15 @@ void WindowManager::Update()
 
         ImDrawList* drawList {ImGui::GetBackgroundDrawList()};
 
-        gestureManager.Update();
-
         inputManager.Update();
+
+        typeManager.Update();
 
         clickableManager.Update();
 
         selectableManager.Update();
+
+        scrollableManager.Update();
 
         drawManager.DrawElements(drawList);
 

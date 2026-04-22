@@ -1,5 +1,6 @@
 #pragma once
-#include "BaseDrawable.h"
+#include "Frontend/UI/Elements/Base/BaseDrawable.h"
+#include "Frontend/UI/Elements/Base/DrawableTransform.h"
 
 #include <forward_list>
 #include <memory>
@@ -8,7 +9,7 @@
 #include "Frontend/Utilities/Anchors.h"
 #include "Frontend/Utilities/Concepts/DerivedFromBaseDrawable.h"
 
-class RectDrawable : public BaseDrawable
+class RectDrawable : public BaseDrawable, public DrawableTransform
 {
 public:
 
@@ -16,19 +17,19 @@ public:
 
     ~RectDrawable() override = default;
 
+    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
+
     void SetAnchors(Anchors&& anchors);
 
     void SetPivot(ImVec2&& pivot);
 
-    void SetDesiredSize(ImVec2&& desiredSize);
-
-    void UpdateSize() const;
-
     void SetRelativePosition(ImVec2&& relativePosition);
 
-    void UpdatePosition() const;
+    [[nodiscard]] ImVec2 GetRelativePosition() const;
 
-    void UpdateRectDrawables() const;
+    void SetDesiredSize(ImVec2&& desiredSize);
+
+    void UpdateAttributes();
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
@@ -37,6 +38,14 @@ public:
     void Draw(ImDrawList* drawList) override;
 
 private:
+
+    void UpdatePosition() const;
+
+    void UpdateSize() const;
+
+    void UpdateRectDrawablesPosition();
+
+    void UpdateRectDrawables();
 
     float CalculatePositionLeft() const;
 
@@ -62,12 +71,6 @@ private:
     ImVec2 _relativePosition;
 
     ImVec2 _desiredSize;
-
-    std::unique_ptr<ImVec2> _position {std::make_unique<ImVec2>()};
-
-    std::unique_ptr<ImVec2> _bottomRightPosition {std::make_unique<ImVec2>()};
-
-    std::unique_ptr<ImVec2> _size {std::make_unique<ImVec2>()};
 
     std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
 

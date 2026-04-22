@@ -1,6 +1,6 @@
 #include "Frontend/Factory/ImGuiFactory.h"
 
-#include "Frontend/Managers/Gesture/MouseButton/MouseButtons.h"
+#include "Frontend/Managers/Input/MouseButton/MouseButtons.h"
 #include "Frontend/KeyDefines.h"
 
 ImGuiIO& ImGuiFactory::GetIO()
@@ -28,6 +28,11 @@ const bool ImGuiFactory::IsMouseButtonReleased(MouseButtons mouseButton)
 ImVec2 ImGuiFactory::GetMousePosition()
 {
     return GetIO().MousePos;
+}
+
+float ImGuiFactory::GetMouseScroll()
+{
+    return GetIO().MouseWheel;
 }
 
 #pragma endregion

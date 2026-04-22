@@ -1,15 +1,19 @@
 #pragma once
 
-#include "Frontend/KeyUsings.h"
+#include "imgui.h"
 
+#include "Frontend/Managers/Input/MouseButton/BaseMouseButtonState.h"
+#include "Utilities/Observer/ObserverMap.h"
 #include "Utilities/Observer/ObserverSingleValue.h"
+#include "TimeUsings.h"
+
+enum class MouseButtons : char;
 
 class InputManager
 {
-
 public:
 
-    ~InputManager() = default;
+    ~InputManager() noexcept;
 
     InputManager(const InputManager& other) = delete;
     InputManager& operator=(const InputManager& other) = delete;
@@ -20,23 +24,39 @@ public:
 
     void Update();
 
-    std::weak_ptr<std::function<void(Key)>> SubscribeToCurrentTypedKeyObserver(std::function<void(Key)>&& action);
-    void UnsubscribeToCurrentTypedKeyObserver(const std::weak_ptr<std::function<void(Key)>>& weakAction);
+    void OnPressButton(MouseButtons mouseButton);
+    void OnReleaseButton(MouseButtons mouseButton);
 
-    std::weak_ptr<std::function<void(char)>> SubscribeToCurrentTypedCharObserver(std::function<void(char)>&& action);
-    void UnsubscribeToCurrentTypedCharObserver(const std::weak_ptr<std::function<void(char)>>& weakAction);
+    [[nodiscard]] std::weak_ptr<std::function<void(bool)>> SubscribeToMouseButtonClickEvent(MouseButtons mouseButton,
+        std::function<void(bool)>&& action);
+
+    void UnsubscribeToMouseButtonClickEvent(MouseButtons mouseButton, std::weak_ptr<std::function<void(bool)>>&& weakAction);
+
+    [[nodiscard]] std::weak_ptr<std::function<void(bool)>> SubscribeToMouseButtonReleaseEvent(MouseButtons mouseButton,
+        std::function<void(bool)>&& action);
+
+    void UnsubscribeToMouseButtonReleaseEvent(MouseButtons mouseButton, std::weak_ptr<std::function<void(bool)>>&& weakAction);
+
+    [[nodiscard]] std::weak_ptr<std::function<void(float)>> SubscribeToMouseScroll(std::function<void(float)>&& action);
+
+    void UnsubscribeToMouseScroll(std::weak_ptr<std::function<void(float)>>&& weakAction);
 
 private:
 
-    InputManager() = default;
+    void ChangeState(MouseButtons mouseButton, std::unique_ptr<BaseMouseButtonState>&& mouseButtonState);
 
-    void UpdateLastKeyPressed();
+    InputManager();
 
-    void UpdateLastCharTyped();
+    static InputManager* _inputManagerInstance;
 
-    static InputManager _inputManagerInstance;
+    std::unique_ptr<BaseMouseButtonState> _mouseButtonState[ImGuiMouseButton_COUNT];
 
-    ObserverSingleValue<Key> _currentPressedKeyObserver;
+    ObserverMap<MouseButtons, bool> _mouseClickInputObserverMap;
+    ObserverMap<MouseButtons, bool> _mouseReleaseInputObserverMap;
 
-    ObserverSingleValue<char> _currentTypedCharObserver;
+    TimePoint _mousePressedTimePoint[ImGuiMouseButton_COUNT];
+
+    ObserverSingleValue<Duration> _mouseButtonsTimePressed[ImGuiMouseButton_COUNT];
+
+    ObserverSingleValue<float> _mouseScrollObserver;
 };

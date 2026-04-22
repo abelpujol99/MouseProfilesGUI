@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Frontend/UI/Elements/Complex/Screen.h"
+#include "Frontend/UI/Elements/Complex/Canvas.h"
 
 class Rectangle;
 class Text;
@@ -9,7 +9,7 @@ class ScreenFactory
 {
 public:
 
-    [[nodiscard]] static std::unique_ptr<Screen> CreateProfileScreen(ImVec2&& position, bool isHidden);
+    [[nodiscard]] static std::unique_ptr<Canvas> CreateProfileScreen(bool isHidden);
 
 private:
 

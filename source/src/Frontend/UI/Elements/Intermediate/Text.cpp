@@ -11,9 +11,10 @@ Text::Text(TextData&& textData, bool isHidden) :
         _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize), _color(textData.color)
 {}
 
-void Text::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
+void Text::SetParentTransform(ImVec2 *parentPositionPointer, ImVec2 *parentBottomRightPositionPointer,
+    ImVec2 *parentSizePointer)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    DrawableComponent::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 
     CalculateTextSize();
 }

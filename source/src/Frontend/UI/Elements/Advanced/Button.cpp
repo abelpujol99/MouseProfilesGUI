@@ -1,8 +1,7 @@
 #include "Frontend/UI/Elements/Advanced/Button.h"
 
-#include "Frontend/Managers/Gesture/GestureManager.h"
-#include "Frontend/Managers/Gesture/MouseButton/MouseButtons.h"
-#include "Frontend/Managers/Input/ClickableManager.h"
+#include "Frontend/Managers/Input/InputManager.h"
+#include "Frontend/Managers/Gestures/ClickableManager.h"
 
 Button::Button(std::function<void()>&& action, bool isHidden) :
         DrawableComponent(isHidden), _action(action)
@@ -25,13 +24,14 @@ void Button::SetText(std::unique_ptr<Text>&& text)
     _text = std::move(text);
 }
 
-void Button::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
+void Button::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 
-    _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _rectangle->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 
-    _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _text->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 }
 
 ImVec2 Button::GetParentPosition() const

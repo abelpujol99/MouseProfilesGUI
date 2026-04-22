@@ -2,11 +2,11 @@
 
 #include "imgui.h"
 
-class ISize
+class IParentSize
 {
 public:
 
-    virtual ~ISize() = default;
+    virtual ~IParentSize() = default;
 
     [[nodiscard]] virtual ImVec2 GetParentSize() const = 0;
 

@@ -1,7 +1,7 @@
-#include "Frontend/Managers/Gesture/MouseButton/ReleasedState.h"
+#include "Frontend/Managers/Input/MouseButton/ReleasedState.h"
 
 #include "Frontend/Factory/ImGuiFactory.h"
-#include "Frontend/Managers/Gesture/GestureManager.h"
+#include "Frontend/Managers/Input/InputManager.h"
 
 ReleasedState::ReleasedState(MouseButtons mouseButton) : BaseMouseButtonState(mouseButton)
 {}
@@ -15,5 +15,5 @@ void ReleasedState::CheckState()
         return;
     }
 
-    GestureManager::GetInstance().OnPressButton(_mouseButton);
+    InputManager::GetInstance().OnPressButton(_mouseButton);
 }

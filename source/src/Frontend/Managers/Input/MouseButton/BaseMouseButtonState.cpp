@@ -1,4 +1,4 @@
-#include "Frontend/Managers/Gesture/MouseButton/BaseMouseButtonState.h"
+#include "Frontend/Managers/Input/MouseButton/BaseMouseButtonState.h"
 
 BaseMouseButtonState::BaseMouseButtonState(MouseButtons mouseButton) : _mouseButton(mouseButton)
 {}

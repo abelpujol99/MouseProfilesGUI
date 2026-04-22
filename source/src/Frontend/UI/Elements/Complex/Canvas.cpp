@@ -1,10 +1,9 @@
-#include "Frontend/UI/Elements/Complex/Screen.h"
+#include "Frontend/UI/Elements/Complex/Canvas.h"
 
 #include "Frontend/Managers/View/WindowManager.h"
 
-Screen::Screen(bool isHidden) :
-        BaseDisplay(isHidden), _position(std::make_unique<ImVec2>(ImVec2{0, 0})),
-        _size(std::make_unique<ImVec2>()), _bottomRightPosition(std::make_unique<ImVec2>())
+Canvas::Canvas(bool isHidden) :
+        BaseDisplay(isHidden)
 {
     _onSizeChangeWeakAction = WindowManager::GetInstance().SubscribeToSizeObserver([&](ImVec2 size) {
 
@@ -13,40 +12,35 @@ Screen::Screen(bool isHidden) :
         }
 
         *_size = size;
-        *_bottomRightPosition = {_position->x + _size->x, _position->y + _size->y};
+
+        *_bottomRightPosition = {_size->x, _size->y};
         UpdateRectDrawables();
     });
 }
 
-void Screen::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
+void Canvas::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 {
     rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    rectDrawable->UpdatePosition();
-
-    rectDrawable->UpdateSize();
-
-    rectDrawable->UpdateRectDrawables();
 
     _rectDrawables.push_front(std::move(rectDrawable));
 }
 
-ImVec2 Screen::GetParentPosition() const
+ImVec2 Canvas::GetParentPosition() const
 {
-    return *_position;
+    return {0, 0};
 }
 
-ImVec2 Screen::GetParentBottomRightPosition() const
+ImVec2 Canvas::GetParentBottomRightPosition() const
 {
     return {GetParentPosition().x + GetParentSize().x, GetParentPosition().y + GetParentSize().y};
 }
 
-ImVec2 Screen::GetParentSize() const
+ImVec2 Canvas::GetParentSize() const
 {
     return *_size;
 }
 
-void Screen::Draw(ImDrawList* drawList)
+void Canvas::Draw(ImDrawList* drawList)
 {
     if (_isHidden)
     {
@@ -61,16 +55,12 @@ void Screen::Draw(ImDrawList* drawList)
     }
 }
 
-void Screen::UpdateRectDrawables() const
+void Canvas::UpdateRectDrawables() const
 {
     const auto itEnd{_rectDrawables.cend()};
 
     for (auto it{_rectDrawables.begin()}; it != itEnd; ++it)
     {
-        (*it)->UpdatePosition();
-
-        (*it)->UpdateSize();
-
-        (*it)->UpdateRectDrawables();
+        (*it)->UpdateAttributes();
     }
 }

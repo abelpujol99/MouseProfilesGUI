@@ -1,15 +1,25 @@
 #include "Frontend/Managers/View/ResolutionManager.h"
 
-ResolutionManager ResolutionManager::_resolutionManagerInstance {};
+ResolutionManager* ResolutionManager::_resolutionManagerInstance {nullptr};
 
 ResolutionManager::ResolutionManager()
 {
 
 }
 
+ResolutionManager::~ResolutionManager() noexcept
+{
+    delete _resolutionManagerInstance;
+}
+
 ResolutionManager& ResolutionManager::GetInstance()
 {
-    return _resolutionManagerInstance;
+    if (_resolutionManagerInstance == nullptr)
+    {
+        _resolutionManagerInstance = new ResolutionManager();
+    }
+
+    return *_resolutionManagerInstance;
 }
 
 ImVec2 ResolutionManager::AdaptSize(ImVec2&& size)

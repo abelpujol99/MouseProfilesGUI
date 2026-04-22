@@ -1,7 +1,7 @@
-#include "Frontend/Managers/Gesture/MouseButton/ClickedState.h"
+#include "Frontend/Managers/Input/MouseButton/ClickedState.h"
 
 #include "Frontend/Factory/ImGuiFactory.h"
-#include "Frontend/Managers/Gesture/GestureManager.h"
+#include "Frontend/Managers/Input/InputManager.h"
 
 ClickedState::ClickedState(MouseButtons mouseButton) : BaseMouseButtonState(mouseButton)
 {}
@@ -15,5 +15,5 @@ void ClickedState::CheckState()
         return;
     }
 
-    GestureManager::GetInstance().OnReleaseButton(_mouseButton);
+    InputManager::GetInstance().OnReleaseButton(_mouseButton);
 }

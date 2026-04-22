@@ -1,17 +1,15 @@
 #pragma once
 #include <functional>
 
-#include "Frontend/UI/Elements/Complex/Screen.h"
-
 #include "Frontend/UI/Elements/Base/RectDrawable.h"
 
-class Screen : public BaseDisplay
+class Canvas : public BaseDisplay, public DrawableTransform
 {
 public:
 
-    Screen(bool isHidden);
+    Canvas(bool isHidden);
 
-    ~Screen() override = default;
+    ~Canvas() override = default;
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
@@ -27,13 +25,7 @@ private:
 
     void UpdateRectDrawables() const;
 
-    std::unique_ptr<ImVec2> _position;
-
     std::weak_ptr<std::function<void(ImVec2)>> _onSizeChangeWeakAction;
-
-    std::unique_ptr<ImVec2> _size;
-
-    std::unique_ptr<ImVec2> _bottomRightPosition;
 
     std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
 };

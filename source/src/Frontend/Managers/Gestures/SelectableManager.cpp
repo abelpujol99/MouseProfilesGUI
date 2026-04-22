@@ -1,24 +1,34 @@
-#include "Frontend/Managers/Input/SelectableManager.h"
+#include "Frontend/Managers/Gestures/SelectableManager.h"
 
 #include "Frontend/Factory/ImGuiFactory.h"
-#include "Frontend/Managers/Gesture/GestureManager.h"
-#include "Frontend/Managers/Gesture/MouseButton/MouseButtons.h"
-#include "Frontend/UI/ISelectable.h"
+#include "Frontend/Managers/Input/InputManager.h"
+#include "Frontend/Managers/Input/MouseButton/MouseButtons.h"
+#include "Frontend/UI/Helpers/ISelectable.h"
 #include "Frontend/Utilities/Boundaries.h"
 
-SelectableManager SelectableManager::_selectableManagerInstance{};
+SelectableManager* SelectableManager::_selectableManagerInstance {nullptr};
 
 SelectableManager::SelectableManager() : _currentSelection(nullptr)
 {
-    _onLeftMouseButtonReleasedWeakAction = GestureManager::GetInstance().SubscribeToMouseButtonReleaseEvent(MouseButtons::LEFT,
+    _onLeftMouseButtonReleasedWeakAction = InputManager::GetInstance().SubscribeToMouseButtonReleaseEvent(MouseButtons::LEFT,
         [&](bool value) {
             _hasLeftMouseButtonReleased = value;
     });
 }
 
+SelectableManager::~SelectableManager() noexcept
+{
+    delete _selectableManagerInstance;
+}
+
 SelectableManager& SelectableManager::GetInstance()
 {
-    return _selectableManagerInstance;
+    if (_selectableManagerInstance == nullptr)
+    {
+        _selectableManagerInstance = new SelectableManager();
+    }
+
+    return *_selectableManagerInstance;
 }
 
 void SelectableManager::Update()

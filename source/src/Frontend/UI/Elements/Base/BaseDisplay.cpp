@@ -3,16 +3,6 @@
 BaseDisplay::BaseDisplay(bool isHidden) : _isHidden(isHidden)
 {}
 
-void BaseDisplay::SetParentSize(ImVec2* parentSize)
-{
-    _parentSize = parentSize;
-}
-
-ImVec2 BaseDisplay::GetParentSize() const
-{
-    return *_parentSize;
-}
-
 void BaseDisplay::SetIsHidden(bool isHidden)
 {
     _isHidden = isHidden;
@@ -21,4 +11,14 @@ void BaseDisplay::SetIsHidden(bool isHidden)
 bool BaseDisplay::IsHidden() const
 {
     return _isHidden;
+}
+
+void BaseDisplay::SetParentSizePointer(ImVec2* parentSizePointer)
+{
+    _parentSize = parentSizePointer;
+}
+
+ImVec2 BaseDisplay::GetParentSize() const
+{
+    return *_parentSize;
 }

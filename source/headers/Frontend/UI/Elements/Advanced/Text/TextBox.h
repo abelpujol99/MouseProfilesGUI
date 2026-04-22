@@ -1,10 +1,10 @@
 #pragma once
 #include "Frontend/Utilities/Concepts/DerivedFromBaseProcessDataStrategy.h"
-#include "Frontend/UI/ISelectable.h"
+#include "Frontend/UI/Helpers/ISelectable.h"
 
 #include "Frontend/UI/Elements/Intermediate/Rectangle.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
-#include "Frontend/Managers/Input/SelectableManager.h"
+#include "Frontend/Managers/Gestures/SelectableManager.h"
 
 #include "Frontend/KeyUsings.h"
 
@@ -21,7 +21,7 @@ public:
 
     void SetText(std::unique_ptr<Text> text);
 
-    void SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize) override;
+    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 
@@ -72,13 +72,14 @@ void TextBox<T, TProcessData>::SetText(std::unique_ptr<Text> text)
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPosition, ImVec2* parentBottomRightPosition, ImVec2* parentSize)
+void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer)
 {
-    DrawableComponent::SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 
-    _rectangle->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _rectangle->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 
-    _text->SetParentTransform(parentPosition, parentBottomRightPosition, parentSize);
+    _text->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

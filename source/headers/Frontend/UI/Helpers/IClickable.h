@@ -1,7 +1,7 @@
 #pragma once
-#include "IPosition.h"
+#include "Frontend/UI/Helpers/IParentPosition.h"
 
-class IClickable : public IPosition
+class IClickable : public IParentPosition
 {
 public:
 

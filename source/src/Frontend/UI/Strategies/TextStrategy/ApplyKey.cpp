@@ -1,12 +1,12 @@
 #include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
 
 #include "Frontend/KeyDefines.h"
-#include "Frontend/Managers/Input/InputManager.h"
+#include "Frontend/Managers/Input/TypeManager.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
 
 void ApplyKey::StartProcessData()
 {
-    _onTypingWeakAction = InputManager::GetInstance().SubscribeToCurrentTypedCharObserver([&](char character) {
+    _onTypingWeakAction = TypeManager::GetInstance().SubscribeToCurrentTypedCharObserver([&](char character) {
 
         if (character == Backspace)
         {
@@ -23,5 +23,5 @@ void ApplyKey::StartProcessData()
 
 void ApplyKey::StopProcessData()
 {
-    InputManager::GetInstance().UnsubscribeToCurrentTypedCharObserver(_onTypingWeakAction);
+    TypeManager::GetInstance().UnsubscribeToCurrentTypedCharObserver(_onTypingWeakAction);
 }

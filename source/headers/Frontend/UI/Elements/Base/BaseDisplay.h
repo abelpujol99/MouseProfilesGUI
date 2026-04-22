@@ -1,12 +1,9 @@
 #pragma once
-
-#include "Frontend/UI/IDrawable.h"
+#include "Frontend/UI/Helpers/IDrawable.h"
 
 class BaseDisplay : public IDrawable
 {
 public:
-
-    BaseDisplay(bool isHidden);
 
     ~BaseDisplay() override = default;
 
@@ -16,7 +13,9 @@ public:
 
 protected:
 
-    virtual void SetParentSize(ImVec2* parentSize);
+    BaseDisplay(bool isHidden);
+
+    virtual void SetParentSizePointer(ImVec2* parentSizePointer);
 
     [[nodiscard]] ImVec2 GetParentSize() const override;
 

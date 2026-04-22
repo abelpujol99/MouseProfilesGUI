@@ -44,7 +44,7 @@ private:
 
     void RenderWindow();
 
-    static WindowManager _windowManagerInstance;
+    static WindowManager* _windowManagerInstance;
 
     int _initialWidth;
     int _initialHeight;

@@ -8,7 +8,7 @@ class ClickableManager
 {
 public:
 
-    ~ClickableManager() = default;
+    ~ClickableManager() noexcept;
 
     ClickableManager(const ClickableManager& other) = delete;
     ClickableManager& operator=(const ClickableManager& other) = delete;
@@ -27,7 +27,7 @@ private:
 
     ClickableManager();
 
-    static ClickableManager _clickableManagerInstance;
+    static ClickableManager* _clickableManagerInstance;
 
     std::weak_ptr<std::function<void(bool)>> _onLeftMouseButtonReleasedWeakAction;
 

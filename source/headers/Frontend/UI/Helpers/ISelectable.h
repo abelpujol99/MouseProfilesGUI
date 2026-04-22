@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Frontend/UI/IPosition.h"
+#include "IParentPosition.h"
 
-class ISelectable : public IPosition
+class ISelectable : public IParentPosition
 {
 public:
 

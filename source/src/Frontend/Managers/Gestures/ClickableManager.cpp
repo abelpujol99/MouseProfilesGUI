@@ -1,29 +1,38 @@
-#include "Frontend/Managers/Input/ClickableManager.h"
+#include "Frontend/Managers/Gestures/ClickableManager.h"
 
 #include "Frontend/Factory/ImGuiFactory.h"
-#include "Frontend/Managers/Gesture/GestureManager.h"
-#include "Frontend/Managers/Gesture/MouseButton/MouseButtons.h"
+#include "Frontend/Managers/Input/InputManager.h"
+#include "Frontend/Managers/Input/MouseButton/MouseButtons.h"
 #include "Frontend/Utilities/Boundaries.h"
-#include "Frontend/UI/IClickable.h"
+#include "Frontend/UI/Helpers/IClickable.h"
 
-ClickableManager ClickableManager::_clickableManagerInstance {};
+ClickableManager* ClickableManager::_clickableManagerInstance {nullptr};
 
 ClickableManager::ClickableManager()
 {
-    _onLeftMouseButtonReleasedWeakAction = GestureManager::GetInstance().SubscribeToMouseButtonReleaseEvent(MouseButtons::LEFT,
+    _onLeftMouseButtonReleasedWeakAction = InputManager::GetInstance().SubscribeToMouseButtonReleaseEvent(MouseButtons::LEFT,
             [&](bool value) {
                 _hasLeftMouseButtonReleased = value;
         });
 }
 
+ClickableManager::~ClickableManager() noexcept
+{
+    delete _clickableManagerInstance;
+}
+
 ClickableManager& ClickableManager::GetInstance()
 {
-    return _clickableManagerInstance;
+    if (_clickableManagerInstance == nullptr)
+    {
+        _clickableManagerInstance = new ClickableManager();
+    }
+
+    return *_clickableManagerInstance;
 }
 
 void ClickableManager::Update()
 {
-
     if (!_hasLeftMouseButtonReleased)
     {
         return;

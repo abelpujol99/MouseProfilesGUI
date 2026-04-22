@@ -2,14 +2,31 @@
 
 #include "Frontend/Factory/ScreenFactory.h"
 
-DrawManager DrawManager::_drawManagerInstance{};
+DrawManager* DrawManager::_drawManagerInstance {nullptr};
+
+DrawManager::~DrawManager() noexcept
+{
+    delete _drawManagerInstance;
+}
 
 DrawManager& DrawManager::GetInstance()
 {
-    return _drawManagerInstance;
+    if (_drawManagerInstance == nullptr)
+    {
+        _drawManagerInstance = new DrawManager();
+    }
+
+    return *_drawManagerInstance;
 }
 
-void DrawManager::AddScreen(Screen* screen)
+void DrawManager::Start()
+{
+    _currentScreen = ScreenFactory::CreateProfileScreen(false);
+
+    AddScreen(_currentScreen.get());
+}
+
+void DrawManager::AddScreen(Canvas* screen)
 {
     _screens.push_back(screen);
 }
@@ -22,11 +39,4 @@ void DrawManager::DrawElements(ImDrawList* drawList)
     {
         (*it)->Draw(drawList);
     }
-}
-
-void DrawManager::Start()
-{
-    _currentScreen = ScreenFactory::CreateProfileScreen({0, 0}, false);
-
-    AddScreen(_currentScreen.get());
 }

@@ -19,6 +19,8 @@ public:
 
     [[nodiscard]] static ImVec2 GetMousePosition();
 
+    [[nodiscard]] static float GetMouseScroll();
+
 #pragma endregion
 
 #pragma region Keyboard

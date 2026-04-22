@@ -2,13 +2,13 @@
 
 #include <vector>
 
-#include "Frontend/UI/Elements/Complex/Screen.h"
+#include "Frontend/UI/Elements/Complex/Canvas.h"
 
 class DrawManager
 {
 public:
 
-    ~DrawManager() = default;
+    ~DrawManager() noexcept;
 
     DrawManager(const DrawManager& other) = delete;
     DrawManager& operator=(const DrawManager& other) = delete;
@@ -17,7 +17,7 @@ public:
 
     static DrawManager& GetInstance();
 
-    void AddScreen(Screen* screen);
+    void AddScreen(Canvas* screen);
 
     void DrawElements(ImDrawList* drawList);
 
@@ -28,9 +28,9 @@ private:
 
     DrawManager() = default;
 
-    static DrawManager _drawManagerInstance;
+    static DrawManager* _drawManagerInstance;
 
-    std::unique_ptr<Screen> _currentScreen;
+    std::unique_ptr<Canvas> _currentScreen;
 
-    std::vector<Screen*> _screens;
+    std::vector<Canvas*> _screens;
 };

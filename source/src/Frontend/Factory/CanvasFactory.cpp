@@ -33,7 +33,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     deviceNameRect->AddDrawableComponent(std::move(deviceNameText));
 
-    //profileScreen->AddRectDrawable(std::move(deviceNameRect));
+    profileScreen->AddRectDrawable(std::move(deviceNameRect));
 
 #pragma endregion
 
@@ -47,7 +47,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     profileNameRect->AddDrawableComponent(std::move(profileNameTextBox));
 
-    //profileScreen->AddRectDrawable(std::move(profileNameRect));
+    profileScreen->AddRectDrawable(std::move(profileNameRect));
 
 #pragma endregion
 
@@ -93,7 +93,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     profileButtonsRect->AddRectDrawable(std::move(profileUnloadButtonRect));
     profileButtonsRect->AddRectDrawable(std::move(profileLinkButtonRect));
 
-    //profileScreen->AddRectDrawable(std::move(profileButtonsRect));
+    profileScreen->AddRectDrawable(std::move(profileButtonsRect));
 
 #pragma endregion
 
@@ -105,7 +105,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     subProfileRect->AddDrawableComponent(GetRectangle(RED));
     subProfileRect->AddDrawableComponent(GetText("SubProfiles Dropdown"));
 
-    //profileScreen->AddRectDrawable(std::move(subProfileRect));
+    profileScreen->AddRectDrawable(std::move(subProfileRect));
 
 #pragma endregion
 
@@ -153,8 +153,16 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RecycleView<Text>> subProfileRecycleView {DrawableFactory::CreateRecycleView<Text>(inputListRect.get(),
-        Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,{0, 50}, 2, false)};
+    std::unique_ptr<RecycleView<Text>> subProfileRecycleView {DrawableFactory::CreateRecycleView<Text>(Anchors{{0, 0}, {1, 0}},
+        PIVOT_TOP_CENTER,{0, 50}, 2, false)};
+
+    for (int i {0}; i < 10; ++i)
+    {
+        std::string string {"Input Key"};
+
+        string += std::to_string(i + 48);
+        subProfileRecycleView->AddDrawableComponent(GetText(string));
+    }
 
     inputListRect->AddDrawableComponent(std::move(subProfileRecycleView));
     inputListRect->AddDrawableComponent(GetRectangle(BROWN));
@@ -199,7 +207,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     outputRect->AddRectDrawable(std::move(outputTypeDetailsRect));
     outputRect->AddDrawableComponent(GetRectangle(RED));
 
-    //profileScreen->AddRectDrawable(std::move(outputRect));
+    profileScreen->AddRectDrawable(std::move(outputRect));
 
 #pragma endregion
 

@@ -168,6 +168,26 @@ void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& com
     _drawableComponents.push_front(std::move(componentDrawable));
 }
 
+void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
+{
+    auto itEnd {_drawableComponents.cend()};
+
+    auto itPrevious {_drawableComponents.before_begin()};
+
+    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
+    {
+        if (it->get() != drawableComponent)
+        {
+            itPrevious = it;
+            continue;
+        }
+
+        _drawableComponents.erase_after(itPrevious);
+
+        return;
+    }
+}
+
 void RectDrawable::Draw(ImDrawList* drawList)
 {
     if (_isHidden)

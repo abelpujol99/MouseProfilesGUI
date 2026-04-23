@@ -18,7 +18,7 @@ Canvas::Canvas(bool isHidden) :
     });
 }
 
-void Canvas::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
+void Canvas::AddRectDrawable(std::shared_ptr<RectDrawable>&& rectDrawable)
 {
     rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 

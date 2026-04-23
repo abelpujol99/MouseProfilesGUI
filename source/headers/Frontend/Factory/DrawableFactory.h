@@ -24,7 +24,7 @@ public:
 
     static std::unique_ptr<Canvas> CreateCanvas(bool isHidden = false);
 
-    static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,
+    static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);
 
     static std::unique_ptr<Texture> CreateTexture(const char* textureFileName, bool isHidden = false);
@@ -43,15 +43,14 @@ public:
         bool isHidden = false);
 
     template<DerivedFromDrawableComponent TDrawableComponent>
-    static std::unique_ptr<RecycleView<TDrawableComponent>> CreateRecycleView(RectDrawable* parentDrawable,
-        Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize, uint8_t bufferSlots,
-        bool isHidden = false);
+    static std::unique_ptr<RecycleView<TDrawableComponent>> CreateRecycleView(Anchors&& rectDrawablesAnchors,
+        ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize, uint8_t bufferSlots, bool isHidden = false);
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-std::unique_ptr<RecycleView<TDrawableComponent>> DrawableFactory::CreateRecycleView(RectDrawable* parentDrawable,
-    Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize, uint8_t bufferSlots, bool isHidden)
+std::unique_ptr<RecycleView<TDrawableComponent>> DrawableFactory::CreateRecycleView(Anchors&& rectDrawablesAnchors,
+    ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize, uint8_t bufferSlots, bool isHidden)
 {
-    return std::make_unique<RecycleView<TDrawableComponent>>(parentDrawable, std::move(rectDrawablesAnchors), std::move(rectDrawablesPivot),
+    return std::make_unique<RecycleView<TDrawableComponent>>(std::move(rectDrawablesAnchors), std::move(rectDrawablesPivot),
         std::move(rectDrawablesSize), bufferSlots, isHidden);
 }

@@ -11,7 +11,7 @@ public:
 
     ~Canvas() override = default;
 
-    void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
+    void AddRectDrawable(std::shared_ptr<RectDrawable>&& rectDrawable);
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 
@@ -27,5 +27,5 @@ private:
 
     std::weak_ptr<std::function<void(ImVec2)>> _onSizeChangeWeakAction;
 
-    std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
+    std::forward_list<std::shared_ptr<RectDrawable>> _rectDrawables;
 };

@@ -17,7 +17,7 @@ public:
 
     static DrawManager& GetInstance();
 
-    void AdsCanvas(Canvas* canvas);
+    void AddCanvas(std::unique_ptr<Canvas> canvas);
 
     void DrawElements(ImDrawList* drawList);
 
@@ -30,7 +30,7 @@ private:
 
     static DrawManager* _drawManagerInstance;
 
-    std::unique_ptr<Canvas> _currentCanvas;
+    Canvas* _currentCanvas;
 
-    std::vector<Canvas*> _canvas;
+    std::vector<std::unique_ptr<Canvas>> _canvas;
 };

@@ -29,13 +29,17 @@ public:
 
     void SetDesiredSize(ImVec2&& desiredSize);
 
+    [[nodiscard]] ImVec2 GetSize() const;
+
     void UpdateAttributes();
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
     void RemoveRectDrawable(RectDrawable* rectDrawable);
 
-    void AddDrawableComponent(std::unique_ptr<DrawableComponent>&& baseDrawable);
+    void AddDrawableComponent(std::unique_ptr<DrawableComponent>&& drawableComponent);
+
+    void RemoveDrawableComponent(DrawableComponent* drawableComponent);
 
     void Draw(ImDrawList* drawList) override;
 

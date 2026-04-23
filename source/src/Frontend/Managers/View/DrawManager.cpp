@@ -21,14 +21,16 @@ DrawManager& DrawManager::GetInstance()
 
 void DrawManager::Start()
 {
-    _currentCanvas = CanvasFactory::CreateProfileCanvas(false);
+    std::unique_ptr<Canvas> canvas = CanvasFactory::CreateProfileCanvas(false);
 
-    AdsCanvas(_currentCanvas.get());
+    _currentCanvas = canvas.get();
+
+    AddCanvas(std::move(canvas));
 }
 
-void DrawManager::AdsCanvas(Canvas* canvas)
+void DrawManager::AddCanvas(std::unique_ptr<Canvas> canvas)
 {
-    _canvas.push_back(canvas);
+    _canvas.push_back(std::move(canvas));
 }
 
 void DrawManager::DrawElements(ImDrawList* drawList)

@@ -13,11 +13,11 @@
 #define SCROLL_MULTIPLIER 10
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-class RecycleView : public DrawableComponent, public IScrollable
+class RecycleView : public DrawableComponent, public DrawableTransform, public IScrollable
 {
 public:
 
-    RecycleView(RectDrawable* parentDrawable, Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize,
+    RecycleView(Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize,
         uint8_t bufferSlots, bool isHidden = false);
 
     ~RecycleView() noexcept override;
@@ -29,6 +29,8 @@ public:
     [[nodiscard]] ImVec2 GetParentBottomRightPosition() const override;
 
     void AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent);
+
+    void RemoveDrawableComponent(int index);
 
     bool CanBeScrolled() override;
 
@@ -44,9 +46,11 @@ private:
 
     void RemoveRectDrawables(int count);
 
-    void OnParentSizeUpdated() override;
+    void OnParentPositionUpdated() override;
 
-    RectDrawable* _parentDrawable;
+    void OnParentBottomRightPositionUpdated() override;
+
+    void OnParentSizeUpdated() override;
 
     Anchors _rectDrawablesAnchors;
 
@@ -56,17 +60,21 @@ private:
 
     uint8_t _bufferSlots;
 
-    std::vector<RectDrawable*> _rectDrawables;
+    std::vector<std::unique_ptr<RectDrawable>> _rectDrawables;
 
     std::vector<std::unique_ptr<TDrawableComponent>> _drawableComponents;
+
+    float _currentScroll {0};
+
+    float _maxScroll;
 
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-RecycleView<TDrawableComponent>::RecycleView(RectDrawable* parentDrawable, Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot,
-        ImVec2&& rectDrawablesSize, uint8_t bufferSlots, bool isHidden) : DrawableComponent(isHidden), _parentDrawable(parentDrawable),
-        _rectDrawablesAnchors(rectDrawablesAnchors), _rectDrawablesPivot(rectDrawablesPivot), _rectDrawablesSize(rectDrawablesSize),
-        _bufferSlots(bufferSlots * 2)
+RecycleView<TDrawableComponent>::RecycleView(Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot,
+    ImVec2&& rectDrawablesSize, uint8_t bufferSlots, bool isHidden) :
+        DrawableComponent(isHidden), _rectDrawablesAnchors(rectDrawablesAnchors), _rectDrawablesPivot(rectDrawablesPivot),
+        _rectDrawablesSize(rectDrawablesSize), _bufferSlots(bufferSlots * 2)
 {
     ScrollableManager::GetInstance().AddScrollable(this);
 }
@@ -96,6 +104,15 @@ void RecycleView<TDrawableComponent>::UpdateRectDrawablesCount()
         RemoveRectDrawables(difference);
         _rectDrawables.shrink_to_fit();
     }
+
+    _maxScroll = -(_drawableComponents.size() * _rectDrawablesSize.y) + GetParentSize().y;
+
+    if (_maxScroll < 0)
+    {
+        return;
+    }
+
+    _maxScroll = 0;
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -103,6 +120,12 @@ void RecycleView<TDrawableComponent>::SetParentTransform(ImVec2* parentPositionP
     ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer)
 {
     DrawableComponent::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+
+    _position.reset(parentPositionPointer);
+
+    _bottomRightPosition.reset(parentBottomRightPositionPointer);
+
+    _size.reset(parentSizePointer);
 
     UpdateRectDrawablesCount();
 }
@@ -132,13 +155,13 @@ void RecycleView<TDrawableComponent>::AddRectDrawables(int count)
 
         string += static_cast<char>(_rectDrawables.size() + 48);
 
-        _rectDrawables.push_back(rectDrawable.get());
-
         rectDrawable->AddDrawableComponent(std::make_unique<Rectangle>(RectangleData{WHITE, 0, 1, false}, false));
         rectDrawable->AddDrawableComponent(std::make_unique<Text>(TextData{string, TextHorizontalAlignments::CENTER,
             TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, 20.f, RED}, false));
 
-        _parentDrawable->AddRectDrawable(std::move(rectDrawable));
+        rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+
+        _rectDrawables.push_back(std::move(rectDrawable));
     }
 }
 
@@ -149,14 +172,42 @@ void RecycleView<TDrawableComponent>::RemoveRectDrawables(int count)
 
     for (int i {0}; i < count; ++i)
     {
-        _parentDrawable->RemoveRectDrawable(_rectDrawables.back());
         _rectDrawables.pop_back();
+    }
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent>
+void RecycleView<TDrawableComponent>::OnParentPositionUpdated()
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdateAttributes();
+    }
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent>
+void RecycleView<TDrawableComponent>::OnParentBottomRightPositionUpdated()
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdateAttributes();
     }
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
 void RecycleView<TDrawableComponent>::OnParentSizeUpdated()
 {
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdateAttributes();
+    }
+
     UpdateRectDrawablesCount();
     std::cout << "Count: " << _rectDrawables.size() << std::endl;
 }
@@ -164,7 +215,13 @@ void RecycleView<TDrawableComponent>::OnParentSizeUpdated()
 template<DerivedFromDrawableComponent TDrawableComponent>
 void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
 {
-    _drawableComponents.push_back(drawableComponent);
+    _drawableComponents.push_back(std::move(drawableComponent));
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent>
+void RecycleView<TDrawableComponent>::RemoveDrawableComponent(int index)
+{
+    _drawableComponents.erase(index);
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -177,6 +234,19 @@ template<DerivedFromDrawableComponent TDrawableComponent>
 void RecycleView<TDrawableComponent>::Scroll(float scrollValue)
 {
     scrollValue *= SCROLL_MULTIPLIER;
+
+    _currentScroll += scrollValue;
+
+    if (_currentScroll > 0)
+    {
+        scrollValue -= _currentScroll;
+        _currentScroll = 0;
+    }
+    else if (_currentScroll < _maxScroll)
+    {
+        scrollValue += _maxScroll - _currentScroll;
+        _currentScroll = _maxScroll;
+    }
 
     auto itEnd {_rectDrawables.cend()};
 

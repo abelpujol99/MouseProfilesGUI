@@ -88,11 +88,13 @@ void RecycleView<TDrawableComponent>::UpdateRectDrawablesCount()
 
     if (difference > 0)
     {
+        _rectDrawables.reserve(_rectDrawables.size() + difference);
         AddRectDrawables(difference);
     }
     else if (difference < 0)
     {
         RemoveRectDrawables(difference);
+        _rectDrawables.shrink_to_fit();
     }
 }
 
@@ -147,6 +149,7 @@ void RecycleView<TDrawableComponent>::RemoveRectDrawables(int count)
 
     for (int i {0}; i < count; ++i)
     {
+        _parentDrawable->RemoveRectDrawable(_rectDrawables.back());
         _rectDrawables.pop_back();
     }
 }
@@ -179,7 +182,7 @@ void RecycleView<TDrawableComponent>::Scroll(float scrollValue)
 
     for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
     {
-        RectDrawable& rectDrawable {(**it)};
+        RectDrawable& rectDrawable {**it};
 
         ImVec2 currentRelativePosition {rectDrawable.GetRelativePosition()};
 

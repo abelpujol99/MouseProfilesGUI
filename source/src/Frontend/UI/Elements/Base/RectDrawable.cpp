@@ -141,6 +141,26 @@ void RectDrawable::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
     _rectDrawables.push_front(std::move(rectDrawable));
 }
 
+void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    auto itPrevious {_rectDrawables.before_begin()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        if (it->get() != rectDrawable)
+        {
+            itPrevious = it;
+            continue;
+        }
+
+        _rectDrawables.erase_after(itPrevious);
+
+        return;
+    }
+}
+
 void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& componentDrawable)
 {
     componentDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());

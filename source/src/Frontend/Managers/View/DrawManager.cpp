@@ -1,6 +1,6 @@
 #include "Frontend/Managers/View/DrawManager.h"
 
-#include "Frontend/Factory/ScreenFactory.h"
+#include "Frontend/Factory/CanvasFactory.h"
 
 DrawManager* DrawManager::_drawManagerInstance {nullptr};
 
@@ -21,21 +21,21 @@ DrawManager& DrawManager::GetInstance()
 
 void DrawManager::Start()
 {
-    _currentScreen = ScreenFactory::CreateProfileScreen(false);
+    _currentCanvas = CanvasFactory::CreateProfileCanvas(false);
 
-    AddScreen(_currentScreen.get());
+    AdsCanvas(_currentCanvas.get());
 }
 
-void DrawManager::AddScreen(Canvas* screen)
+void DrawManager::AdsCanvas(Canvas* canvas)
 {
-    _screens.push_back(screen);
+    _canvas.push_back(canvas);
 }
 
 void DrawManager::DrawElements(ImDrawList* drawList)
 {
-    auto itEnd {_screens.cend()};
+    auto itEnd {_canvas.cend()};
 
-    for (auto it {_screens.begin()}; it != itEnd; ++it)
+    for (auto it {_canvas.begin()}; it != itEnd; ++it)
     {
         (*it)->Draw(drawList);
     }

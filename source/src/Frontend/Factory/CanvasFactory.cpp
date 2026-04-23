@@ -1,4 +1,4 @@
-#include "Frontend/Factory/ScreenFactory.h"
+#include "Frontend/Factory/CanvasFactory.h"
 
 #include <filesystem>
 #include <iostream>
@@ -17,11 +17,11 @@
 #include "Frontend/RectangleDefines.h"
 #include "Frontend/UI/Elements/Complex/RecycleView.h"
 
-std::unique_ptr<Canvas> ScreenFactory::CreateProfileScreen(bool isHidden)
+std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 {
     std::filesystem::path resourceDir = RESOURCE_DIR;
 
-    std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateScreen(isHidden)};
+    std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateCanvas(isHidden)};
 
 #pragma region Device Name
 
@@ -33,7 +33,7 @@ std::unique_ptr<Canvas> ScreenFactory::CreateProfileScreen(bool isHidden)
 
     deviceNameRect->AddDrawableComponent(std::move(deviceNameText));
 
-    profileScreen->AddRectDrawable(std::move(deviceNameRect));
+    //profileScreen->AddRectDrawable(std::move(deviceNameRect));
 
 #pragma endregion
 
@@ -47,7 +47,7 @@ std::unique_ptr<Canvas> ScreenFactory::CreateProfileScreen(bool isHidden)
 
     profileNameRect->AddDrawableComponent(std::move(profileNameTextBox));
 
-    profileScreen->AddRectDrawable(std::move(profileNameRect));
+    //profileScreen->AddRectDrawable(std::move(profileNameRect));
 
 #pragma endregion
 
@@ -93,7 +93,7 @@ std::unique_ptr<Canvas> ScreenFactory::CreateProfileScreen(bool isHidden)
     profileButtonsRect->AddRectDrawable(std::move(profileUnloadButtonRect));
     profileButtonsRect->AddRectDrawable(std::move(profileLinkButtonRect));
 
-    profileScreen->AddRectDrawable(std::move(profileButtonsRect));
+    //profileScreen->AddRectDrawable(std::move(profileButtonsRect));
 
 #pragma endregion
 
@@ -105,7 +105,7 @@ std::unique_ptr<Canvas> ScreenFactory::CreateProfileScreen(bool isHidden)
     subProfileRect->AddDrawableComponent(GetRectangle(RED));
     subProfileRect->AddDrawableComponent(GetText("SubProfiles Dropdown"));
 
-    profileScreen->AddRectDrawable(std::move(subProfileRect));
+    //profileScreen->AddRectDrawable(std::move(subProfileRect));
 
 #pragma endregion
 
@@ -199,14 +199,14 @@ std::unique_ptr<Canvas> ScreenFactory::CreateProfileScreen(bool isHidden)
     outputRect->AddRectDrawable(std::move(outputTypeDetailsRect));
     outputRect->AddDrawableComponent(GetRectangle(RED));
 
-    profileScreen->AddRectDrawable(std::move(outputRect));
+    //profileScreen->AddRectDrawable(std::move(outputRect));
 
 #pragma endregion
 
     return profileScreen;
 }
 
-void ScreenFactory::ShowLinesX(void* rect)
+void CanvasFactory::ShowLinesX(void* rect)
 {
     for (float i = 0; i < 10; i += 0.5f)
     {
@@ -222,12 +222,12 @@ void ScreenFactory::ShowLinesX(void* rect)
     }
 }
 
-std::unique_ptr<Rectangle> ScreenFactory::GetRectangle(ImColor color)
+std::unique_ptr<Rectangle> CanvasFactory::GetRectangle(ImColor color)
 {
     return std::make_unique<Rectangle>(RectangleData{color, 0, 1, false}, false);
 }
 
-std::unique_ptr<Text> ScreenFactory::GetText(std::string string)
+std::unique_ptr<Text> CanvasFactory::GetText(std::string string)
 {
     return std::make_unique<Text>(TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
         FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, false);

@@ -5,11 +5,11 @@
 class Rectangle;
 class Text;
 
-class ScreenFactory
+class CanvasFactory
 {
 public:
 
-    [[nodiscard]] static std::unique_ptr<Canvas> CreateProfileScreen(bool isHidden);
+    [[nodiscard]] static std::unique_ptr<Canvas> CreateProfileCanvas(bool isHidden);
 
 private:
 

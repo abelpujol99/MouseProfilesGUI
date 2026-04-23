@@ -22,7 +22,7 @@ public:
 
     DrawableFactory() = delete;
 
-    static std::unique_ptr<Canvas> CreateScreen(bool isHidden = false);
+    static std::unique_ptr<Canvas> CreateCanvas(bool isHidden = false);
 
     static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);

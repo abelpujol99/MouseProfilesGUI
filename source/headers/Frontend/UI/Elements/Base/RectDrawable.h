@@ -33,6 +33,8 @@ public:
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
+    void RemoveRectDrawable(RectDrawable* rectDrawable);
+
     void AddDrawableComponent(std::unique_ptr<DrawableComponent>&& baseDrawable);
 
     void Draw(ImDrawList* drawList) override;

@@ -33,7 +33,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     deviceNameRect->AddDrawableComponent(std::move(deviceNameText));
 
-    profileScreen->AddRectDrawable(std::move(deviceNameRect));
+    //profileScreen->AddRectDrawable(std::move(deviceNameRect));
 
 #pragma endregion
 
@@ -47,7 +47,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     profileNameRect->AddDrawableComponent(std::move(profileNameTextBox));
 
-    profileScreen->AddRectDrawable(std::move(profileNameRect));
+    //profileScreen->AddRectDrawable(std::move(profileNameRect));
 
 #pragma endregion
 
@@ -93,7 +93,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     profileButtonsRect->AddRectDrawable(std::move(profileUnloadButtonRect));
     profileButtonsRect->AddRectDrawable(std::move(profileLinkButtonRect));
 
-    profileScreen->AddRectDrawable(std::move(profileButtonsRect));
+    //profileScreen->AddRectDrawable(std::move(profileButtonsRect));
 
 #pragma endregion
 
@@ -105,7 +105,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     subProfileRect->AddDrawableComponent(GetRectangle(RED));
     subProfileRect->AddDrawableComponent(GetText("SubProfiles Dropdown"));
 
-    profileScreen->AddRectDrawable(std::move(subProfileRect));
+    //profileScreen->AddRectDrawable(std::move(subProfileRect));
 
 #pragma endregion
 
@@ -153,19 +153,18 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RecycleView<TextBox<char, ApplyKey>>> subProfileRecycleView {DrawableFactory::CreateRecycleView<TextBox<char, ApplyKey>>(Anchors{{0, 0}, {1, 0}},
+    std::unique_ptr<RecycleView<Button>> subProfileRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
         PIVOT_TOP_CENTER,{0, 50}, 2, false)};
 
     inputListRect->AddDrawableComponent(std::move(subProfileRecycleView));
     inputListRect->AddDrawableComponent(GetRectangle(BROWN));
-    inputListRect->AddDrawableComponent(GetText("Input List"));
 
     inputRect->AddRectDrawable(std::move(inputTitleRect));
     inputRect->AddRectDrawable(std::move(inputButtonsRect));
     inputRect->AddRectDrawable(std::move(inputListRect));
     inputRect->AddDrawableComponent(GetRectangle(RED));
 
-    profileScreen->AddRectDrawable(std::move(inputRect));
+    //profileScreen->AddRectDrawable(std::move(inputRect));
 
 #pragma endregion
 
@@ -199,7 +198,33 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     outputRect->AddRectDrawable(std::move(outputTypeDetailsRect));
     outputRect->AddDrawableComponent(GetRectangle(RED));
 
-    profileScreen->AddRectDrawable(std::move(outputRect));
+    //profileScreen->AddRectDrawable(std::move(outputRect));
+
+#pragma endregion
+
+#pragma region Test
+
+    std::unique_ptr<RectDrawable> testRect {DrawableFactory::CreateRectDrawable(Anchors{{0.2, 0.2}, {0.8, 0.8}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    std::unique_ptr<RecycleView<Button>> testRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
+        PIVOT_TOP_CENTER,{0, 50}, 2, false)};
+
+    /*for (int i {0}; i < 20; ++i)
+    {
+        std::string string {"Input Key"};
+
+        string += std::to_string(i + 48);
+        testRecycleView->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, false},
+            TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, [string]() {
+                std::cout << string << std::endl;
+            }, isHidden));
+    }*/
+
+    testRect->AddDrawableComponent(std::move(testRecycleView));
+    testRect->AddDrawableComponent(GetRectangle(BROWN));
+
+    profileScreen->AddRectDrawable(std::move(testRect));
 
 #pragma endregion
 

@@ -6,6 +6,7 @@
 #include "Frontend/UI/Elements/Complex/Canvas.h"
 #include "Frontend/UI/Elements/Advanced/Button.h"
 #include "Frontend/UI/Elements/Advanced/Text/TextBox.h"
+#include "Frontend/UI/Elements/Base/ResizableDrawable.h"
 #include "Frontend/UI/Elements/Intermediate/Rectangle.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
 #include "Frontend/UI/Elements/Intermediate/Texture.h"
@@ -25,6 +26,9 @@ public:
     static std::unique_ptr<Canvas> CreateCanvas(bool isHidden = false);
 
     static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition,
+    ImVec2&& desiredSize, bool isHidden);
+
+    static std::unique_ptr<ResizableDrawable> CreateResizableDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);
 
     static std::unique_ptr<Texture> CreateTexture(const char* textureFileName, bool isHidden = false);

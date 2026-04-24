@@ -1,15 +1,13 @@
 #pragma once
-#include "Frontend/UI/Elements/Base/BaseDrawable.h"
-#include "Frontend/UI/Elements/Base/DrawableTransform.h"
+#include "Frontend/UI/Elements/Base/DrawableContainer.h"
 
-#include <forward_list>
 #include <memory>
 
 #include "Frontend/UI/Elements/Base/DrawableComponent.h"
 #include "Frontend/Utilities/Anchors.h"
 #include "Frontend/Utilities/Concepts/DerivedFromBaseDrawable.h"
 
-class RectDrawable : public BaseDrawable, public DrawableTransform
+class RectDrawable : public DrawableContainer<std::unique_ptr<DrawableComponent>>
 {
 public:
 
@@ -17,70 +15,43 @@ public:
 
     ~RectDrawable() override = default;
 
-    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
+    void OnUpdateParentTransform() override;
 
-    void SetAnchors(Anchors&& anchors);
+    void OnUpdateAnchorsImplementation() override;
 
-    void SetPivot(ImVec2&& pivot);
+    void OnUpdatePivotImplementation() override;
 
-    void SetRelativePosition(ImVec2&& relativePosition);
+    void OnUpdateRelativePositionImplementation() override;
 
-    [[nodiscard]] ImVec2 GetRelativePosition() const;
+    void OnUpdateDesiredSizeImplementation() override;
 
-    void SetDesiredSize(ImVec2&& desiredSize);
-
-    [[nodiscard]] ImVec2 GetSize() const;
-
-    void UpdateAttributes();
+    void OnUpdateAttributesImplementation() override;
 
     void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
 
     void RemoveRectDrawable(RectDrawable* rectDrawable);
 
+    void UpdateRectDrawablesPosition();
+
+    void UpdateRectDrawables();
+
+    void AddRectDrawables(std::unique_ptr<RectDrawable>&& rectDrawable);
+
+    void RemoveRectDrawables(RectDrawable* rectDrawable);
+
     void AddDrawableComponent(std::unique_ptr<DrawableComponent>&& drawableComponent);
 
-    void RemoveDrawableComponent(DrawableComponent* drawableComponent);
+    void RemoveDrawableComponent(DrawableComponent* drawableComponent) override;
 
     void Draw(ImDrawList* drawList) override;
 
 private:
 
-    void UpdatePosition() const;
-
-    void UpdateSize() const;
-
-    void UpdateRectDrawablesPosition();
-
-    void UpdateRectDrawables();
-
-    float CalculatePositionLeft() const;
-
-    float CalculatePositionTop() const;
-
-    float CalculatePositionRight() const;
-
-    float CalculatePositionBottom() const;
-
-    static float CalculateStartPoint(float parentPosition, float parentSize, float multiplier);
-
-    static float CalculateRelativePoint(float relativePosition, float size);
-
-    static float CalculateSize(float desiredSize, float parentSize, float maxAnchor, float minAnchor);
-
     template<DerivedFromBaseDrawable TDrawable>
     static void DrawDrawables(const std::forward_list<std::unique_ptr<TDrawable>>& drawables, ImDrawList* drawList);
 
-    Anchors _anchors;
-
-    ImVec2 _pivot;
-
-    ImVec2 _relativePosition;
-
-    ImVec2 _desiredSize;
-
+private:
     std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
-
-    std::forward_list<std::unique_ptr<DrawableComponent>> _drawableComponents;
 };
 
 template<DerivedFromBaseDrawable TDrawable>

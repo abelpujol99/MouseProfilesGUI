@@ -153,16 +153,8 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RecycleView<Text>> subProfileRecycleView {DrawableFactory::CreateRecycleView<Text>(Anchors{{0, 0}, {1, 0}},
+    std::unique_ptr<RecycleView<TextBox<char, ApplyKey>>> subProfileRecycleView {DrawableFactory::CreateRecycleView<TextBox<char, ApplyKey>>(Anchors{{0, 0}, {1, 0}},
         PIVOT_TOP_CENTER,{0, 50}, 2, false)};
-
-    for (int i {0}; i < 10; ++i)
-    {
-        std::string string {"Input Key"};
-
-        string += std::to_string(i + 48);
-        subProfileRecycleView->AddDrawableComponent(GetText(string));
-    }
 
     inputListRect->AddDrawableComponent(std::move(subProfileRecycleView));
     inputListRect->AddDrawableComponent(GetRectangle(BROWN));

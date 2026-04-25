@@ -32,7 +32,7 @@ public:
 
     void AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent);
 
-    void RemoveDrawableComponent(int index);
+    void RemoveDrawableComponent(uint8_t index);
 
     bool CanBeScrolled() override;
 
@@ -44,7 +44,9 @@ public:
 
 private:
 
-    void UpdateRectDrawablesCount();
+    void UpdateResizableDrawablesCount();
+
+    void Reset();
 
     void AddResizableDrawables(int count);
 
@@ -68,7 +70,9 @@ private:
 
     std::vector<std::unique_ptr<TDrawableComponent>> _drawableComponents;
 
-    std::map<ResizableDrawable*, int8_t> _resizableDrawableComponentIndex;
+    std::map<ResizableDrawable*, uint8_t> _resizableDrawableComponentIndex;
+
+    std::map<uint8_t, ResizableDrawable*> _drawableComponentResizableIndex;
 
     float _currentScroll {0};
 
@@ -89,23 +93,9 @@ RecycleView<TDrawableComponent>::RecycleView(Anchors&& rectDrawablesAnchors, ImV
 
     _resizableDrawableComponentIndex.emplace(resizableDrawable.get(), 0);
 
+    _drawableComponentResizableIndex.emplace(0, resizableDrawable.get());
+
     resizableDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    std::unique_ptr<Button> button {DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, false}, TextData{"Input Key 0", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, []() {
-        std::cout << "Input Key 0" << std::endl;
-    }, false)};
-
-    AddDrawableComponent(std::move(button));
-
-    std::unique_ptr<Button> button1 {DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, false}, TextData{"Input Key 1", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, []() {
-        std::cout << "Input Key 1" << std::endl;
-    }, false)};
-
-    AddDrawableComponent(std::move(button1));
-
-    resizableDrawable->AddDrawableComponent(_drawableComponents.at(_resizableDrawableComponentIndex.at(resizableDrawable.get())).get());
 
     _resizableDrawables.push_back(std::move(resizableDrawable));
 }
@@ -117,7 +107,7 @@ RecycleView<TDrawableComponent>::~RecycleView() noexcept
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::UpdateRectDrawablesCount()
+void RecycleView<TDrawableComponent>::UpdateResizableDrawablesCount()
 {
     float parentSizeY {GetParentSize().y};
 
@@ -138,6 +128,8 @@ void RecycleView<TDrawableComponent>::UpdateRectDrawablesCount()
 
     _maxScroll = -(_drawableComponents.size() * _resizableDrawablesSize.y) + GetParentSize().y;
 
+    Reset();
+
     if (_maxScroll <= 0)
     {
         return;
@@ -147,12 +139,47 @@ void RecycleView<TDrawableComponent>::UpdateRectDrawablesCount()
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
+void RecycleView<TDrawableComponent>::Reset()
+{
+    MoveContainers(-_currentScroll);
+
+    _currentScroll = 0;
+
+    uint8_t resizableDrawablesCount {static_cast<uint8_t>(_resizableDrawables.size())};
+
+    if (_resizableDrawableComponentIndex.at(_resizableDrawables.at(0).get()) == 0)
+    {
+        return;
+    }
+
+    for (uint8_t i {0}; i < resizableDrawablesCount; ++i)
+    {
+        ResizableDrawable* resizableDrawable {_resizableDrawables.at(i).get()};
+
+        uint8_t& index {_resizableDrawableComponentIndex.at(resizableDrawable)};
+
+        if (index >= _drawableComponents.size())
+        {
+            continue;
+        }
+
+        resizableDrawable->RemoveDrawableComponent(_drawableComponents.at(index).get());
+
+        index = i;
+
+        resizableDrawable->AddDrawableComponent(_drawableComponents.at(index).get());
+
+        _drawableComponentResizableIndex.at(index) = _resizableDrawables.at(index).get();
+    }
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent>
 void RecycleView<TDrawableComponent>::SetParentTransform(ImVec2* parentPositionPointer,
     ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer)
 {
     DrawableComponent::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
 
-    UpdateRectDrawablesCount();
+    UpdateResizableDrawablesCount();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -181,23 +208,9 @@ void RecycleView<TDrawableComponent>::AddResizableDrawables(int count)
 
         _resizableDrawableComponentIndex.emplace(resizableDrawable.get(), _resizableDrawables.size());
 
+        _drawableComponentResizableIndex.emplace(_resizableDrawables.size(), resizableDrawable.get());
+
         resizableDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-        for (int i {0}; i < 5; ++i)
-        {
-            std::string string {"Input Key "};
-
-            string += std::to_string(_drawableComponents.size());
-
-            std::unique_ptr<Button> button {DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, false}, TextData{string, TextHorizontalAlignments::CENTER,
-                TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, [string]() {
-                std::cout << string << std::endl;
-            }, false)};
-
-            _drawableComponents.push_back(std::move(button));
-        }
-
-        resizableDrawable->AddDrawableComponent(_drawableComponents.at(_resizableDrawableComponentIndex.at(resizableDrawable.get())).get());
 
         _resizableDrawables.push_back(std::move(resizableDrawable));
     }
@@ -225,6 +238,8 @@ void RecycleView<TDrawableComponent>::OnParentPositionUpdated()
     {
         (*it)->UpdateAttributes();
     }
+
+    UpdateResizableDrawablesCount();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -238,6 +253,8 @@ void RecycleView<TDrawableComponent>::OnParentBottomRightPositionUpdated()
     {
         (*it)->UpdateAttributes();
     }
+
+    UpdateResizableDrawablesCount();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -252,20 +269,60 @@ void RecycleView<TDrawableComponent>::OnParentSizeUpdated()
         (*it)->UpdateAttributes();
     }
 
-    UpdateRectDrawablesCount();
+    UpdateResizableDrawablesCount();
     std::cout << "Count: " << _resizableDrawables.size() << std::endl;
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
 void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
 {
+    uint8_t drawableComponentsSize {_drawableComponents.size()};
+
+    _drawableComponentResizableIndex.emplace(drawableComponentsSize, nullptr);
+
+    auto itEnd {_resizableDrawableComponentIndex.cend()};
+
+    for (auto it{_resizableDrawableComponentIndex.begin()}; it != itEnd; ++it)
+    {
+        auto& pair {*it};
+
+        if (pair.second != drawableComponentsSize)
+        {
+            continue;
+        }
+
+        _drawableComponentResizableIndex.at(drawableComponentsSize) = pair.first;
+
+        break;
+    }
+
     _drawableComponents.push_back(std::move(drawableComponent));
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::RemoveDrawableComponent(int index)
+void RecycleView<TDrawableComponent>::RemoveDrawableComponent(uint8_t index)
 {
+    uint8_t auxIndex = index;
+
+    ResizableDrawable* resizableDrawable {nullptr};
+
+    do{
+        resizableDrawable = _drawableComponentResizableIndex.at(auxIndex);
+
+        resizableDrawable->RemoveDrawableComponent(_drawableComponents.at(auxIndex));
+
+        if (_drawableComponents.size() == ++auxIndex)
+        {
+            break;
+        }
+
+        resizableDrawable->AddDrawableComponent(_drawableComponents.at(auxIndex));
+
+    }while(true);
+
     _drawableComponents.erase(index);
+
+    _drawableComponentResizableIndex.erase(_drawableComponentResizableIndex.cend());
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -311,21 +368,21 @@ void RecycleView<TDrawableComponent>::MoveContainers(float scrollValue)
     {
         ResizableDrawable* resizeDrawable {it->get()};
 
-        ImVec2 currentRelativePosition {resizeDrawable->GetRelativePosition()};
-
-        float predictedRelativePosition {currentRelativePosition.y + scrollValue};
-
         uint8_t halfBufferSlots {static_cast<uint8_t>(_bufferSlots / 2)};
 
         float upperLimit {-_resizableDrawablesSize.y * halfBufferSlots};
 
         float lowerLimit {_size->y + _resizableDrawablesSize.y * (halfBufferSlots - 1)};
 
+        ImVec2 currentRelativePosition {resizeDrawable->GetRelativePosition()};
+
+        float predictedRelativePosition {currentRelativePosition.y + scrollValue};
+
         float jumpDistance {_resizableDrawablesSize.y * _resizableDrawables.size()};
 
         if (predictedRelativePosition < upperLimit)
         {
-            int8_t& index {_resizableDrawableComponentIndex.at(resizeDrawable)};
+            uint8_t& index {_resizableDrawableComponentIndex.at(resizeDrawable)};
 
             int nexIndex {index + static_cast<int>(_resizableDrawables.size())};
 
@@ -348,7 +405,7 @@ void RecycleView<TDrawableComponent>::MoveContainers(float scrollValue)
         }
         else if (predictedRelativePosition > lowerLimit)
         {
-            int8_t& index {_resizableDrawableComponentIndex.at(resizeDrawable)};
+            uint8_t& index {_resizableDrawableComponentIndex.at(resizeDrawable)};
 
             int newIndex {index - static_cast<int>(_resizableDrawables.size())};
 

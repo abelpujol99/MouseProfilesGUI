@@ -19,7 +19,7 @@ class RecycleView : public DrawableComponent, public DrawableTransform, public I
 {
 public:
 
-    RecycleView(Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot, ImVec2&& rectDrawablesSize,
+    RecycleView(Anchors&& resizableDrawablesAnchors, ImVec2&& resizableDrawablesPivot, ImVec2&& resizableDrawablesSize,
         uint8_t bufferSlots, bool isHidden = false);
 
     ~RecycleView() noexcept override;
@@ -80,10 +80,10 @@ private:
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-RecycleView<TDrawableComponent>::RecycleView(Anchors&& rectDrawablesAnchors, ImVec2&& rectDrawablesPivot,
-    ImVec2&& rectDrawablesSize, uint8_t bufferSlots, bool isHidden) :
-        DrawableComponent(isHidden), _resizeDrawablesAnchors(rectDrawablesAnchors), _resizeDrawablesPivot(rectDrawablesPivot),
-        _resizableDrawablesSize(rectDrawablesSize), _bufferSlots(bufferSlots * 2)
+RecycleView<TDrawableComponent>::RecycleView(Anchors&& resizableDrawablesAnchors, ImVec2&& resizableDrawablesPivot,
+    ImVec2&& resizableDrawablesSize, uint8_t bufferSlots, bool isHidden) :
+        DrawableComponent(isHidden), _resizeDrawablesAnchors(resizableDrawablesAnchors), _resizeDrawablesPivot(resizableDrawablesPivot),
+        _resizableDrawablesSize(resizableDrawablesSize), _bufferSlots(bufferSlots * 2)
 {
     ScrollableManager::GetInstance().AddScrollable(this);
 
@@ -111,7 +111,14 @@ void RecycleView<TDrawableComponent>::UpdateResizableDrawablesCount()
 {
     float parentSizeY {GetParentSize().y};
 
-    int slots {static_cast<int>(std::ceil(parentSizeY / _resizableDrawablesSize.y) + _bufferSlots)};
+    int slots {_bufferSlots};
+
+    float availableSlots {std::ceil(parentSizeY / _resizableDrawablesSize.y)};
+
+    if (!std::isnan(availableSlots))
+    {
+        slots += static_cast<int>(availableSlots);
+    }
 
     int difference {static_cast<int>(slots - _resizableDrawables.size())};
 
@@ -276,7 +283,7 @@ void RecycleView<TDrawableComponent>::OnParentSizeUpdated()
 template<DerivedFromDrawableComponent TDrawableComponent>
 void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
 {
-    uint8_t drawableComponentsSize {_drawableComponents.size()};
+    uint8_t drawableComponentsSize {static_cast<uint8_t>(_drawableComponents.size())};
 
     _drawableComponentResizableIndex.emplace(drawableComponentsSize, nullptr);
 
@@ -292,6 +299,8 @@ void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDraw
         }
 
         _drawableComponentResizableIndex.at(drawableComponentsSize) = pair.first;
+
+        pair.first->AddDrawableComponent(drawableComponent.get());
 
         break;
     }

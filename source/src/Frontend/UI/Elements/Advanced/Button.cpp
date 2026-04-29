@@ -49,6 +49,11 @@ bool Button::CanBeClicked() const
     return !_isHidden;
 }
 
+void Button::SetAction(std::function<void()>&& action)
+{
+    _action = action;
+}
+
 void Button::Click()
 {
     _action();

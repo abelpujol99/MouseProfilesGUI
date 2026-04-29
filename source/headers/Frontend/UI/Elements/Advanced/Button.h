@@ -25,6 +25,8 @@ public:
 
     [[nodiscard]] bool CanBeClicked() const override;
 
+    void SetAction(std::function<void()>&& action);
+
     void Click() override;
 
     void Draw(ImDrawList* drawList) override;

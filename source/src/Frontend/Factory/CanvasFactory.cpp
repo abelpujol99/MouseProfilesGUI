@@ -15,7 +15,8 @@
 #include "Frontend/PivotDefines.h"
 #include "Frontend/TextDefines.h"
 #include "Frontend/RectangleDefines.h"
-#include "Frontend/UI/Elements/Complex/RecycleView.h"
+#include "Frontend/UI/Elements/Advanced/RecycleView.h"
+#include "Frontend/UI/Elements/Advanced/Dropdown.h"
 
 std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 {
@@ -102,8 +103,11 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.3}, {0.6, 0.3}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
-    subProfileRect->AddDrawableComponent(GetRectangle(RED));
-    subProfileRect->AddDrawableComponent(GetText("SubProfiles Dropdown"));
+    std::unique_ptr<Dropdown<Button>> subProfilesDropdown {DrawableFactory::CreateDropdown<Button>(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"SubProfiles Dropdown", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
+        10, {0, 100}, ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER, {0, 50}, 4, isHidden)};
+
+    subProfileRect->AddDrawableComponent(std::move(subProfilesDropdown));
 
     profileScreen->AddRectDrawable(std::move(subProfileRect));
 
@@ -171,11 +175,11 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
 #pragma region Output
 
-    std::unique_ptr<Text> outputTitle {DrawableFactory::CreateText(TextData{"Output", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
-
     std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 70}, isHidden)};
+
+    std::unique_ptr<Text> outputTitle {DrawableFactory::CreateText(TextData{"Output", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
 
     outputTitleRect->AddDrawableComponent(std::move(outputTitle));
 

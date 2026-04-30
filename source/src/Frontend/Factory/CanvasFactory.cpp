@@ -26,7 +26,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
 #pragma region Device Name
 
-    std::unique_ptr<RectDrawable> deviceNameRect {DrawableFactory::CreateRectDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
+    std::unique_ptr<RectDrawable> deviceNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 0.1}}, PIVOT_TOP_CENTER,
         {0, 10}, {0, 50}, isHidden)};
 
     std::unique_ptr<Text> deviceNameText {DrawableFactory::CreateText(TextData{"Razer Basilisk V3", TextHorizontalAlignments::CENTER,
@@ -40,7 +40,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
 #pragma region Profile Name
 
-    std::unique_ptr<RectDrawable> profileNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.1}, {0.6, 0.1}}, PIVOT_TOP_CENTER,
+    std::unique_ptr<RectDrawable> profileNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.2}, {0.6, 0.2}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
     std::unique_ptr<TextBox<char, ApplyKey>> profileNameTextBox {DrawableFactory::CreateTextBox(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
@@ -54,32 +54,21 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
 #pragma region Profile Buttons
 
-    std::unique_ptr<RectDrawable> profileButtonsRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.2}, {1, 0.2}}, PIVOT_TOP_CENTER,
+    std::unique_ptr<RectDrawable> profileButtonsRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.3}, {1, 0.3}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
-    std::unique_ptr<RectDrawable> profileLoadButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.1, 0},{0.3, 1}}, PIVOT_MIDDLE_CENTER,
+    std::unique_ptr<RectDrawable> profileLoadUnloadButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.3, 0},{0.45, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<Button> profileLoadButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
-        TextData{"Load", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+    std::unique_ptr<Button> profileLoadUnloadButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Load/Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
         TITLE_SIZE, WHITE}, []() {
-            std::cout << "Load" << std::endl;
+            std::cout << "Load/Unload" << std::endl;
         }, isHidden)};
 
-    profileLoadButtonRect->AddDrawableComponent(std::move(profileLoadButton));
+    profileLoadUnloadButtonRect->AddDrawableComponent(std::move(profileLoadUnloadButton));
 
-    std::unique_ptr<RectDrawable> profileUnloadButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0},{0.6, 1}}, PIVOT_MIDDLE_CENTER,
-        {0, 0}, {0, 0}, isHidden)};
-
-    std::unique_ptr<Button> profileUnloadButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
-        TextData{"Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, WHITE}, []() {
-            std::cout << "Unload" << std::endl;
-        }, isHidden)};
-
-    profileUnloadButtonRect->AddDrawableComponent(std::move(profileUnloadButton));
-
-    std::unique_ptr<RectDrawable> profileLinkButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.7, 0},{0.9, 1}}, PIVOT_MIDDLE_CENTER,
+    std::unique_ptr<RectDrawable> profileLinkButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.55, 0},{0.7, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
     std::unique_ptr<Button> profileLinkButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
@@ -90,8 +79,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     profileLinkButtonRect->AddDrawableComponent(std::move(profileLinkButton));
 
-    profileButtonsRect->AddRectDrawable(std::move(profileLoadButtonRect));
-    profileButtonsRect->AddRectDrawable(std::move(profileUnloadButtonRect));
+    profileButtonsRect->AddRectDrawable(std::move(profileLoadUnloadButtonRect));
     profileButtonsRect->AddRectDrawable(std::move(profileLinkButtonRect));
 
     profileScreen->AddRectDrawable(std::move(profileButtonsRect));
@@ -100,14 +88,59 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
 #pragma region SubProfile
 
-    std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(Anchors{{0.4, 0.3}, {0.6, 0.3}}, PIVOT_TOP_CENTER,
+    std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {0.2, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    std::unique_ptr<RectDrawable> subProfileTitleRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 70}, isHidden)};
+
+    std::unique_ptr<Text> subProfileTitle {DrawableFactory::CreateText(TextData{"SubProfiles", TextHorizontalAlignments::CENTER,
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, isHidden)};
+
+    subProfileTitleRect->AddDrawableComponent(std::move(subProfileTitle));
+
+    std::unique_ptr<RectDrawable> subProfileButtonsRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.2}, {1, 0.2}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    std::unique_ptr<RectDrawable> subProfileAddButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.05, 0}, {0.45, 0}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 50}, isHidden)};
 
-    std::unique_ptr<Dropdown<Button>> subProfilesDropdown {DrawableFactory::CreateDropdown<Button>(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
-        TextData{"SubProfiles Dropdown", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
-        10, {0, 100}, ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER, {0, 50}, 4, isHidden)};
+    std::unique_ptr<Button> subProfileAddButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Add", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
+        []() {
+            std::cout << "Add" << std::endl;
+        }, isHidden)};
 
-    subProfileRect->AddDrawableComponent(std::move(subProfilesDropdown));
+    subProfileAddButtonRect->AddDrawableComponent(std::move(subProfileAddButton));
+
+    std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.55, 0}, {0.95, 0}}, PIVOT_TOP_CENTER,
+        {0, 0}, {0, 50}, isHidden)};
+
+    std::unique_ptr<Button> subProfileDeleteButton {DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Delete", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
+        []() {
+            std::cout << "Delete" << std::endl;
+        }, isHidden)};
+
+    subProfileDeleteButtonRect->AddDrawableComponent(std::move(subProfileDeleteButton));
+
+    subProfileButtonsRect->AddRectDrawable(std::move(subProfileAddButtonRect));
+    subProfileButtonsRect->AddRectDrawable(std::move(subProfileDeleteButtonRect));
+
+    std::unique_ptr<RectDrawable> subProfileListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    std::unique_ptr<RecycleView<Button>> subProfileListRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
+        PIVOT_TOP_CENTER,{0, 50}, 2, false)};
+
+    subProfileListRect->AddDrawableComponent(std::move(subProfileListRecycleView));
+    subProfileListRect->AddDrawableComponent(GetText("SubProfiles List"));
+    subProfileListRect->AddDrawableComponent(GetRectangle(BROWN));
+
+    subProfileRect->AddRectDrawable(std::move(subProfileTitleRect));
+    subProfileRect->AddRectDrawable(std::move(subProfileButtonsRect));
+    subProfileRect->AddRectDrawable(std::move(subProfileListRect));
+    subProfileRect->AddDrawableComponent(GetRectangle(RED));
 
     profileScreen->AddRectDrawable(std::move(subProfileRect));
 
@@ -115,7 +148,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
 #pragma region Input
 
-    std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {0.5, 1}}, PIVOT_MIDDLE_CENTER,
+    std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(Anchors{{0.2, 0.4}, {0.5, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
     std::unique_ptr<RectDrawable> inputTitleRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,
@@ -157,10 +190,10 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RecycleView<Button>> subProfileRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
+    std::unique_ptr<RecycleView<Button>> inputListRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
         PIVOT_TOP_CENTER,{0, 50}, 2, false)};
 
-    inputListRect->AddDrawableComponent(std::move(subProfileRecycleView));
+    inputListRect->AddDrawableComponent(std::move(inputListRecycleView));
     inputListRect->AddDrawableComponent(GetText("Inputs List"));
     inputListRect->AddDrawableComponent(GetRectangle(BROWN));
 
@@ -174,6 +207,9 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 #pragma endregion
 
 #pragma region Output
+
+    std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(Anchors{{0.5, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
 
     std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0}}, PIVOT_TOP_CENTER,
         {0, 0}, {0, 70}, isHidden)};
@@ -194,9 +230,6 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     outputTypeDetailsRect->AddDrawableComponent(GetRectangle(BROWN));
     outputTypeDetailsRect->AddDrawableComponent(GetText("Output Type Details"));
-
-    std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(Anchors{{0.5, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
-        {0, 0}, {0, 0}, isHidden)};
 
     outputRect->AddRectDrawable(std::move(outputTitleRect));
     outputRect->AddRectDrawable(std::move(outputTypeRect));

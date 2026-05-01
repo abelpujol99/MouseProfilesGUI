@@ -1,6 +1,6 @@
 #pragma once
 
-struct ImVec2;
+#include "imgui.h"
 
 namespace Utilities::Boundaries
 {

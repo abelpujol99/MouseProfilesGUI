@@ -8,6 +8,7 @@
 #include "Frontend/Utilities/Concepts/Pointer.h"
 #include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/Utilities/Math.h"
+#include "Frontend/Utilities/Pivot.h"
 
 class DrawableComponent;
 
@@ -16,7 +17,7 @@ class DrawableContainer : public BaseDrawable, public DrawableTransform
 {
 public:
 
-    DrawableContainer(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
+    DrawableContainer(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
 
     ~DrawableContainer() override = default;
 
@@ -24,7 +25,7 @@ public:
 
     void SetAnchors(Anchors&& anchors);
 
-    void SetPivot(ImVec2&& pivot);
+    void SetPivot(Pivot&& pivot);
 
     void SetRelativePosition(ImVec2&& relativePosition);
 
@@ -60,7 +61,7 @@ protected:
 
     Anchors _anchors;
 
-    ImVec2 _pivot;
+    Pivot _pivot;
 
     ImVec2 _relativePosition;
 
@@ -84,7 +85,7 @@ private:
 };
 
 template<Pointer TDrawableComponentPointer>
-DrawableContainer<TDrawableComponentPointer>::DrawableContainer(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize,
+DrawableContainer<TDrawableComponentPointer>::DrawableContainer(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize,
     bool isHidden):
         BaseDrawable(isHidden), _anchors(anchors), _pivot(pivot),
         _relativePosition(ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
@@ -117,7 +118,7 @@ void DrawableContainer<TDrawableComponentPointer>::SetAnchors(Anchors&& anchors)
 }
 
 template<Pointer TDrawableComponentPointer>
-void DrawableContainer<TDrawableComponentPointer>::SetPivot(ImVec2&& pivot)
+void DrawableContainer<TDrawableComponentPointer>::SetPivot(Pivot&& pivot)
 {
     _pivot = pivot;
 
@@ -205,14 +206,14 @@ float DrawableContainer<TDrawableComponentPointer>::CalculatePositionLeft() cons
 {
     float parentSizeX {GetParentSize().x};
 
-    float startPoint {CalculateStartPoint(GetParentPosition().x, parentSizeX, _anchors.min.x)};
+    float startPoint {CalculateStartPoint(GetParentPosition().x, parentSizeX, _anchors._min.x)};
 
-    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, _anchors.max.x, _anchors.min.x) / 2};
+    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, _anchors._max.x, _anchors._min.x) / 2};
 
     float relativePoint {CalculateRelativePoint(_relativePosition.x,
-        -(_desiredSize.x / 2) * Utilities::Math::Absolute(_anchors.max.x - _anchors.min.x - 1))};
+        -(_desiredSize.x / 2) * Utilities::Math::Absolute(_anchors._max.x - _anchors._min.x - 1))};
 
-    relativePoint += halfSize + halfSize * -(_pivot.x * 2);
+    relativePoint += halfSize + halfSize * -(_pivot.GetXPivot() * 2);
 
     return startPoint + relativePoint;
 }
@@ -222,14 +223,14 @@ float DrawableContainer<TDrawableComponentPointer>::CalculatePositionTop() const
 {
     float parentSizeY {GetParentSize().y};
 
-    float startPoint {CalculateStartPoint(GetParentPosition().y, parentSizeY, _anchors.min.y)};
+    float startPoint {CalculateStartPoint(GetParentPosition().y, parentSizeY, _anchors._min.y)};
 
     float relativePoint {CalculateRelativePoint(_relativePosition.y,
-        -(_desiredSize.y / 2)  * Utilities::Math::Absolute(_anchors.max.y - _anchors.min.y - 1))};
+        -(_desiredSize.y / 2)  * Utilities::Math::Absolute(_anchors._max.y - _anchors._min.y - 1))};
 
-    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, _anchors.max.y, _anchors.min.y) / 2};
+    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, _anchors._max.y, _anchors._min.y) / 2};
 
-    relativePoint += halfSize + halfSize * -(_pivot.y * 2);
+    relativePoint += halfSize + halfSize * -(_pivot.GetYPivot() * 2);
 
     return startPoint + relativePoint;
 }
@@ -239,14 +240,14 @@ float DrawableContainer<TDrawableComponentPointer>::CalculatePositionRight() con
 {
     float parentSizeX {GetParentSize().x};
 
-    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().x, -parentSizeX, 1 - _anchors.max.x)};
+    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().x, -parentSizeX, 1 - _anchors._max.x)};
 
     float relativePoint {CalculateRelativePoint(_relativePosition.x,
-        (_desiredSize.x / 2) * Utilities::Math::Absolute(_anchors.max.x - _anchors.min.x - 1))};
+        (_desiredSize.x / 2) * Utilities::Math::Absolute(_anchors._max.x - _anchors._min.x - 1))};
 
-    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, _anchors.max.x, _anchors.min.x) / 2};
+    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, _anchors._max.x, _anchors._min.x) / 2};
 
-    relativePoint += halfSize + halfSize * -(_pivot.x * 2);
+    relativePoint += halfSize + halfSize * -(_pivot.GetXPivot() * 2);
 
     return startPoint + relativePoint;
 }
@@ -256,14 +257,14 @@ float DrawableContainer<TDrawableComponentPointer>::CalculatePositionBottom() co
 {
     float parentSizeY {GetParentSize().y};
 
-    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().y, -parentSizeY, 1 - _anchors.max.y)};
+    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().y, -parentSizeY, 1 - _anchors._max.y)};
 
     float relativePoint {CalculateRelativePoint(_relativePosition.y,
-        (_desiredSize.y / 2) * Utilities::Math::Absolute(_anchors.max.y - _anchors.min.y - 1))};
+        (_desiredSize.y / 2) * Utilities::Math::Absolute(_anchors._max.y - _anchors._min.y - 1))};
 
-    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, _anchors.max.y, _anchors.min.y) / 2};
+    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, _anchors._max.y, _anchors._min.y) / 2};
 
-    relativePoint += halfSize + halfSize * -(_pivot.y * 2);
+    relativePoint += halfSize + halfSize * -(_pivot.GetYPivot() * 2);
 
     return startPoint + relativePoint;
 }
@@ -287,3 +288,87 @@ float DrawableContainer<TDrawableComponentPointer>::CalculateSize(float desiredS
 
     return desiredSize * Utilities::Math::Absolute(multiplier - 1) + parentSize * multiplier;
 }
+
+/*
+ *
+
+template<Pointer TDrawableComponentPointer>
+float DrawableContainer<TDrawableComponentPointer>::CalculatePositionLeft() const
+{
+    float parentSizeX {GetParentSize().x};
+
+    float horizontalMinAnchor {_anchors.GetHorizontalMinAnchor()};
+    float horizontalMaxAnchor {_anchors.GetHorizontalMaxAnchor()};
+
+    float startPoint {CalculateStartPoint(GetParentPosition().x, parentSizeX, horizontalMinAnchor)};
+
+    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, horizontalMaxAnchor, horizontalMinAnchor) / 2};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.x,
+        -(_desiredSize.x / 2) * Utilities::Math::Absolute(horizontalMaxAnchor - horizontalMinAnchor - 1))};
+
+    relativePoint += halfSize + halfSize * -(_pivot.x * 2);
+
+    return startPoint + relativePoint;
+}
+
+template<Pointer TDrawableComponentPointer>
+float DrawableContainer<TDrawableComponentPointer>::CalculatePositionTop() const
+{
+    float parentSizeY {GetParentSize().y};
+
+    float verticalMinAnchor {_anchors.GetVerticalMinAnchor()};
+    float verticalMaxAnchor {_anchors.GetVerticalMaxAnchor()};
+
+    float startPoint {CalculateStartPoint(GetParentPosition().y, parentSizeY, verticalMinAnchor)};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.y,
+        -(_desiredSize.y / 2)  * Utilities::Math::Absolute(verticalMaxAnchor - verticalMinAnchor - 1))};
+
+    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, verticalMaxAnchor, verticalMinAnchor) / 2};
+
+    relativePoint += halfSize + halfSize * -(_pivot.y * 2);
+
+    return startPoint + relativePoint;
+}
+
+template<Pointer TDrawableComponentPointer>
+float DrawableContainer<TDrawableComponentPointer>::CalculatePositionRight() const
+{
+    float parentSizeX {GetParentSize().x};
+
+    float horizontalMaxAnchor {_anchors.GetHorizontalMaxAnchor()};
+    float horizontalMinAnchor {_anchors.GetHorizontalMinAnchor()};
+
+    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().x, -parentSizeX, 1 - horizontalMaxAnchor)};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.x,
+        (_desiredSize.x / 2) * Utilities::Math::Absolute(horizontalMaxAnchor - horizontalMinAnchor - 1))};
+
+    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, horizontalMaxAnchor, horizontalMinAnchor) / 2};
+
+    relativePoint += halfSize + halfSize * -(_pivot.x * 2);
+
+    return startPoint + relativePoint;
+}
+
+template<Pointer TDrawableComponentPointer>
+float DrawableContainer<TDrawableComponentPointer>::CalculatePositionBottom() const
+{
+    float parentSizeY {GetParentSize().y};
+
+    float verticalMaxAnchor {_anchors.GetVerticalMaxAnchor()};
+    float verticalMinAnchor {_anchors.GetVerticalMinAnchor()};
+
+    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().y, -parentSizeY, 1 - verticalMaxAnchor)};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.y,
+        (_desiredSize.y / 2) * Utilities::Math::Absolute(verticalMaxAnchor - verticalMinAnchor - 1))};
+
+    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, verticalMaxAnchor, verticalMinAnchor) / 2};
+
+    relativePoint += halfSize + halfSize * -(_pivot.y * 2);
+
+    return startPoint + relativePoint;
+}
+ */

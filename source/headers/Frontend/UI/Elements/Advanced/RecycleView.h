@@ -64,10 +64,6 @@ private:
 
     ImVec2 _marginBetweenViews;
 
-    Anchors _resizeDrawablesAnchors;
-
-    ImVec2 _resizeDrawablesPivot;
-
     ImVec2 _rowsSize;
 
     uint8_t _bufferRows;
@@ -96,7 +92,7 @@ private:
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize,
     uint8_t bufferRows, bool isHidden) :
-        DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews(std::move(marginBetweenViews)),
+        DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews({marginBetweenViews.x / _viewsPerRow, marginBetweenViews.y}),
         _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2),
         _widthPerView(1 / static_cast<float>(_viewsPerRow)), _rowCreationStrategy(std::make_unique<TRowCreation>())
 {

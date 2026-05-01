@@ -34,10 +34,10 @@ public:
 
     static std::unique_ptr<Canvas> CreateCanvas(bool isHidden = false);
 
-    static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition,
+    static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);
 
-    static std::unique_ptr<ResizableDrawable> CreateResizableDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition,
+    static std::unique_ptr<ResizableDrawable> CreateResizableDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);
 
     static std::unique_ptr<Texture> CreateTexture(const char* textureFileName, bool isHidden = false);

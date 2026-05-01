@@ -6,7 +6,7 @@ namespace Utilities::Math
 
     [[nodiscard]] static int Absolute(int value);
 
-    [[nodiscard]] static float Clamp(float value);
+    [[nodiscard]] static float Clamp(float value, float min, float max);
 }
 
 inline float Utilities::Math::Absolute(float value)
@@ -29,16 +29,16 @@ inline int Utilities::Math::Absolute(int value)
     return value;
 }
 
-inline float Utilities::Math::Clamp(float value)
+inline float Utilities::Math::Clamp(float value, float min, float max)
 {
-    if (value > 1.f)
+    if (value > max)
     {
-        return 1.f;
+        return max;
     }
 
-    if (value < 0.f)
+    if (value < min)
     {
-        return 0.f;
+        return min;
     }
 
     return value;

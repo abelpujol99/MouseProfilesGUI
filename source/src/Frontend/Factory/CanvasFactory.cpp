@@ -27,7 +27,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateDevicesCanvas(bool isHidden)
         {0, 0}, {0, 0}, isHidden)};
 
     std::unique_ptr<RecycleView<Button, ResizableRow>> testRecycleView {DrawableFactory::CreateRecycleView<Button, ResizableRow>(
-        4, {0, 0}, {0, 150}, 2, isHidden)};
+        4, {0.1, 0.1}, {0, 150}, 2, isHidden)};
 
     auto recyclePtr {testRecycleView.get()};
 

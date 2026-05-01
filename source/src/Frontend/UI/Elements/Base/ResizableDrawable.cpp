@@ -3,7 +3,7 @@
 #include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/UI/Elements/Base/DrawableComponent.h"
 
-ResizableDrawable::ResizableDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize,
+ResizableDrawable::ResizableDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize,
     bool isHidden) :
         DrawableContainer(std::move(anchors), std::move(pivot), {ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
         ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}, std::move(desiredSize), isHidden)

@@ -5,7 +5,7 @@ class ResizableDrawable : public DrawableContainer<DrawableComponent*>
 {
 public:
 
-    ResizableDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
+    ResizableDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
 
     ~ResizableDrawable() override = default;
 

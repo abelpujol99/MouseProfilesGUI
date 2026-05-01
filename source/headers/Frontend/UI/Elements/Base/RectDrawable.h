@@ -11,7 +11,7 @@ class RectDrawable : public DrawableContainer<std::unique_ptr<DrawableComponent>
 {
 public:
 
-    RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
+    RectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
 
     ~RectDrawable() override = default;
 

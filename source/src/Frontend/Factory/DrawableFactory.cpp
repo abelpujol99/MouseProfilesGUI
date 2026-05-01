@@ -7,15 +7,15 @@ std::unique_ptr<Canvas> DrawableFactory::CreateCanvas(bool isHidden)
     return std::make_unique<Canvas>(isHidden);
 }
 
-std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, ImVec2&& pivot ,ImVec2&& relativePosition,
+std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, Pivot&& pivot ,ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden)
 {
     return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
         std::move(desiredSize), isHidden);
 }
 
-std::unique_ptr<ResizableDrawable> DrawableFactory::CreateResizableDrawable(Anchors &&anchors, ImVec2 &&pivot,
-    ImVec2 &&relativePosition, ImVec2 &&desiredSize, bool isHidden)
+std::unique_ptr<ResizableDrawable> DrawableFactory::CreateResizableDrawable(Anchors&& anchors, Pivot&& pivot,
+    ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden)
 {
     return std::make_unique<ResizableDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
         std::move(desiredSize), isHidden);

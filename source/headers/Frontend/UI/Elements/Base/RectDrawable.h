@@ -15,7 +15,7 @@ public:
 
     ~RectDrawable() override = default;
 
-    void OnUpdateParentTransform() override;
+    void OnUpdateParentTransformImplementation() override;
 
     void OnUpdateAnchorsImplementation() override;
 

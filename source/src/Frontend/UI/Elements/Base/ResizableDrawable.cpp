@@ -9,6 +9,62 @@ ResizableDrawable::ResizableDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&&
         ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}, std::move(desiredSize), isHidden)
 {}
 
+void ResizableDrawable::OnUpdateParentTransformImplementation()
+{
+    UpdateResizableDrawables();
+}
+
+void ResizableDrawable::OnUpdateAnchorsImplementation()
+{
+    UpdateResizableDrawables();
+}
+
+void ResizableDrawable::OnUpdatePivotImplementation()
+{
+    UpdateResizableDrawablePosition();
+}
+
+void ResizableDrawable::OnUpdateRelativePositionImplementation()
+{
+    UpdateResizableDrawables();
+}
+
+void ResizableDrawable::OnUpdateDesiredSizeImplementation()
+{
+    UpdateResizableDrawables();
+}
+
+void ResizableDrawable::OnUpdateAttributesImplementation()
+{
+    UpdateResizableDrawables();
+}
+
+void ResizableDrawable::UpdateResizableDrawables()
+{
+    auto itEnd {_resizableDrawables.cend()};
+
+    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdatePosition();
+
+        (*it)->UpdateSize();
+
+        (*it)->UpdateResizableDrawables();
+    }
+}
+
+void ResizableDrawable::UpdateResizableDrawablePosition()
+{
+    auto itEnd {_resizableDrawables.cend()};
+
+    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->UpdatePosition();
+
+        (*it)->UpdateResizableDrawablePosition();
+    }
+}
+
 void ResizableDrawable::AddResizableDrawable(std::unique_ptr<ResizableDrawable>&& resizableDrawable)
 {
     if (resizableDrawable.get() == this)
@@ -79,34 +135,4 @@ void ResizableDrawable::Draw(ImDrawList* drawList)
     {
         (*it)->Draw(drawList);
     }
-}
-
-void ResizableDrawable::OnUpdateParentTransform()
-{
-
-}
-
-void ResizableDrawable::OnUpdateAnchorsImplementation()
-{
-
-}
-
-void ResizableDrawable::OnUpdatePivotImplementation()
-{
-
-}
-
-void ResizableDrawable::OnUpdateRelativePositionImplementation()
-{
-
-}
-
-void ResizableDrawable::OnUpdateDesiredSizeImplementation()
-{
-
-}
-
-void ResizableDrawable::OnUpdateAttributesImplementation()
-{
-
 }

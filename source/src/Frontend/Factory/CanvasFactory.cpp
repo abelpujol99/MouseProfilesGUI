@@ -17,11 +17,43 @@
 #include "Frontend/RectangleDefines.h"
 #include "Frontend/UI/Elements/Advanced/RecycleView.h"
 #include "Frontend/UI/Elements/Advanced/Dropdown.h"
+#include "Frontend/UI/Strategies/RecycleViewStrategy/ResizableRow.h"
+
+std::unique_ptr<Canvas> CanvasFactory::CreateDevicesCanvas(bool isHidden)
+{
+    std::unique_ptr<Canvas> devicesScreen {DrawableFactory::CreateCanvas(isHidden)};
+
+    std::unique_ptr<RectDrawable> testRecycleViewRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 1}}, PIVOT_MIDDLE_CENTER,
+        {0, 0}, {0, 0}, isHidden)};
+
+    std::unique_ptr<RecycleView<Button, ResizableRow>> testRecycleView {DrawableFactory::CreateRecycleView<Button, ResizableRow>(
+        4, {0, 0}, {0, 150}, 2, isHidden)};
+
+    auto recyclePtr {testRecycleView.get()};
+
+    testRecycleViewRect->AddDrawableComponent(std::move(testRecycleView));
+    testRecycleViewRect->AddDrawableComponent(GetRectangle(RED));
+
+    for (int i {0}; i < 30; ++i)
+    {
+        std::string string {"Device "};
+
+        string += std::to_string(i);
+
+        recyclePtr->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{PURPLE, NO_ROUNDING, THIN_BORDER, false},
+            TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+                TITLE_SIZE, RED}, [string]() {
+            std::cout << string << std::endl;
+        }));
+    }
+
+    devicesScreen->AddRectDrawable(std::move(testRecycleViewRect));
+
+    return devicesScreen;
+}
 
 std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 {
-    std::filesystem::path resourceDir = RESOURCE_DIR;
-
     std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateCanvas(isHidden)};
 
 #pragma region Device Name
@@ -130,12 +162,27 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> subProfileListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RecycleView<Button>> subProfileListRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
-        PIVOT_TOP_CENTER,{0, 50}, 2, false)};
+    std::unique_ptr<RecycleView<Button, NotResizableRow>> subProfileListRecycleView {DrawableFactory::CreateRecycleView<Button, NotResizableRow>(
+        1, {0, 0}, {0, 50}, 2, false)};
+
+    auto recyclePtr {subProfileListRecycleView.get()};
 
     subProfileListRect->AddDrawableComponent(std::move(subProfileListRecycleView));
     subProfileListRect->AddDrawableComponent(GetText("SubProfiles List"));
     subProfileListRect->AddDrawableComponent(GetRectangle(BROWN));
+
+    for (int i {0}; i < 30; ++i)
+    {
+        std::string string {"Device "};
+
+        string += std::to_string(i);
+
+        recyclePtr->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{PURPLE, NO_ROUNDING, THIN_BORDER, false},
+            TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+                TITLE_SIZE, RED}, [string]() {
+            std::cout << string << std::endl;
+        }));
+    }
 
     subProfileRect->AddRectDrawable(std::move(subProfileTitleRect));
     subProfileRect->AddRectDrawable(std::move(subProfileButtonsRect));
@@ -190,8 +237,8 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.4}, {1, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    std::unique_ptr<RecycleView<Button>> inputListRecycleView {DrawableFactory::CreateRecycleView<Button>(Anchors{{0, 0}, {1, 0}},
-        PIVOT_TOP_CENTER,{0, 50}, 2, false)};
+    std::unique_ptr<RecycleView<Button, NotResizableRow>> inputListRecycleView {DrawableFactory::CreateRecycleView<Button, NotResizableRow>(
+        1, {0, 0},{0, 50}, 2, false)};
 
     inputListRect->AddDrawableComponent(std::move(inputListRecycleView));
     inputListRect->AddDrawableComponent(GetText("Inputs List"));

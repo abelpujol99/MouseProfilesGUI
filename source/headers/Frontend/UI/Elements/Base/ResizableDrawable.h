@@ -9,6 +9,10 @@ public:
 
     ~ResizableDrawable() override = default;
 
+    void UpdateResizableDrawables();
+
+    void UpdateResizableDrawablePosition();
+
     void AddResizableDrawable(std::unique_ptr<ResizableDrawable>&& resizableDrawable);
 
     void RemoveResizableDrawable(ResizableDrawable* resizableDrawable);
@@ -21,7 +25,7 @@ public:
 
 private:
 
-    void OnUpdateParentTransform() override;
+    void OnUpdateParentTransformImplementation() override;
 
     void OnUpdateAnchorsImplementation() override;
 

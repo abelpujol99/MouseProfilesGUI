@@ -9,6 +9,8 @@ class CanvasFactory
 {
 public:
 
+    [[nodiscard]] static std::unique_ptr<Canvas> CreateDevicesCanvas(bool isHidden);
+
     [[nodiscard]] static std::unique_ptr<Canvas> CreateProfileCanvas(bool isHidden);
 
 private:

@@ -12,12 +12,15 @@
 #include "Frontend/UI/Elements/Intermediate/Rectangle.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
 #include "Frontend/UI/Elements/Intermediate/Texture.h"
+#include "Frontend/UI/Strategies/RecycleViewStrategy/NotResizableRow.h"
 #include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
 #include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
 #include "Frontend/UI/Structs/TextData.h"
 
 #include "Frontend/Utilities/Concepts/DerivedFromDrawableComponent.h"
-template<DerivedFromDrawableComponent TDrawableComponent>
+#include "Frontend/Utilities/Concepts/DerivedFromBaseRowCreationStrategy.h"
+
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 class RecycleView;
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -52,9 +55,9 @@ public:
     static std::unique_ptr<Button> CreateButton(RectangleData&& rectangleData, TextData&& textData, std::function<void()>&& action,
         bool isHidden = false);
 
-    template<DerivedFromDrawableComponent TDrawableComponent>
-    static std::unique_ptr<RecycleView<TDrawableComponent>> CreateRecycleView(Anchors&& resizableDrawablesAnchors,
-        ImVec2&& resizableDrawablesPivot, ImVec2&& resizableDrawablesSize, uint8_t bufferSlots, bool isHidden = false);
+    template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+    static std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> CreateRecycleView(uint8_t viewsPerRow,
+        ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, bool isHidden = false);
 
     template<DerivedFromDrawableComponent TDrawableComponent>
     static std::unique_ptr<Dropdown<TDrawableComponent>> CreateDropdown(RectangleData&& buttonRectangleData,
@@ -62,12 +65,12 @@ public:
         ImVec2&& resizableDrawablesPivot, ImVec2&& resizableDrawablesSize, uint8_t bufferSlots, bool isHidden);
 };
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-std::unique_ptr<RecycleView<TDrawableComponent>> DrawableFactory::CreateRecycleView(Anchors&& resizableDrawablesAnchors,
-    ImVec2&& resizableDrawablesPivot, ImVec2&& resizableDrawablesSize, uint8_t bufferSlots, bool isHidden)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> DrawableFactory::CreateRecycleView(uint8_t viewsPerRow,
+    ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, bool isHidden)
 {
-    return std::make_unique<RecycleView<TDrawableComponent>>(std::move(resizableDrawablesAnchors), std::move(resizableDrawablesPivot),
-        std::move(resizableDrawablesSize), bufferSlots, isHidden);
+    return std::make_unique<RecycleView<TDrawableComponent, TRowCreation>>(viewsPerRow, std::move(marginBetweenViews),
+        std::move(rowsSize), bufferRows, isHidden);
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>
@@ -80,7 +83,7 @@ std::unique_ptr<Dropdown<TDrawableComponent>> DrawableFactory::CreateDropdown(Re
     std::unique_ptr<ResizableDrawable> recycleViewContainer {CreateResizableDrawable(ANCHORS_BOTTOM_STRETCH, PIVOT_TOP_CENTER,
         {0, distanceY}, std::move(dropdownWindowsSize), true)};
 
-    std::unique_ptr<RecycleView<TDrawableComponent>> recycleView {CreateRecycleView<TDrawableComponent>(std::move(resizableDrawablesAnchors),
+    std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>> recycleView {CreateRecycleView<TDrawableComponent>(std::move(resizableDrawablesAnchors),
         std::move(resizableDrawablesPivot), std::move(resizableDrawablesSize), bufferSlots, isHidden)};
 
     return std::make_unique<Dropdown<TDrawableComponent>>(std::move(button), std::move(recycleViewContainer), std::move(recycleView),

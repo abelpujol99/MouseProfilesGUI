@@ -14,7 +14,7 @@ class Dropdown : public DrawableComponent, public DrawableTransform
 public:
 
     Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<ResizableDrawable>&& recycleViewContainer,
-        std::unique_ptr<RecycleView<TDrawableComponent>>&& recycleView, bool isHidden);
+        std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>>&& recycleView, bool isHidden);
 
     ~Dropdown() override = default;
 
@@ -38,13 +38,13 @@ private:
 
     std::unique_ptr<ResizableDrawable> _recycleViewContainer;
 
-    std::unique_ptr<RecycleView<TDrawableComponent>> _recycleView;
+    std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>> _recycleView;
 
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent>
 Dropdown<TDrawableComponent>::Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<ResizableDrawable>&& recycleViewContainer,
-    std::unique_ptr<RecycleView<TDrawableComponent>>&& recycleView, bool isHidden) :
+    std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>>&& recycleView, bool isHidden) :
         DrawableComponent(isHidden), _button(std::move(button)), _recycleViewContainer(std::move(recycleViewContainer)),
         _recycleView(std::move(recycleView))
 {

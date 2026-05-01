@@ -14,13 +14,13 @@
 #define NO_INDEX -1
 #define SCROLL_MULTIPLIER 10
 
-template<DerivedFromDrawableComponent TDrawableComponent>
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 class RecycleView : public DrawableComponent, public DrawableTransform, public IScrollable
 {
 public:
 
-    RecycleView(Anchors&& resizableDrawablesAnchors, ImVec2&& resizableDrawablesPivot, ImVec2&& resizableDrawablesSize,
-        uint8_t bufferSlots, bool isHidden = false);
+    RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
+        bool isHidden = false);
 
     ~RecycleView() noexcept override;
 
@@ -48,9 +48,11 @@ private:
 
     void Reset();
 
-    void AddResizableDrawables(int count);
+    void CalculateMaxScroll();
 
-    void RemoveRectDrawables(int count);
+    void CreateRow(ImVec2&& lastRowPosition);
+
+    void DeleteLastRow();
 
     void OnParentPositionUpdated() override;
 
@@ -58,84 +60,138 @@ private:
 
     void OnParentSizeUpdated() override;
 
+    uint8_t _viewsPerRow;
+
+    ImVec2 _marginBetweenViews;
+
     Anchors _resizeDrawablesAnchors;
 
     ImVec2 _resizeDrawablesPivot;
 
-    ImVec2 _resizableDrawablesSize;
+    ImVec2 _rowsSize;
 
-    uint8_t _bufferSlots;
+    uint8_t _bufferRows;
 
-    std::vector<std::unique_ptr<ResizableDrawable>> _resizableDrawables;
+    uint8_t _totalRows;
+
+    float _widthPerView;
+
+    std::vector<std::unique_ptr<ResizableDrawable>> _rows;
+
+    std::map<ResizableDrawable*, std::vector<ResizableDrawable*>> _views;
 
     std::vector<std::unique_ptr<TDrawableComponent>> _drawableComponents;
 
-    std::map<ResizableDrawable*, uint8_t> _resizableDrawableComponentIndex;
+    std::map<ResizableDrawable*, uint8_t> _viewsComponentIndex;
 
-    std::map<uint8_t, ResizableDrawable*> _drawableComponentResizableIndex;
+    std::map<uint8_t, ResizableDrawable*> _componentViewsIndex;
 
     float _currentScroll {0};
 
     float _maxScroll{0};
+
+    std::unique_ptr<TRowCreation> _rowCreationStrategy;
 };
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-RecycleView<TDrawableComponent>::RecycleView(Anchors&& resizableDrawablesAnchors, ImVec2&& resizableDrawablesPivot,
-    ImVec2&& resizableDrawablesSize, uint8_t bufferSlots, bool isHidden) :
-        DrawableComponent(isHidden), _resizeDrawablesAnchors(resizableDrawablesAnchors), _resizeDrawablesPivot(resizableDrawablesPivot),
-        _resizableDrawablesSize(resizableDrawablesSize), _bufferSlots(bufferSlots * 2)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize,
+    uint8_t bufferRows, bool isHidden) :
+        DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews(std::move(marginBetweenViews)),
+        _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2),
+        _widthPerView(1 / static_cast<float>(_viewsPerRow)), _rowCreationStrategy(std::make_unique<TRowCreation>())
 {
     ScrollableManager::GetInstance().AddScrollable(this);
 
-    std::unique_ptr<ResizableDrawable> resizableDrawable {DrawableFactory::CreateResizableDrawable({{_resizeDrawablesAnchors.min.x, _resizeDrawablesAnchors.min.y},
-            {_resizeDrawablesAnchors.max.x, _resizeDrawablesAnchors.max.y}}, {_resizeDrawablesPivot.x, _resizeDrawablesPivot.y},
-            {0, 0}, {_resizableDrawablesSize.x, _resizableDrawablesSize.y}, false)};
-
-    _resizableDrawableComponentIndex.emplace(resizableDrawable.get(), 0);
-
-    _drawableComponentResizableIndex.emplace(0, resizableDrawable.get());
-
-    resizableDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    _resizableDrawables.push_back(std::move(resizableDrawable));
+    CreateRow({0, -_rowsSize.y});
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-RecycleView<TDrawableComponent>::~RecycleView() noexcept
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+RecycleView<TDrawableComponent, TRowCreation>::~RecycleView() noexcept
 {
     ScrollableManager::GetInstance().RemoveScrollable(this);
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::UpdateResizableDrawablesCount()
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::UpdateResizableDrawablesCount()
 {
     float parentSizeY {GetParentSize().y};
 
-    int slots {_bufferSlots};
+    int slots {_bufferRows};
 
-    float availableSlots {std::ceil(parentSizeY / _resizableDrawablesSize.y)};
+    float availableSlots {std::ceil(parentSizeY / _rowsSize.y)};
 
     if (!std::isnan(availableSlots))
     {
         slots += static_cast<int>(availableSlots);
     }
 
-    int difference {static_cast<int>(slots - _resizableDrawables.size())};
+    int difference {static_cast<int>(slots - _rows.size())};
 
     if (difference > 0)
     {
-        _resizableDrawables.reserve(_resizableDrawables.size() + difference);
-        AddResizableDrawables(difference);
+        _rows.reserve(_rows.size() + difference);
+
+        for (int i {0}; i < difference; ++i)
+        {
+            CreateRow(_rows.back()->GetRelativePosition());
+        }
     }
     else if (difference < 0)
     {
-        RemoveRectDrawables(difference);
-        _resizableDrawables.shrink_to_fit();
+        difference = Utilities::Math::Absolute(difference);
+
+        for (int i {0}; i < difference; ++i)
+        {
+            DeleteLastRow();
+        }
+        _rows.shrink_to_fit();
     }
 
-    _maxScroll = -(_drawableComponents.size() * _resizableDrawablesSize.y) + GetParentSize().y;
-
     Reset();
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Reset()
+{
+    MoveContainers(-_currentScroll);
+
+    _currentScroll = 0;
+
+    uint8_t rowsCount {static_cast<uint8_t>(_rows.size())};
+
+    if (_viewsComponentIndex.at(_views.at(_rows.front().get()).front()) == 0)
+    {
+        //return;
+    }
+
+    for (uint8_t i {0}; i < rowsCount; ++i)
+    {
+        for (uint8_t j {0}; j < _viewsPerRow; ++j)
+        {
+            ResizableDrawable* view {_views.at(_rows.at(i).get()).at(j)};
+
+            uint8_t& index {_viewsComponentIndex.at(view)};
+
+            if (index >= _drawableComponents.size())
+            {
+                return;
+            }
+
+            view->RemoveDrawableComponent(_drawableComponents.at(index).get());
+
+            index = i * _viewsPerRow + j;
+
+            view->AddDrawableComponent(_drawableComponents.at(index).get());
+
+            _componentViewsIndex.at(index) = _views.at(_rows.at(i).get()).at(j);
+        }
+    }
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::CalculateMaxScroll()
+{
+    _maxScroll = -(std::ceil(static_cast<float>(_drawableComponents.size()) / static_cast<float>(_viewsPerRow)) * _rowsSize.y) + GetParentSize().y;
 
     if (_maxScroll <= 0)
     {
@@ -145,43 +201,8 @@ void RecycleView<TDrawableComponent>::UpdateResizableDrawablesCount()
     _maxScroll = 0;
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::Reset()
-{
-    MoveContainers(-_currentScroll);
-
-    _currentScroll = 0;
-
-    uint8_t resizableDrawablesCount {static_cast<uint8_t>(_resizableDrawables.size())};
-
-    if (_resizableDrawableComponentIndex.at(_resizableDrawables.at(0).get()) == 0)
-    {
-        return;
-    }
-
-    for (uint8_t i {0}; i < resizableDrawablesCount; ++i)
-    {
-        ResizableDrawable* resizableDrawable {_resizableDrawables.at(i).get()};
-
-        uint8_t& index {_resizableDrawableComponentIndex.at(resizableDrawable)};
-
-        if (index >= _drawableComponents.size())
-        {
-            continue;
-        }
-
-        resizableDrawable->RemoveDrawableComponent(_drawableComponents.at(index).get());
-
-        index = i;
-
-        resizableDrawable->AddDrawableComponent(_drawableComponents.at(index).get());
-
-        _drawableComponentResizableIndex.at(index) = _resizableDrawables.at(index).get();
-    }
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::SetParentTransform(ImVec2* parentPositionPointer,
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::SetParentTransform(ImVec2* parentPositionPointer,
     ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer)
 {
     DrawableComponent::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
@@ -189,107 +210,111 @@ void RecycleView<TDrawableComponent>::SetParentTransform(ImVec2* parentPositionP
     UpdateResizableDrawablesCount();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-ImVec2 RecycleView<TDrawableComponent>::GetParentPosition() const
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+ImVec2 RecycleView<TDrawableComponent, TRowCreation>::GetParentPosition() const
 {
     return DrawableComponent::GetParentPosition();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-ImVec2 RecycleView<TDrawableComponent>::GetParentBottomRightPosition() const
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+ImVec2 RecycleView<TDrawableComponent, TRowCreation>::GetParentBottomRightPosition() const
 {
     return DrawableComponent::GetParentBottomRightPosition();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::AddResizableDrawables(int count)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPosition)
 {
-    for (int i {0}; i < count; ++i)
+    std::unique_ptr<ResizableDrawable> row {DrawableFactory::CreateResizableDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
+        {lastRowPosition.x, lastRowPosition.y + _rowsSize.y}, {_rowsSize.x, _rowsSize.y}, _isHidden)};
+
+    _views.emplace(row.get(), std::vector<ResizableDrawable*>{});
+
+    uint8_t offsetIndex {static_cast<uint8_t>(_viewsPerRow * _rows.size())};
+
+    for (uint8_t i {0}; i < _viewsPerRow; ++i)
     {
-        ImVec2 lastResizableDrawablePosition {_resizableDrawables.back()->GetRelativePosition()};
+        std::unique_ptr<ResizableDrawable> view {DrawableFactory::CreateResizableDrawable(
+            Anchors{{i * _widthPerView + _marginBetweenViews.x, _marginBetweenViews.y},
+                {(i + 1) * _widthPerView - _marginBetweenViews.x, 1 - _marginBetweenViews.y}}, PIVOT_MIDDLE_CENTER,
+                {0, 0}, {0, 0}, false)};
 
-        std::unique_ptr<ResizableDrawable> resizableDrawable {DrawableFactory::CreateResizableDrawable({{_resizeDrawablesAnchors.min.x, _resizeDrawablesAnchors.min.y},
-            {_resizeDrawablesAnchors.max.x, _resizeDrawablesAnchors.max.y}}, {_resizeDrawablesPivot.x, _resizeDrawablesPivot.y},
-            {lastResizableDrawablePosition.x, lastResizableDrawablePosition.y + _resizableDrawablesSize.y},
-            {_resizableDrawablesSize.x, _resizableDrawablesSize.y}, false)};
+        uint8_t index {static_cast<uint8_t>(i + offsetIndex)};
 
-        _resizableDrawableComponentIndex.emplace(resizableDrawable.get(), _resizableDrawables.size());
+        _viewsComponentIndex.emplace(view.get(), index);
 
-        _drawableComponentResizableIndex.emplace(_resizableDrawables.size(), resizableDrawable.get());
+        _componentViewsIndex.emplace(index + _viewsPerRow * _rows.size(), view.get());
 
-        resizableDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+        _views.at(row.get()).push_back(view.get());
 
-        _resizableDrawables.push_back(std::move(resizableDrawable));
+        row->AddResizableDrawable(std::move(view));
     }
+
+    row->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+
+    _rows.push_back(std::move(row));
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::RemoveRectDrawables(int count)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::DeleteLastRow()
 {
-    count = Utilities::Math::Absolute(count);
+    _views.erase(_rows.back().get());
 
-    for (int i {0}; i < count; ++i)
-    {
-        _resizableDrawables.pop_back();
-    }
+    _rows.pop_back();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::OnParentPositionUpdated()
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::OnParentPositionUpdated()
 {
     *_position = GetParentPosition();
 
-    auto itEnd {_resizableDrawables.cend()};
-
-    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    for (auto&& row : _rows)
     {
-        (*it)->UpdateAttributes();
+        row->UpdateAttributes();
     }
 
     UpdateResizableDrawablesCount();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::OnParentBottomRightPositionUpdated()
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::OnParentBottomRightPositionUpdated()
 {
     *_bottomRightPosition = GetParentBottomRightPosition();
 
-    auto itEnd {_resizableDrawables.cend()};
-
-    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    for (auto&& row : _rows)
     {
-        (*it)->UpdateAttributes();
+        row->UpdateAttributes();
     }
 
     UpdateResizableDrawablesCount();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::OnParentSizeUpdated()
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::OnParentSizeUpdated()
 {
     *_size = GetParentSize();
 
-    auto itEnd {_resizableDrawables.cend()};
+    CalculateMaxScroll();
 
-    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    for (auto&& row : _rows)
     {
-        (*it)->UpdateAttributes();
+        row->UpdateAttributes();
     }
 
     UpdateResizableDrawablesCount();
-    std::cout << "Count: " << _resizableDrawables.size() << std::endl;
+    std::cout << "Count: " << _rows.size() << std::endl;
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
 {
     uint8_t drawableComponentsSize {static_cast<uint8_t>(_drawableComponents.size())};
 
-    _drawableComponentResizableIndex.emplace(drawableComponentsSize, nullptr);
+    _componentViewsIndex.emplace(drawableComponentsSize, nullptr);
 
-    auto itEnd {_resizableDrawableComponentIndex.cend()};
+    auto itEnd {_viewsComponentIndex.cend()};
 
-    for (auto it{_resizableDrawableComponentIndex.begin()}; it != itEnd; ++it)
+    for (auto it{_viewsComponentIndex.begin()}; it != itEnd; ++it)
     {
         auto& pair {*it};
 
@@ -298,7 +323,7 @@ void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDraw
             continue;
         }
 
-        _drawableComponentResizableIndex.at(drawableComponentsSize) = pair.first;
+        _componentViewsIndex.at(drawableComponentsSize) = pair.first;
 
         pair.first->AddDrawableComponent(drawableComponent.get());
 
@@ -306,17 +331,19 @@ void RecycleView<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDraw
     }
 
     _drawableComponents.push_back(std::move(drawableComponent));
+
+    CalculateMaxScroll();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::RemoveDrawableComponent(uint8_t index)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::RemoveDrawableComponent(uint8_t index)
 {
     uint8_t auxIndex = index;
 
     ResizableDrawable* resizableDrawable {nullptr};
 
     do{
-        resizableDrawable = _drawableComponentResizableIndex.at(auxIndex);
+        resizableDrawable = _componentViewsIndex.at(auxIndex);
 
         resizableDrawable->RemoveDrawableComponent(_drawableComponents.at(auxIndex));
 
@@ -331,129 +358,141 @@ void RecycleView<TDrawableComponent>::RemoveDrawableComponent(uint8_t index)
 
     _drawableComponents.erase(index);
 
-    _drawableComponentResizableIndex.erase(_drawableComponentResizableIndex.cend());
+    _componentViewsIndex.erase(_componentViewsIndex.cend());
+
+    CalculateMaxScroll();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-bool RecycleView<TDrawableComponent>::CanBeScrolled()
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+bool RecycleView<TDrawableComponent, TRowCreation>::CanBeScrolled()
 {
     return !_isHidden;
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::Scroll(float scrollValue)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Scroll(float scrollValue)
 {
     scrollValue *= SCROLL_MULTIPLIER;
 
     float newScrollValue {_currentScroll + scrollValue};
 
-    if (newScrollValue > 0 || newScrollValue < _maxScroll)
+    if (newScrollValue > 0)
     {
-        return;
+        if (_currentScroll == 0)
+        {
+            return;
+        }
+
+        scrollValue = -_currentScroll;
+
+        newScrollValue = 0;
+    }
+    else if (newScrollValue < _maxScroll)
+    {
+        if (_currentScroll == _maxScroll)
+        {
+            return;
+        }
+
+        scrollValue = _maxScroll - _currentScroll;
+
+        newScrollValue = _maxScroll;
     }
 
     _currentScroll = newScrollValue;
 
-    if (_currentScroll > 0)
-    {
-        scrollValue -= _currentScroll;
-        _currentScroll = 0;
-    }
-    else if (_currentScroll < _maxScroll)
-    {
-        scrollValue += _maxScroll - _currentScroll;
-        _currentScroll = _maxScroll;
-    }
-
     MoveContainers(scrollValue);
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::MoveContainers(float scrollValue)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::MoveContainers(float scrollValue)
 {
-    auto itEnd {_resizableDrawables.cend()};
+    uint8_t halfBufferSlots {static_cast<uint8_t>(_bufferRows / 2)};
 
-    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    float upperLimit {-_rowsSize.y * halfBufferSlots};
+
+    float lowerLimit {_size->y + _rowsSize.y * (halfBufferSlots - 1)};
+
+    float jumpDistance {_rowsSize.y * _rows.size() / _viewsPerRow};
+
+    for (auto&& row : _rows)
     {
-        ResizableDrawable* resizeDrawable {it->get()};
-
-        uint8_t halfBufferSlots {static_cast<uint8_t>(_bufferSlots / 2)};
-
-        float upperLimit {-_resizableDrawablesSize.y * halfBufferSlots};
-
-        float lowerLimit {_size->y + _resizableDrawablesSize.y * (halfBufferSlots - 1)};
-
-        ImVec2 currentRelativePosition {resizeDrawable->GetRelativePosition()};
+        ImVec2 currentRelativePosition {row->GetRelativePosition()};
 
         float predictedRelativePosition {currentRelativePosition.y + scrollValue};
 
-        float jumpDistance {_resizableDrawablesSize.y * _resizableDrawables.size()};
-
         if (predictedRelativePosition < upperLimit)
         {
-            uint8_t& index {_resizableDrawableComponentIndex.at(resizeDrawable)};
-
-            int nexIndex {index + static_cast<int>(_resizableDrawables.size())};
-
-            if (nexIndex < _drawableComponents.size())
+            for (auto&& view : _views.at(row.get()))
             {
-                predictedRelativePosition += jumpDistance;
+                uint8_t& index {_viewsComponentIndex.at(view)};
 
-                if (index > NO_INDEX)
+                int nexIndex {index + static_cast<int>(_rows.size() * _viewsPerRow)};
+
+                if (nexIndex < _drawableComponents.size())
                 {
-                    resizeDrawable->RemoveDrawableComponent(_drawableComponents.at(index).get());
-                }
+                    predictedRelativePosition += jumpDistance;
 
-                index = nexIndex;
+                    if (index > NO_INDEX)
+                    {
+                        view->RemoveDrawableComponent(_drawableComponents.at(index).get());
+                    }
 
-                if (index > NO_INDEX)
-                {
-                    resizeDrawable->AddDrawableComponent(_drawableComponents.at(index).get());
+                    index = nexIndex;
+
+                    if (index > NO_INDEX)
+                    {
+                        view->AddDrawableComponent(_drawableComponents.at(index).get());
+                    }
                 }
             }
         }
         else if (predictedRelativePosition > lowerLimit)
         {
-            uint8_t& index {_resizableDrawableComponentIndex.at(resizeDrawable)};
-
-            int newIndex {index - static_cast<int>(_resizableDrawables.size())};
-
-            if (newIndex >= 0)
+            for (auto&& view : _views.at(row.get()))
             {
-                predictedRelativePosition -= jumpDistance;
+                uint8_t& index {_viewsComponentIndex.at(view)};
 
-                if (index > NO_INDEX)
+                int nexIndex {index - static_cast<int>(_rows.size() * _viewsPerRow)};
+
+                if (nexIndex >= 0)
                 {
-                    resizeDrawable->RemoveDrawableComponent(_drawableComponents.at(index).get());
-                }
+                    predictedRelativePosition -= jumpDistance;
 
-                index = newIndex;
+                    if (index > NO_INDEX)
+                    {
+                        view->RemoveDrawableComponent(_drawableComponents.at(index).get());
+                    }
 
-                if (index > NO_INDEX)
-                {
-                    resizeDrawable->AddDrawableComponent(_drawableComponents.at(index).get());
+                    index = nexIndex;
+
+                    if (index > NO_INDEX)
+                    {
+                        view->AddDrawableComponent(_drawableComponents.at(index).get());
+                    }
                 }
             }
         }
 
         currentRelativePosition.y = predictedRelativePosition;
 
-        resizeDrawable->SetRelativePosition(std::move(currentRelativePosition));
+        row->SetRelativePosition(std::move(currentRelativePosition));
     }
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent>
-void RecycleView<TDrawableComponent>::Draw(ImDrawList* drawList)
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Draw(ImDrawList* drawList)
 {
     if (_isHidden)
     {
         return;
     }
 
-    auto itEnd {_resizableDrawables.cend()};
-
-    for (auto it {_resizableDrawables.begin()}; it != itEnd; ++it)
+    for (auto&& row : _rows)
     {
-        (*it)->Draw(drawList);
+        for (auto&& view : _views.at(row.get()))
+        {
+            view->Draw(drawList);
+        }
     }
 }

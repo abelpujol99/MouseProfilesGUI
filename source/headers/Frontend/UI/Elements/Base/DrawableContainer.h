@@ -70,7 +70,7 @@ protected:
 
 private:
 
-    virtual void OnUpdateParentTransform() = 0;
+    virtual void OnUpdateParentTransformImplementation() = 0;
 
     virtual void OnUpdateAnchorsImplementation() = 0;
 
@@ -101,7 +101,7 @@ void DrawableContainer<TDrawableComponentPointer>::SetParentTransform(ImVec2* pa
 
     UpdateSize();
 
-    OnUpdateParentTransform();
+    OnUpdateParentTransformImplementation();
 }
 
 template<Pointer TDrawableComponentPointer>

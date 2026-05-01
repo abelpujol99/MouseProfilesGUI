@@ -7,7 +7,7 @@ RectDrawable::RectDrawable(Anchors&& anchors, ImVec2&& pivot, ImVec2&& relativeP
         ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}, std::move(desiredSize), isHidden)
 {}
 
-void RectDrawable::OnUpdateParentTransform()
+void RectDrawable::OnUpdateParentTransformImplementation()
 {
     UpdateRectDrawables();
 }

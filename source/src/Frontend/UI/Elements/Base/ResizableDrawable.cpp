@@ -99,11 +99,15 @@ void ResizableDrawable::AddDrawableComponent(DrawableComponent* drawableComponen
 {
     drawableComponent->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 
+    drawableComponent->SetIsHidden(false);
+
     _drawableComponents.push_front(drawableComponent);
 }
 
 void ResizableDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
 {
+    drawableComponent->SetIsHidden(true);
+
     auto itEnd {_drawableComponents.cend()};
 
     auto itPrevious {_drawableComponents.before_begin()};
@@ -129,10 +133,7 @@ void ResizableDrawable::Draw(ImDrawList* drawList)
         return;
     }
 
-    auto itEnd {_drawableComponents.cend()};
+    DrawDrawables(_drawableComponents, drawList);
 
-    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
-    {
-        (*it)->Draw(drawList);
-    }
+    DrawDrawables(_resizableDrawables, drawList);
 }

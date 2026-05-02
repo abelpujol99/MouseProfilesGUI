@@ -1,5 +1,5 @@
 #pragma once
-#include "DrawableContainer.h"
+#include "Frontend/UI/Elements/Base/DrawableContainer.h"
 
 class ResizableDrawable : public DrawableContainer<DrawableComponent*>
 {
@@ -37,5 +37,20 @@ private:
 
     void OnUpdateAttributesImplementation() override;
 
+    template<Pointer TDrawableComponentPointer>
+    static void DrawDrawables(const std::forward_list<TDrawableComponentPointer>& drawables, ImDrawList* drawList);
+
     std::forward_list<std::unique_ptr<ResizableDrawable>> _resizableDrawables;
 };
+
+template<Pointer TDrawableComponentPointer>
+void ResizableDrawable::DrawDrawables(const std::forward_list<TDrawableComponentPointer>& drawables,
+    ImDrawList* drawList)
+{
+    auto itEnd {drawables.cend()};
+
+    for (auto it {drawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->Draw(drawList);
+    }
+}

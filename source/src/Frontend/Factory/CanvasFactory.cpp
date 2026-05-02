@@ -23,32 +23,6 @@ std::unique_ptr<Canvas> CanvasFactory::CreateDevicesCanvas(bool isHidden)
 {
     std::unique_ptr<Canvas> devicesScreen {DrawableFactory::CreateCanvas(isHidden)};
 
-    std::unique_ptr<RectDrawable> testRecycleViewRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 1}}, PIVOT_MIDDLE_CENTER,
-        {0, 0}, {0, 0}, isHidden)};
-
-    std::unique_ptr<RecycleView<Button, ResizableRow>> testRecycleView {DrawableFactory::CreateRecycleView<Button, ResizableRow>(
-        4, {0.1, 0.1}, {0, 150}, 2, isHidden)};
-
-    auto recyclePtr {testRecycleView.get()};
-
-    testRecycleViewRect->AddDrawableComponent(std::move(testRecycleView));
-    testRecycleViewRect->AddDrawableComponent(GetRectangle(RED));
-
-    for (int i {0}; i < 30; ++i)
-    {
-        std::string string {"Device "};
-
-        string += std::to_string(i);
-
-        recyclePtr->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{PURPLE, NO_ROUNDING, THIN_BORDER, false},
-            TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-                TITLE_SIZE, RED}, [string]() {
-            std::cout << string << std::endl;
-        }));
-    }
-
-    devicesScreen->AddRectDrawable(std::move(testRecycleViewRect));
-
     return devicesScreen;
 }
 

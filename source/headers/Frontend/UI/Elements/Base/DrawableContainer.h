@@ -39,6 +39,8 @@ public:
 
     virtual void RemoveDrawableComponent(DrawableComponent* drawableComponent) = 0;
 
+    void ClearDrawableComponents();
+
 protected:
 
     void UpdatePosition() const;
@@ -172,6 +174,12 @@ void DrawableContainer<TDrawableComponentPointer>::UpdateAttributes()
 }
 
 template<Pointer TDrawableComponentPointer>
+void DrawableContainer<TDrawableComponentPointer>::ClearDrawableComponents()
+{
+    _drawableComponents.clear();
+}
+
+template<Pointer TDrawableComponentPointer>
 void DrawableContainer<TDrawableComponentPointer>::UpdatePosition() const
 {
     *_position = {CalculatePositionLeft(), CalculatePositionTop()};
@@ -288,87 +296,3 @@ float DrawableContainer<TDrawableComponentPointer>::CalculateSize(float desiredS
 
     return desiredSize * Utilities::Math::Absolute(multiplier - 1) + parentSize * multiplier;
 }
-
-/*
- *
-
-template<Pointer TDrawableComponentPointer>
-float DrawableContainer<TDrawableComponentPointer>::CalculatePositionLeft() const
-{
-    float parentSizeX {GetParentSize().x};
-
-    float horizontalMinAnchor {_anchors.GetHorizontalMinAnchor()};
-    float horizontalMaxAnchor {_anchors.GetHorizontalMaxAnchor()};
-
-    float startPoint {CalculateStartPoint(GetParentPosition().x, parentSizeX, horizontalMinAnchor)};
-
-    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, horizontalMaxAnchor, horizontalMinAnchor) / 2};
-
-    float relativePoint {CalculateRelativePoint(_relativePosition.x,
-        -(_desiredSize.x / 2) * Utilities::Math::Absolute(horizontalMaxAnchor - horizontalMinAnchor - 1))};
-
-    relativePoint += halfSize + halfSize * -(_pivot.x * 2);
-
-    return startPoint + relativePoint;
-}
-
-template<Pointer TDrawableComponentPointer>
-float DrawableContainer<TDrawableComponentPointer>::CalculatePositionTop() const
-{
-    float parentSizeY {GetParentSize().y};
-
-    float verticalMinAnchor {_anchors.GetVerticalMinAnchor()};
-    float verticalMaxAnchor {_anchors.GetVerticalMaxAnchor()};
-
-    float startPoint {CalculateStartPoint(GetParentPosition().y, parentSizeY, verticalMinAnchor)};
-
-    float relativePoint {CalculateRelativePoint(_relativePosition.y,
-        -(_desiredSize.y / 2)  * Utilities::Math::Absolute(verticalMaxAnchor - verticalMinAnchor - 1))};
-
-    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, verticalMaxAnchor, verticalMinAnchor) / 2};
-
-    relativePoint += halfSize + halfSize * -(_pivot.y * 2);
-
-    return startPoint + relativePoint;
-}
-
-template<Pointer TDrawableComponentPointer>
-float DrawableContainer<TDrawableComponentPointer>::CalculatePositionRight() const
-{
-    float parentSizeX {GetParentSize().x};
-
-    float horizontalMaxAnchor {_anchors.GetHorizontalMaxAnchor()};
-    float horizontalMinAnchor {_anchors.GetHorizontalMinAnchor()};
-
-    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().x, -parentSizeX, 1 - horizontalMaxAnchor)};
-
-    float relativePoint {CalculateRelativePoint(_relativePosition.x,
-        (_desiredSize.x / 2) * Utilities::Math::Absolute(horizontalMaxAnchor - horizontalMinAnchor - 1))};
-
-    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, horizontalMaxAnchor, horizontalMinAnchor) / 2};
-
-    relativePoint += halfSize + halfSize * -(_pivot.x * 2);
-
-    return startPoint + relativePoint;
-}
-
-template<Pointer TDrawableComponentPointer>
-float DrawableContainer<TDrawableComponentPointer>::CalculatePositionBottom() const
-{
-    float parentSizeY {GetParentSize().y};
-
-    float verticalMaxAnchor {_anchors.GetVerticalMaxAnchor()};
-    float verticalMinAnchor {_anchors.GetVerticalMinAnchor()};
-
-    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().y, -parentSizeY, 1 - verticalMaxAnchor)};
-
-    float relativePoint {CalculateRelativePoint(_relativePosition.y,
-        (_desiredSize.y / 2) * Utilities::Math::Absolute(verticalMaxAnchor - verticalMinAnchor - 1))};
-
-    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, verticalMaxAnchor, verticalMinAnchor) / 2};
-
-    relativePoint += halfSize + halfSize * -(_pivot.y * 2);
-
-    return startPoint + relativePoint;
-}
- */

@@ -5,7 +5,6 @@
 
 #include "Frontend/UI/Elements/Base/DrawableComponent.h"
 #include "Frontend/Utilities/Anchors.h"
-#include "Frontend/Utilities/Concepts/DerivedFromBaseDrawable.h"
 
 class RectDrawable : public DrawableContainer<std::unique_ptr<DrawableComponent>>
 {
@@ -31,32 +30,26 @@ public:
 
     void RemoveRectDrawable(RectDrawable* rectDrawable);
 
-    void UpdateRectDrawablesPosition();
-
-    void UpdateRectDrawables();
-
-    void AddRectDrawables(std::unique_ptr<RectDrawable>&& rectDrawable);
-
-    void RemoveRectDrawables(RectDrawable* rectDrawable);
-
     void AddDrawableComponent(std::unique_ptr<DrawableComponent>&& drawableComponent);
 
     void RemoveDrawableComponent(DrawableComponent* drawableComponent) override;
+
+    void UpdateRectDrawablesPosition();
+
+    void UpdateRectDrawables();
 
     void Draw(ImDrawList* drawList) override;
 
 private:
 
-    template<DerivedFromBaseDrawable TDrawable>
-    static void DrawDrawables(const std::forward_list<std::unique_ptr<TDrawable>>& drawables, ImDrawList* drawList);
+    template<Pointer TDrawablePointer>
+    static void DrawDrawables(const std::forward_list<TDrawablePointer>& drawables, ImDrawList* drawList);
 
-private:
     std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
 };
 
-template<DerivedFromBaseDrawable TDrawable>
-void RectDrawable::DrawDrawables(const std::forward_list<std::unique_ptr<TDrawable>>& drawables,
-    ImDrawList* drawList)
+template<Pointer TDrawablePointer>
+void RectDrawable::DrawDrawables(const std::forward_list<TDrawablePointer>& drawables, ImDrawList* drawList)
 {
     auto itEnd {drawables.cend()};
 

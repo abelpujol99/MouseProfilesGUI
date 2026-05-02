@@ -46,11 +46,15 @@ void RectDrawable::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 
     rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 
+    rectDrawable->SetIsHidden(false);
+
     _rectDrawables.push_front(std::move(rectDrawable));
 }
 
 void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
 {
+    rectDrawable->SetIsHidden(true);
+
     auto itEnd {_rectDrawables.cend()};
 
     auto itPrevious {_rectDrawables.before_begin()};
@@ -64,6 +68,37 @@ void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
         }
 
         _rectDrawables.erase_after(itPrevious);
+
+        return;
+    }
+}
+
+void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& drawableComponent)
+{
+    drawableComponent->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+
+    drawableComponent->SetIsHidden(false);
+
+    _drawableComponents.push_front(std::move(drawableComponent));
+}
+
+void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
+{
+    drawableComponent->SetIsHidden(true);
+
+    auto itEnd {_drawableComponents.cend()};
+
+    auto itPrevious {_drawableComponents.before_begin()};
+
+    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
+    {
+        if (it->get() != drawableComponent)
+        {
+            itPrevious = it;
+            continue;
+        }
+
+        _drawableComponents.erase_after(itPrevious);
 
         return;
     }
@@ -92,63 +127,6 @@ void RectDrawable::UpdateRectDrawables()
         (*it)->UpdateSize();
 
         (*it)->UpdateRectDrawables();
-    }
-}
-
-void RectDrawable::AddRectDrawables(std::unique_ptr<RectDrawable>&& rectDrawable)
-{
-    if (rectDrawable.get() == this)
-    {
-        return;
-    }
-
-    rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    _rectDrawables.push_front(std::move(rectDrawable));
-}
-
-void RectDrawable::RemoveRectDrawables(RectDrawable* rectDrawable)
-{
-    auto itEnd {_rectDrawables.cend()};
-
-    auto itPrevious {_rectDrawables.before_begin()};
-
-    for (auto it{_rectDrawables.begin()}; it != itEnd; ++it)
-    {
-        if (it->get() != rectDrawable)
-        {
-            continue;
-        }
-
-        _rectDrawables.erase_after(itPrevious);
-        return;
-    }
-}
-
-void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& componentDrawable)
-{
-    componentDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    _drawableComponents.push_front(std::move(componentDrawable));
-}
-
-void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
-{
-    auto itEnd {_drawableComponents.cend()};
-
-    auto itPrevious {_drawableComponents.before_begin()};
-
-    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
-    {
-        if (it->get() != drawableComponent)
-        {
-            itPrevious = it;
-            continue;
-        }
-
-        _drawableComponents.erase_after(itPrevious);
-
-        return;
     }
 }
 

@@ -12,13 +12,6 @@ std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anch
         std::move(desiredSize), isHidden);
 }
 
-std::unique_ptr<ResizableDrawable> DrawableFactory::CreateResizableDrawable(Anchors&& anchors, Pivot&& pivot,
-    ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden)
-{
-    return std::make_unique<ResizableDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
-        std::move(desiredSize), isHidden);
-}
-
 std::unique_ptr<Texture> DrawableFactory::CreateTexture(const char* textureFileName, bool isHidden)
 {
     return std::make_unique<Texture>(textureFileName, isHidden);

@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Frontend/UI/Elements/Base/ResizableDrawable.h"
+#include "Frontend/UI/Elements/Base/RectDrawable.h"
 
 class BaseRowCreationStrategy
 {
@@ -9,5 +9,5 @@ public:
 
     virtual ~BaseRowCreationStrategy() = default;
 
-    [[nodiscard]] std::unique_ptr<ResizableDrawable> CreateRow(ImVec2 lasPosition);
+    [[nodiscard]] std::unique_ptr<RectDrawable> CreateRow(ImVec2 lasPosition);
 };

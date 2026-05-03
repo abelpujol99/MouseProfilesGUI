@@ -1,39 +1,110 @@
 #include "Frontend/UI/Elements/Base/RectDrawable.h"
 
 #include "Frontend/Managers/View/ResolutionManager.h"
+#include "Frontend/Utilities/Math.h"
 
 RectDrawable::RectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden) :
-        DrawableContainer(std::move(anchors), std::move(pivot), {ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
-        ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}, std::move(desiredSize), isHidden)
+        BaseDrawable(isHidden), _anchors(std::move(anchors)), _pivot(std::move(pivot)),
+        _relativePosition({ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
+        ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}), _desiredSize(std::move(desiredSize))
 {}
 
-void RectDrawable::OnUpdateParentTransformImplementation()
+void RectDrawable::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer)
 {
+    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+
+    UpdatePosition();
+
+    UpdateSize();
+
     UpdateRectDrawables();
 }
 
-void RectDrawable::OnUpdateAnchorsImplementation()
+void RectDrawable::SetAnchors(Anchors&& anchors)
 {
+    _anchors = anchors;
+
+    UpdatePosition();
+
+    UpdateSize();
+
     UpdateRectDrawables();
 }
 
-void RectDrawable::OnUpdatePivotImplementation()
+void RectDrawable::SetPivot(Pivot&& pivot)
 {
+    _pivot = pivot;
+
+    UpdatePosition();
+
     UpdateRectDrawablesPosition();
 }
 
-void RectDrawable::OnUpdateRelativePositionImplementation()
+void RectDrawable::SetRelativePosition(ImVec2&& relativePosition)
 {
+    _relativePosition = relativePosition;
+
+    UpdatePosition();
+
     UpdateRectDrawables();
 }
 
-void RectDrawable::OnUpdateDesiredSizeImplementation()
+ImVec2 RectDrawable::GetRelativePosition() const
 {
+    return _relativePosition;
+}
+
+void RectDrawable::SetDesiredSize(ImVec2&& desiredSize)
+{
+    _desiredSize = desiredSize;
+
+    UpdatePosition();
+
+    UpdateSize();
+
     UpdateRectDrawables();
 }
 
-void RectDrawable::OnUpdateAttributesImplementation()
+ImVec2 RectDrawable::GetSize() const
 {
+    return *_size;
+}
+
+void RectDrawable::UpdatePosition() const
+{
+    *_position = {CalculatePositionLeft(), CalculatePositionTop()};
+
+    *_bottomRightPosition = {CalculatePositionRight(), CalculatePositionBottom()};
+
+    auto itEnd {_drawableComponents.cend()};
+
+    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
+    {
+        (*it)->OnParentPositionUpdated();
+
+        (*it)->OnParentBottomRightPositionUpdated();
+    }
+}
+
+void RectDrawable::UpdateSize() const
+{
+    *_size = {_bottomRightPosition->x - _position->x, _bottomRightPosition->y - _position->y};
+
+    auto itEnd {_drawableComponents.cend()};
+
+    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
+    {
+        (*it)->OnParentSizeUpdated();
+    }
+}
+
+void RectDrawable::UpdateAttributes()
+{
+    UpdatePosition();
+
+    UpdateSize();
+
     UpdateRectDrawables();
 }
 
@@ -73,7 +144,7 @@ void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
     }
 }
 
-void RectDrawable::AddDrawableComponent(std::unique_ptr<DrawableComponent>&& drawableComponent)
+void RectDrawable::AddDrawableComponent(DrawableComponent* drawableComponent)
 {
     drawableComponent->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 
@@ -92,7 +163,7 @@ void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
 
     for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
     {
-        if (it->get() != drawableComponent)
+        if (*it != drawableComponent)
         {
             itPrevious = it;
             continue;
@@ -102,6 +173,11 @@ void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
 
         return;
     }
+}
+
+void RectDrawable::ClearDrawableComponents()
+{
+    _drawableComponents.clear();
 }
 
 void RectDrawable::UpdateRectDrawablesPosition()
@@ -128,6 +204,87 @@ void RectDrawable::UpdateRectDrawables()
 
         (*it)->UpdateRectDrawables();
     }
+}
+
+float RectDrawable::CalculatePositionLeft() const
+{
+    float parentSizeX {GetParentSize().x};
+
+    float startPoint {CalculateStartPoint(GetParentPosition().x, parentSizeX, _anchors._min.x)};
+
+    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, _anchors._max.x, _anchors._min.x) / 2};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.x,
+        -(_desiredSize.x / 2) * Utilities::Math::Absolute(_anchors._max.x - _anchors._min.x - 1))};
+
+    relativePoint += halfSize + halfSize * -(_pivot.GetXPivot() * 2);
+
+    return startPoint + relativePoint;
+}
+
+float RectDrawable::CalculatePositionTop() const
+{
+    float parentSizeY {GetParentSize().y};
+
+    float startPoint {CalculateStartPoint(GetParentPosition().y, parentSizeY, _anchors._min.y)};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.y,
+        -(_desiredSize.y / 2)  * Utilities::Math::Absolute(_anchors._max.y - _anchors._min.y - 1))};
+
+    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, _anchors._max.y, _anchors._min.y) / 2};
+
+    relativePoint += halfSize + halfSize * -(_pivot.GetYPivot() * 2);
+
+    return startPoint + relativePoint;
+}
+
+float RectDrawable::CalculatePositionRight() const
+{
+    float parentSizeX {GetParentSize().x};
+
+    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().x, -parentSizeX, 1 - _anchors._max.x)};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.x,
+        (_desiredSize.x / 2) * Utilities::Math::Absolute(_anchors._max.x - _anchors._min.x - 1))};
+
+    float halfSize {CalculateSize(_desiredSize.x, parentSizeX, _anchors._max.x, _anchors._min.x) / 2};
+
+    relativePoint += halfSize + halfSize * -(_pivot.GetXPivot() * 2);
+
+    return startPoint + relativePoint;
+}
+
+float RectDrawable::CalculatePositionBottom() const
+{
+    float parentSizeY {GetParentSize().y};
+
+    float startPoint {CalculateStartPoint(GetParentBottomRightPosition().y, -parentSizeY, 1 - _anchors._max.y)};
+
+    float relativePoint {CalculateRelativePoint(_relativePosition.y,
+        (_desiredSize.y / 2) * Utilities::Math::Absolute(_anchors._max.y - _anchors._min.y - 1))};
+
+    float halfSize {CalculateSize(_desiredSize.y, parentSizeY, _anchors._max.y, _anchors._min.y) / 2};
+
+    relativePoint += halfSize + halfSize * -(_pivot.GetYPivot() * 2);
+
+    return startPoint + relativePoint;
+}
+
+float RectDrawable::CalculateStartPoint(float parentPosition, float parentSize, float multiplier)
+{
+    return parentPosition + parentSize * multiplier;
+}
+
+float RectDrawable::CalculateRelativePoint(float relativePosition, float size)
+{
+    return relativePosition + size;
+}
+
+float RectDrawable::CalculateSize(float desiredSize, float parentSize, float maxAnchor, float minAnchor)
+{
+    float multiplier {maxAnchor - minAnchor};
+
+    return desiredSize * Utilities::Math::Absolute(multiplier - 1) + parentSize * multiplier;
 }
 
 void RectDrawable::Draw(ImDrawList* drawList)

@@ -3,7 +3,7 @@
 
 #include "RecycleView.h"
 #include "Frontend/UI/Elements/Base/DrawableComponent.h"
-#include "Frontend/UI/Elements/Base/ResizableDrawable.h"
+#include "Frontend/UI/Elements/Base/RectDrawable.h"
 #include "Frontend/UI/Structs/RectangleData.h"
 
 #include "Frontend/Utilities/Concepts/DerivedFromDrawableComponent.h"
@@ -13,7 +13,7 @@ class Dropdown : public DrawableComponent, public DrawableTransform
 {
 public:
 
-    Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<ResizableDrawable>&& recycleViewContainer,
+    Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<RectDrawable>&& recycleViewContainer,
         std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>>&& recycleView, bool isHidden);
 
     ~Dropdown() override = default;
@@ -36,14 +36,14 @@ private:
 
     ImVec2 _dropdownWindowSize;
 
-    std::unique_ptr<ResizableDrawable> _recycleViewContainer;
+    std::unique_ptr<RectDrawable> _recycleViewContainer;
 
     std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>> _recycleView;
 
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent>
-Dropdown<TDrawableComponent>::Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<ResizableDrawable>&& recycleViewContainer,
+Dropdown<TDrawableComponent>::Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<RectDrawable>&& recycleViewContainer,
     std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>>&& recycleView, bool isHidden) :
         DrawableComponent(isHidden), _button(std::move(button)), _recycleViewContainer(std::move(recycleViewContainer)),
         _recycleView(std::move(recycleView))

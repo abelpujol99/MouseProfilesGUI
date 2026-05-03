@@ -15,8 +15,6 @@ public:
 
 private:
 
-    static void ShowLinesX(void* rect);
-
     static std::unique_ptr<Rectangle> GetRectangle(ImColor color);
 
     static std::unique_ptr<Text> GetText(std::string string);

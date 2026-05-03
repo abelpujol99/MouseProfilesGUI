@@ -63,7 +63,7 @@ private:
 
     void MoveContainers(float scrollValue);
 
-    void UpdateViewContent(ResizableDrawable* view, int newIndex);
+    void UpdateViewContent(RectDrawable* view, int newIndex);
 
     void HandleMoveUp(float scrollValue);
 
@@ -81,15 +81,15 @@ private:
 
     float _widthPerView;
 
-    std::vector<std::unique_ptr<ResizableDrawable>> _rows;
+    std::vector<std::unique_ptr<RectDrawable>> _rows;
 
-    std::map<ResizableDrawable*, std::vector<ResizableDrawable*>> _views;
+    std::map<RectDrawable*, std::vector<RectDrawable*>> _views;
 
     std::vector<std::unique_ptr<TDrawableComponent>> _drawableComponents;
 
-    std::map<ResizableDrawable*, uint8_t> _viewsComponentIndex;
+    std::map<RectDrawable*, uint8_t> _viewsComponentIndex;
 
-    std::map<uint8_t, ResizableDrawable*> _componentViewsIndex;
+    std::map<uint8_t, RectDrawable*> _componentViewsIndex;
 
     float _currentScroll {0};
 
@@ -97,8 +97,8 @@ private:
 
     std::unique_ptr<TRowCreation> _rowCreationStrategy;
 
-    ResizableDrawable** _firstComponentViewReference {nullptr};
-    ResizableDrawable** _lastComponentViewReference {nullptr};
+    RectDrawable** _firstComponentViewReference {nullptr};
+    RectDrawable** _lastComponentViewReference {nullptr};
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -288,16 +288,16 @@ void RecycleView<TDrawableComponent, TRowCreation>::CalculateMaxScroll()
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPosition)
 {
-    std::unique_ptr<ResizableDrawable> row {DrawableFactory::CreateResizableDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
+    std::unique_ptr<RectDrawable> row {DrawableFactory::CreateRectDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
         {lastRowPosition.x, lastRowPosition.y + _rowsSize.y}, {_rowsSize.x, _rowsSize.y}, false)};
 
-    _views.emplace(row.get(), std::vector<ResizableDrawable*>{});
+    _views.emplace(row.get(), std::vector<RectDrawable*>{});
 
     uint8_t offsetIndex {static_cast<uint8_t>(_viewsPerRow * _rows.size())};
 
     for (uint8_t i {0}; i < _viewsPerRow; ++i)
     {
-        std::unique_ptr<ResizableDrawable> view {DrawableFactory::CreateResizableDrawable(
+        std::unique_ptr<RectDrawable> view {DrawableFactory::CreateRectDrawable(
             Anchors{{i * _widthPerView + _marginBetweenViews.x, _marginBetweenViews.y},
                 {(i + 1) * _widthPerView - _marginBetweenViews.x, 1 - _marginBetweenViews.y}}, PIVOT_MIDDLE_CENTER,
                 {0, 0}, {0, 0}, false)};
@@ -308,7 +308,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPo
 
         _views.at(row.get()).push_back(view.get());
 
-        row->AddResizableDrawable(std::move(view));
+        row->AddRectDrawable(std::move(view));
     }
 
     row->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
@@ -380,19 +380,19 @@ void RecycleView<TDrawableComponent, TRowCreation>::RemoveDrawableComponent(uint
 {
     uint8_t auxIndex = index;
 
-    ResizableDrawable* resizableDrawable {nullptr};
+    RectDrawable* view {nullptr};
 
     do{
-        resizableDrawable = _componentViewsIndex.at(auxIndex);
+        view = _componentViewsIndex.at(auxIndex);
 
-        resizableDrawable->RemoveDrawableComponent(_drawableComponents.at(auxIndex));
+        view->RemoveDrawableComponent(_drawableComponents.at(auxIndex));
 
         if (_drawableComponents.size() == ++auxIndex)
         {
             break;
         }
 
-        resizableDrawable->AddDrawableComponent(_drawableComponents.at(auxIndex));
+        view->AddDrawableComponent(_drawableComponents.at(auxIndex));
 
     }while(true);
 
@@ -477,13 +477,13 @@ void RecycleView<TDrawableComponent, TRowCreation>::HandleMoveUp(float scrollVal
 
     for (int i {static_cast<int>(rowsCount - 1)}; i >= 0; --i)
     {
-        ResizableDrawable* row {_rows[i].get()};
+        RectDrawable* row {_rows[i].get()};
 
         ImVec2 currentRelativePosition {row->GetRelativePosition()};
 
         float predictedRelativePosition {currentRelativePosition.y + scrollValue};
 
-        std::vector<ResizableDrawable*>& views {_views.at(row)};
+        std::vector<RectDrawable*>& views {_views.at(row)};
 
         if (predictedRelativePosition > lowerLimit && *_firstComponentViewReference == nullptr)
         {
@@ -525,7 +525,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::HandleMoveDown(float scrollV
 
         float predictedRelativePosition {currentRelativePosition.y + scrollValue};
 
-        std::vector<ResizableDrawable*>& views {_views.at(row.get())};
+        std::vector<RectDrawable*>& views {_views.at(row.get())};
 
         if (predictedRelativePosition < upperLimit && *_lastComponentViewReference == nullptr)
         {
@@ -549,7 +549,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::HandleMoveDown(float scrollV
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::UpdateViewContent(ResizableDrawable* view, int newIndex)
+void RecycleView<TDrawableComponent, TRowCreation>::UpdateViewContent(RectDrawable* view, int newIndex)
 {
     uint8_t& index {_viewsComponentIndex.at(view)};
 

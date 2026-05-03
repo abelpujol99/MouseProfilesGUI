@@ -33,9 +33,6 @@ public:
     static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);
 
-    static std::unique_ptr<ResizableDrawable> CreateResizableDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
-    ImVec2&& desiredSize, bool isHidden);
-
     static std::unique_ptr<Texture> CreateTexture(const char* textureFileName, bool isHidden = false);
 
     static std::unique_ptr<Rectangle> CreateRectangle(RectangleData&& rectangleData, bool isHidden = false);
@@ -76,7 +73,7 @@ std::unique_ptr<Dropdown<TDrawableComponent>> DrawableFactory::CreateDropdown(Re
 {
     std::unique_ptr<Button> button {CreateButton(std::move(buttonRectangleData), std::move(buttonTextData), [](){}, isHidden)};
 
-    std::unique_ptr<ResizableDrawable> recycleViewContainer {CreateResizableDrawable(ANCHORS_BOTTOM_STRETCH, PIVOT_TOP_CENTER,
+    std::unique_ptr<RectDrawable> recycleViewContainer {CreateRectDrawable(ANCHORS_BOTTOM_STRETCH, PIVOT_TOP_CENTER,
         {0, distanceY}, std::move(dropdownWindowsSize), true)};
 
     std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>> recycleView {CreateRecycleView<TDrawableComponent>(std::move(resizableDrawablesAnchors),

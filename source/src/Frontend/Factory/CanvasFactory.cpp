@@ -26,7 +26,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 {
     std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateCanvas(isHidden)};
 
-#pragma region Device Name
+/*#pragma region Device Name
 
     std::unique_ptr<RectDrawable> deviceNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 0.1}}, PIVOT_TOP_CENTER,
         {0, 10}, {0, 50}, isHidden)};
@@ -255,25 +255,9 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     profileScreen->AddRectDrawable(std::move(outputRect));
 
-#pragma endregion
+#pragma endregion*/
 
     return profileScreen;
-}
-
-void CanvasFactory::ShowLinesX(void* rect)
-{
-    for (float i = 0; i < 10; i += 0.5f)
-    {
-        std::unique_ptr<Rectangle> rectangle {DrawableFactory::CreateRectangle(RectangleData{PURPLE, 0, 1, false}, false)};
-
-        std::unique_ptr<RectDrawable> rectDrawable {DrawableFactory::CreateRectDrawable({{static_cast<float>(i / 10), 0},
-            {static_cast<float>(i / 10), 1}}, PIVOT_MIDDLE_CENTER,
-            {0, 0},{0, 100}, false)};
-
-        rectDrawable->AddDrawableComponent(std::move(rectangle));
-
-        static_cast<RectDrawable*>(rect)->AddRectDrawable(std::move(rectDrawable));
-    }
 }
 
 std::unique_ptr<Rectangle> CanvasFactory::GetRectangle(ImColor color)

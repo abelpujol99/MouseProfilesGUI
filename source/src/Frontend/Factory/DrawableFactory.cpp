@@ -1,12 +1,14 @@
 #include "Frontend/Factory/DrawableFactory.h"
 
-std::unique_ptr<Canvas> DrawableFactory::CreateCanvas(bool isHidden)
+#include "Frontend/UI/Elements/Complex/DevicesCanvas.h"
+
+std::unique_ptr<Canvas> DrawableFactory::CreateDevicesCanvas(bool isHidden)
 {
-    return std::make_unique<Canvas>(isHidden);
+    return std::make_unique<DevicesCanvas>(isHidden);
 }
 
 std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, Pivot&& pivot ,ImVec2&& relativePosition,
-    ImVec2&& desiredSize, bool isHidden)
+                                                                  ImVec2&& desiredSize, bool isHidden)
 {
     return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
         std::move(desiredSize), isHidden);

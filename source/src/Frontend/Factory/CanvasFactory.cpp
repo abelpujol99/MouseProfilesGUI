@@ -14,17 +14,18 @@
 #include "Frontend/RectangleDefines.h"
 #include "Frontend/UI/Elements/Advanced/RecycleView.h"
 #include "Frontend/UI/Elements/Advanced/Dropdown.h"
+#include "Frontend/UI/Elements/Complex/DevicesCanvas.h"
 
 std::unique_ptr<Canvas> CanvasFactory::CreateDevicesCanvas(bool isHidden)
 {
-    std::unique_ptr<Canvas> devicesScreen {DrawableFactory::CreateCanvas(isHidden)};
+    std::unique_ptr<Canvas> devicesScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
 
     return devicesScreen;
 }
 
 std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 {
-    std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateCanvas(isHidden)};
+    std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
 
 /*#pragma region Device Name
 

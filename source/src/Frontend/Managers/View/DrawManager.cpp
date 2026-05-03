@@ -21,7 +21,7 @@ DrawManager& DrawManager::GetInstance()
 
 void DrawManager::Start()
 {
-    std::unique_ptr<Canvas> canvas = CanvasFactory::CreateProfileCanvas(false);
+    std::unique_ptr<Canvas> canvas = CanvasFactory::CreateDevicesCanvas(false);
 
     _currentCanvas = canvas.get();
 

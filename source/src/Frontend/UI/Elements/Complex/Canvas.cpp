@@ -18,11 +18,31 @@ Canvas::Canvas(bool isHidden) :
     });
 }
 
-void Canvas::AddRectDrawable(std::shared_ptr<RectDrawable>&& rectDrawable)
+void Canvas::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 {
     rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
 
     _rectDrawables.push_front(std::move(rectDrawable));
+}
+
+void Canvas::RemoveRectDrawable(RectDrawable* rectDrawable)
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    auto itPrevious {_rectDrawables.before_begin()};
+
+    for (auto it{_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        if (it->get() != rectDrawable)
+        {
+            itPrevious = it;
+            continue;
+        }
+
+        _rectDrawables.erase_after(itPrevious);
+
+        return;
+    }
 }
 
 ImVec2 Canvas::GetParentPosition() const

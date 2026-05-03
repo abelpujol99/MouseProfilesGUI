@@ -10,6 +10,7 @@
 #include "Frontend/Managers/Gestures/ScrollableManager.h"
 #include "Frontend/UI/Helpers/IScrollable.h"
 #include "Frontend/Utilities/Math.h"
+#include "Frontend/ColorDefines.h"
 
 #define SCROLL_MULTIPLIER 10
 
@@ -184,7 +185,6 @@ void RecycleView<TDrawableComponent, TRowCreation>::OnParentSizeUpdated()
     }
 
     UpdateResizableDrawablesCount();
-    std::cout << "Count: " << _rows.size() << std::endl;
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -312,8 +312,6 @@ void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPo
     }
 
     row->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-
-    row->AddDrawableComponent(new Rectangle(RectangleData{BROWN, 0, 2, false}, false));
 
     _rows.push_back(std::move(row));
 }

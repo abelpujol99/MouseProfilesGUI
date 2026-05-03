@@ -28,7 +28,7 @@ public:
 
     DrawableFactory() = delete;
 
-    static std::unique_ptr<Canvas> CreateCanvas(bool isHidden = false);
+    static std::unique_ptr<Canvas> CreateDevicesCanvas(bool isHidden = false);
 
     static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);

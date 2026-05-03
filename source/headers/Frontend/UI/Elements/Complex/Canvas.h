@@ -11,7 +11,9 @@ public:
 
     ~Canvas() override = default;
 
-    void AddRectDrawable(std::shared_ptr<RectDrawable>&& rectDrawable);
+    void AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable);
+
+    void RemoveRectDrawable(RectDrawable* rectDrawable);
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 

@@ -1,5 +1,7 @@
 #include "Frontend/Utilities/Anchors.h"
 
+#include "Frontend/Utilities/Math.h"
+
 Anchors::Anchors(ImVec2 min, ImVec2 max)
 {
     SetAnchors(min, max);

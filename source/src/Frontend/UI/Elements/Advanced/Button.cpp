@@ -1,6 +1,5 @@
 #include "Frontend/UI/Elements/Advanced/Button.h"
 
-#include "Frontend/Managers/Input/InputManager.h"
 #include "Frontend/Managers/Gestures/ClickableManager.h"
 
 Button::Button(std::function<void()>&& action, bool isHidden) :

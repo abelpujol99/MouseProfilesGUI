@@ -1,14 +1,14 @@
 #pragma once
+#include "Frontend/Utilities/Concepts/Pointer.h"
 #include "BaseDrawable.h"
 #include "DrawableTransform.h"
 
 #include <forward_list>
 
 #include "Frontend/Utilities/Anchors.h"
-#include "Frontend/Utilities/Concepts/Pointer.h"
+#include "Frontend/Utilities/Pivot.h"
 #include "Frontend/Managers/View/ResolutionManager.h"
 #include "Frontend/Utilities/Math.h"
-#include "Frontend/Utilities/Pivot.h"
 
 class DrawableComponent;
 

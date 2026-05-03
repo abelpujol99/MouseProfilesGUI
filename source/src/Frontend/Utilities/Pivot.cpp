@@ -1,6 +1,5 @@
 #include "Frontend/Utilities/Pivot.h"
 
-#include "Frontend/Utilities/Boundaries.h"
 #include "Frontend/Utilities/Math.h"
 
 Pivot::Pivot(float x, float y)

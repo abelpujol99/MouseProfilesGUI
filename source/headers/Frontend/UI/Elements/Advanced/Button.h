@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Frontend/UI/Helpers/IClickable.h"
+
 #include "Frontend/UI/Elements/Intermediate/Rectangle.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"
 

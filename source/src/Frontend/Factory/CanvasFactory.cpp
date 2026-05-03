@@ -5,19 +5,15 @@
 
 #include "Frontend/Factory/DrawableFactory.h"
 #include "Frontend/Factory/Font/FontFamilyTypes.h"
-#include "Frontend/Managers/View/WindowManager.h"
 #include "Frontend/UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
 #include "Frontend/UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "Frontend/UI/Structs/RectangleData.h"
 #include "Frontend/UI/Structs/TextData.h"
 #include "Frontend/ColorDefines.h"
-#include "Frontend/AnchorsDefines.h"
-#include "Frontend/PivotDefines.h"
 #include "Frontend/TextDefines.h"
 #include "Frontend/RectangleDefines.h"
 #include "Frontend/UI/Elements/Advanced/RecycleView.h"
 #include "Frontend/UI/Elements/Advanced/Dropdown.h"
-#include "Frontend/UI/Strategies/RecycleViewStrategy/ResizableRow.h"
 
 std::unique_ptr<Canvas> CanvasFactory::CreateDevicesCanvas(bool isHidden)
 {

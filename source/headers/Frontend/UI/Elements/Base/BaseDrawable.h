@@ -1,5 +1,4 @@
 #pragma once
-
 #include "BaseDisplay.h"
 
 class DrawableTransform;

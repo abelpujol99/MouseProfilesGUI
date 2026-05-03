@@ -1,7 +1,5 @@
 #include "Frontend/Factory/DrawableFactory.h"
 
-#include "Frontend/Utilities/Anchors.h"
-
 std::unique_ptr<Canvas> DrawableFactory::CreateCanvas(bool isHidden)
 {
     return std::make_unique<Canvas>(isHidden);

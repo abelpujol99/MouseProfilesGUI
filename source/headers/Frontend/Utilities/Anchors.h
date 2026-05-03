@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imgui.h"
-#include "Math.h"
 
 class Anchors
 {

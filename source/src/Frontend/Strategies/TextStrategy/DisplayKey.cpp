@@ -1,4 +1,4 @@
-#include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
+#include "Frontend/Strategies/TextStrategy/DisplayKey.h"
 
 #include "Frontend/Managers/Input/TypeManager.h"
 #include "Frontend/UI/Elements/Intermediate/Text.h"

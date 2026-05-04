@@ -7,12 +7,13 @@
 #include "Frontend/TextDefines.h"
 #include "Frontend/Factory/DrawableFactory.h"
 #include "Frontend/Factory/Font/FontFamilyTypes.h"
+#include "Frontend/Strategies/ReadDevicesStrategy/ReadLinuxDevices.h"
 #include "Frontend/UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
 #include "Frontend/UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "Frontend/UI/Structs/RectangleData.h"
 #include "Frontend/UI/Structs/TextData.h"
 
-DevicesCanvas::DevicesCanvas(bool isHidden) : Canvas(isHidden)
+DevicesCanvas::DevicesCanvas(bool isHidden) : Canvas(isHidden), _readDevices(std::make_unique<ReadLinuxDevices>())
 {
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
         {0, 0}, {0, 100}, isHidden)};
@@ -51,23 +52,28 @@ DevicesCanvas::DevicesCanvas(bool isHidden) : Canvas(isHidden)
 
     recycleViewRect->AddDrawableComponent(_devicesRecycleView.get());
 
-    for (int i{0}; i < 50; ++i)
-    {
-        std::string string {"Device "};
+    AddRectDrawable(std::move(recycleViewRect));
 
-        string += std::to_string(i);
-
-        _devicesRecycleView->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{BROWN, LOW_ROUNDING, THIN_BORDER, false},
-            TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-            TITLE_SIZE, RED}, [string]() {
-                std::cout << string << std::endl;
-            }, isHidden));
-    }
-
-    AddRectDrawable(std::move(recycleViewRect));;
+    _reloadButton->Click();
 }
 
 void DevicesCanvas::Reload()
 {
-    std::cout << "Reload" << std::endl;
+    _devicesRecycleView->Clear();
+
+    std::vector<DeviceInfo> devicesInfo {_readDevices->ReturnDevices()};
+
+    auto itEnd {devicesInfo.cend()};
+
+    for (auto it{devicesInfo.begin()}; it != itEnd; ++it)
+    {
+        std::string name {it->name};
+        std::string path {it->path};
+
+        _devicesRecycleView->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+            TextData{name, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR},
+            [name, path]() {
+                std::cout << name << std::endl << path << std::endl;
+            }, false));
+    }
 }

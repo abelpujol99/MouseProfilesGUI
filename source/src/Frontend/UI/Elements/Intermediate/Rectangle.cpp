@@ -1,7 +1,7 @@
 #include "Frontend/UI/Elements/Intermediate/Rectangle.h"
 
-#include "Frontend/UI/Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
-#include "Frontend/UI/Strategies/DrawStrategy/Rectangle/DrawFilledRectangle.h"
+#include "Frontend/Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
+#include "Frontend/Strategies/DrawStrategy/Rectangle/DrawFilledRectangle.h"
 #include "Frontend/UI/Structs/RectangleData.h"
 
 Rectangle::Rectangle(RectangleData&& rectangleData, bool isHidden) :

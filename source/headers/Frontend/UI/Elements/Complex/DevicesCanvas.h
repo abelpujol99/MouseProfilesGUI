@@ -1,9 +1,10 @@
 #pragma once
 #include "Canvas.h"
+#include "Frontend/Strategies/ReadDevicesStrategy/IReadDevicesStrategy.h"
 
 #include "Frontend/UI/Elements/Advanced/Button.h"
 #include "Frontend/UI/Elements/Advanced/RecycleView.h"
-#include "Frontend/UI/Strategies/RecycleViewStrategy/NotResizableRow.h"
+#include "Frontend/Strategies/RecycleViewStrategy/NotResizableRow.h"
 
 class DevicesCanvas : public Canvas
 {
@@ -16,6 +17,8 @@ public:
 private:
 
     void Reload();
+
+    std::unique_ptr<IReadDevicesStrategy> _readDevices;
 
     std::unique_ptr<Button> _reloadButton;
 

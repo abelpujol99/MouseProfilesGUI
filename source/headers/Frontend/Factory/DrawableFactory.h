@@ -9,9 +9,9 @@
 #include "Frontend/UI/Elements/Advanced/Button.h"
 #include "Frontend/UI/Elements/Advanced/Text/TextBox.h"
 #include "Frontend/UI/Elements/Intermediate/Texture.h"
-#include "Frontend/UI/Strategies/RecycleViewStrategy/NotResizableRow.h"
-#include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
-#include "Frontend/UI/Strategies/TextStrategy/DisplayKey.h"
+#include "Frontend/Strategies/RecycleViewStrategy/NotResizableRow.h"
+#include "Frontend/Strategies/TextStrategy/ApplyKey.h"
+#include "Frontend/Strategies/TextStrategy/DisplayKey.h"
 
 #include "Frontend/Utilities/Concepts/DerivedFromDrawableComponent.h"
 #include "Frontend/Utilities/Concepts/DerivedFromBaseRowCreationStrategy.h"

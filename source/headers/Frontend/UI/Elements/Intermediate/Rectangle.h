@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Frontend/UI/Strategies/DrawStrategy/Rectangle/IDrawRectangleStrategy.h"
+#include "Frontend/Strategies/DrawStrategy/Rectangle/IDrawRectangleStrategy.h"
 
 struct RectangleData;
 

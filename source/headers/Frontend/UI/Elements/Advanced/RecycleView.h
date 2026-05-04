@@ -38,6 +38,8 @@ public:
 
     void Scroll(float scrollValue) override;
 
+    void Clear();
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -261,7 +263,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::CalculateFirstViewIndexRefer
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::CalculateLastViewIndexReference()
 {
-    int index {_drawableComponents.size() - 1};
+    const size_t index {_drawableComponents.size() - 1};
 
     if (!_componentViewsIndex.contains(index))
     {
@@ -446,6 +448,16 @@ void RecycleView<TDrawableComponent, TRowCreation>::Scroll(float scrollValue)
     _currentScroll = newScrollValue;
 
     MoveContainers(scrollValue);
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Clear()
+{
+    Reset();
+
+    _drawableComponents.clear();
+
+    _componentViewsIndex.clear();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>

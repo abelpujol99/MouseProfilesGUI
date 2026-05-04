@@ -1,4 +1,4 @@
-#include "Frontend/UI/Strategies/TextStrategy/ApplyKey.h"
+#include "Frontend/Strategies/TextStrategy/ApplyKey.h"
 
 #include "Frontend/KeyDefines.h"
 #include "Frontend/Managers/Input/TypeManager.h"

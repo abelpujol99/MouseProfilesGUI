@@ -408,6 +408,36 @@ void RecycleView<TDrawableComponent, TRowCreation>::RemoveDrawableComponent(uint
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Clear()
+{
+    Reset();
+
+    auto itEnd {_componentViewsIndex.cend()};
+
+    for (auto it{_componentViewsIndex.begin()}; it != itEnd; ++it)
+    {
+        RectDrawable* view {it->second};
+
+        if (view == nullptr)
+        {
+            continue;
+        }
+
+        view->RemoveDrawableComponent(_drawableComponents.at(it->first).get());
+    }
+
+    _drawableComponents.clear();
+
+    _componentViewsIndex.clear();
+
+    CalculateMaxScroll();
+
+    CalculateFirstViewIndexReference();
+
+    CalculateLastViewIndexReference();
+}
+
+template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 bool RecycleView<TDrawableComponent, TRowCreation>::CanBeScrolled()
 {
     return !_isHidden;
@@ -448,16 +478,6 @@ void RecycleView<TDrawableComponent, TRowCreation>::Scroll(float scrollValue)
     _currentScroll = newScrollValue;
 
     MoveContainers(scrollValue);
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::Clear()
-{
-    Reset();
-
-    _drawableComponents.clear();
-
-    _componentViewsIndex.clear();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>

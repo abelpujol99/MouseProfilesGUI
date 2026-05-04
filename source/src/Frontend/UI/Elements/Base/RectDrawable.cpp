@@ -178,6 +178,13 @@ void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
 void RectDrawable::ClearDrawableComponents()
 {
     _drawableComponents.clear();
+
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->ClearDrawableComponents();
+    }
 }
 
 void RectDrawable::UpdateRectDrawablesPosition()

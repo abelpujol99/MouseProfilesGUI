@@ -16,7 +16,7 @@ public:
 
 private:
 
-    void Reload();
+    void Reload() const;
 
     std::unique_ptr<IReadDevicesStrategy> _readDevices;
 

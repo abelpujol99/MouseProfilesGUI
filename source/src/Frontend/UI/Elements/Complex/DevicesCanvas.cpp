@@ -44,10 +44,10 @@ DevicesCanvas::DevicesCanvas(bool isHidden) : Canvas(isHidden), _readDevices(std
 
     AddRectDrawable(std::move(topBarRect));
 
-    std::unique_ptr<RectDrawable> recycleViewRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 1}},
+    std::unique_ptr<RectDrawable> recycleViewRect {DrawableFactory::CreateRectDrawable(Anchors{{0.1, 0.2}, {0.9, 1}},
         PIVOT_MIDDLE_CENTER, {0, 0}, {0, 0}, isHidden)};
 
-    _devicesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(5, {0.05, 0.05}, {0, 150}, 2,
+    _devicesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(4, {0.05, 0.05}, {0, 150}, 2,
         isHidden);
 
     recycleViewRect->AddDrawableComponent(_devicesRecycleView.get());
@@ -57,7 +57,7 @@ DevicesCanvas::DevicesCanvas(bool isHidden) : Canvas(isHidden), _readDevices(std
     _reloadButton->Click();
 }
 
-void DevicesCanvas::Reload()
+void DevicesCanvas::Reload() const
 {
     _devicesRecycleView->Clear();
 
@@ -71,9 +71,10 @@ void DevicesCanvas::Reload()
         std::string path {it->path};
 
         _devicesRecycleView->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
-            TextData{name, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR},
+            TextData{name, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+            TITLE_SIZE, WHITE},
             [name, path]() {
-                std::cout << name << std::endl << path << std::endl;
+                //TODO OPEN DEVICE PROFILES WINDOW
             }, false));
     }
 }

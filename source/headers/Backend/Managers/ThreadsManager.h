@@ -1,6 +1,7 @@
 #pragma once
 
 #include <forward_list>
+#include <mutex>
 #include <thread>
 
 #include "Backend/Utilities/Concepts/DerivedFromBaseListener.h"

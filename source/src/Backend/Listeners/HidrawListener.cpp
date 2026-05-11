@@ -1,6 +1,7 @@
 #include "Backend/Listener/HidrawListener.h"
 
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "Backend/Managers/VirtualDeviceManager.h"
 

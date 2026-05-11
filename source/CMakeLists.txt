@@ -9,11 +9,17 @@ GetProjectName(${PROJECT_DIR} PROJECT_NAME)
 
 project(${PROJECT_NAME})
 
-FetchImGui(${SOURCE_DIR} IMGUI_SOURCE_DIR)
-AddImGuiTarget(${IMGUI_SOURCE_DIR})
+#GLFW
+FetchGLFW(${SOURCE_DIR} GLFW_SOURCE_DIR)
 
+#ImGui
+FetchImGui(${SOURCE_DIR} IMGUI_SOURCE_DIR)
+AddImGuiTarget(${IMGUI_SOURCE_DIR} ${GLFW_SOURCE_DIR})
+
+#Glad
 AddGladTarget(${SOURCE_DIR})
 
+#Stb
 FetchStb(${SOURCE_DIR} STB_SOURCE_DIR)
 AddStbTarget(${STB_SOURCE_DIR})
 
@@ -40,25 +46,16 @@ set(INCLUDES
 
 IncludeDirectoriesToTarget(${PROJECT_NAME} PUBLIC INCLUDES)
 
-#GLFW
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLFW REQUIRED glfw3)
+set(LIBRARIES
+        GL
+        dl
+        pthread
+        imgui
+        glfw
+        glad
+        stb)
 
-if(GLFW_FOUND)
-        IncludeDirectoriesToTarget(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
-        set(LIBRARIES
-                GL
-                dl
-                glfw
-                pthread
-                imgui
-                glad
-                stb)
-
-        LinkLibrariesToTarget(${PROJECT_NAME} PUBLIC LIBRARIES)
-else()
-        message(FATAL_ERROR "GLFW not found")
-endif()
+LinkLibrariesToTarget(${PROJECT_NAME} PUBLIC LIBRARIES)
 
 #CPP
 SetLibraryCppStandardToTarget(${PROJECT_NAME} 20)

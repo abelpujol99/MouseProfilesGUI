@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <fcntl.h>
 #include <unistd.h>
-#include <cstring>
 #include <linux/input.h>
 #include <sys/ioctl.h>
 #include <iostream>
@@ -38,7 +37,7 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
 
         std::string physicalLocationString(physicalLocation);
 
-        if (physicalLocationString.back() != '0' || !IsAPeripheric(file))
+        if (physicalLocationString.empty() || physicalLocationString.back() != '0' || !IsAPeripheric(file))
         {
             close(file);
             continue;

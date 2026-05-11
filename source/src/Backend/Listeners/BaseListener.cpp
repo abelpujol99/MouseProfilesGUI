@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <poll.h>
+#include <unistd.h>
 
 #include "Backend/Managers/ApplicationManager.h"
 #include "Backend/Profile/FileCodes.h"

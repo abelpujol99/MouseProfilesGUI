@@ -67,6 +67,7 @@ endfunction()
 
 function(IncludeDirectoriesToTarget project_name scope include_dirs)
     foreach(include_dir IN LISTS ${include_dirs})
+        message(${include_dir})
         target_include_directories(${project_name} ${scope} ${include_dir})
     endforeach ()
 endfunction()
@@ -112,7 +113,7 @@ function(FetchImGui source_dir out_imgui_source_dir)
     set(${out_imgui_source_dir} ${imgui_SOURCE_DIR} PARENT_SCOPE)
 endfunction()
 
-function(AddImGuiTarget imgui_source_dir)
+function(AddImGuiTarget imgui_source_dir glfw_source_dir)
     add_library(imgui STATIC
         ${imgui_source_dir}/imgui.cpp
         ${imgui_source_dir}/imgui_draw.cpp
@@ -122,6 +123,21 @@ function(AddImGuiTarget imgui_source_dir)
         ${imgui_source_dir}/backends/imgui_impl_opengl3.cpp)
 
     IncludeDirectoriesToTarget(imgui PUBLIC imgui_source_dir)
+
+    target_include_directories(imgui PUBLIC ${glfw_source_dir}/include)
+endfunction()
+
+#GLFW
+function(FetchGLFW source_dir out_glfw_source_dir)
+    set(FETCHCONTENT_BASE_DIR ${source_dir}/libraries/GLFW)
+    FetchContent_Declare(
+            GLFW
+            GIT_REPOSITORY https://github.com/glfw/glfw
+            GIT_TAG b00e6a8a88ad1b60c0a045e696301deb92c9a13e
+    )
+
+    FetchContent_MakeAvailable(GLFW)
+    set(${out_glfw_source_dir} ${glfw_SOURCE_DIR} PARENT_SCOPE)
 endfunction()
 
 #Glad

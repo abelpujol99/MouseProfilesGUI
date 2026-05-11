@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <iostream>
+#include <unistd.h>
 
 #include "Backend/Managers/ProfileManager.h"
 #include "Backend/Managers/ThreadsManager.h"

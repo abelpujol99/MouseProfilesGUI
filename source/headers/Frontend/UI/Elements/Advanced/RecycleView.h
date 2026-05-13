@@ -20,6 +20,7 @@ class RecycleView : public DrawableComponent, public DrawableTransform, public I
 public:
 
     RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
+        std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
         bool isHidden = false);
 
     ~RecycleView() noexcept override;
@@ -40,6 +41,10 @@ public:
     void Scroll(float scrollValue) override;
 
     void Clear();
+
+    void Enable();
+
+    void Disable();
 
     void Draw(ImDrawList* drawList) override;
 
@@ -101,16 +106,21 @@ private:
 
     std::unique_ptr<TRowCreation> _rowCreationStrategy;
 
+    std::function<void(TDrawableComponent&)> _onEnable;
+
+    std::function<void(TDrawableComponent&)> _onDisable;
+
     RectDrawable** _firstComponentViewReference {nullptr};
     RectDrawable** _lastComponentViewReference {nullptr};
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize,
-    uint8_t bufferRows, bool isHidden) :
+    uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
+    bool isHidden) :
         DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews({marginBetweenViews.x / _viewsPerRow, marginBetweenViews.y}),
         _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2), _widthPerView(1 / static_cast<float>(_viewsPerRow)),
-        _rowCreationStrategy(std::make_unique<TRowCreation>())
+        _rowCreationStrategy(std::make_unique<TRowCreation>()), _onEnable(std::move(onEnable)), _onDisable(std::move(onDisable))
 {
     ScrollableManager::GetInstance().AddScrollable(this);
 
@@ -347,7 +357,6 @@ void RecycleView<TDrawableComponent, TRowCreation>::AddDrawableComponent(std::un
     uint8_t drawableComponentsSize {static_cast<uint8_t>(_drawableComponents.size())};
 
     _componentViewsIndex.emplace(drawableComponentsSize, nullptr);
-    drawableComponent->SetIsHidden(true);
 
     auto itEnd {_viewsComponentIndex.cend()};
 
@@ -436,6 +445,24 @@ void RecycleView<TDrawableComponent, TRowCreation>::Clear()
     CalculateFirstViewIndexReference();
 
     CalculateLastViewIndexReference();
+}
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Enable()
+{
+    for (auto&& drawableComponent : _drawableComponents)
+    {
+        _onEnable(*drawableComponent);
+    }
+}
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::Disable()
+{
+    for (auto&& drawableComponent : _drawableComponents)
+    {
+        _onDisable(*drawableComponent);
+    }
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>

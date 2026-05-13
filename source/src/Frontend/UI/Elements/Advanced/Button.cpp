@@ -5,12 +5,12 @@
 Button::Button(std::function<void()>&& action, bool isHidden) :
         DrawableComponent(isHidden), _action(action)
 {
-    ClickableManager::GetInstance().AddClickable(this);
+    Subscribe();
 }
 
 Button::~Button() noexcept
 {
-    ClickableManager::GetInstance().RemoveClickable(this);
+    Unsubscribe();
 }
 
 void Button::SetRectangle(std::unique_ptr<Rectangle>&& rectangle)
@@ -56,6 +56,16 @@ void Button::SetAction(std::function<void()>&& action)
 void Button::Click()
 {
     _action();
+}
+
+void Button::Subscribe()
+{
+    ClickableManager::GetInstance().AddClickable(this);
+}
+
+void Button::Unsubscribe()
+{
+    ClickableManager::GetInstance().RemoveClickable(this);
 }
 
 void Button::Draw(ImDrawList* drawList)

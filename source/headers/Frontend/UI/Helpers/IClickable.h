@@ -11,4 +11,8 @@ public:
 
     virtual void Click() = 0;
 
+    virtual void Subscribe() = 0;
+
+    virtual void Unsubscribe() = 0;
+
 };

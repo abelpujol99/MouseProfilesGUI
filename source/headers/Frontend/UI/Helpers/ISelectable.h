@@ -13,4 +13,8 @@ public:
     virtual void OnSelect() = 0;
 
     virtual void OnUnselect() = 0;
+
+    virtual void Subscribe() = 0;
+
+    virtual void Unsubscribe() = 0;
 };

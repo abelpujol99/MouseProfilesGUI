@@ -34,6 +34,10 @@ public:
 
     void OnUnselect() override;
 
+    void Subscribe() override;
+
+    void Unsubscribe() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -49,13 +53,13 @@ template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 TextBox<T, TProcessData>::TextBox(bool isHidden) :
         DrawableComponent(isHidden), _processDataStrategy(std::make_unique<TProcessData>())
 {
-    SelectableManager::GetInstance().AddSelectable(this);
+    Subscribe();
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 TextBox<T, TProcessData>::~TextBox() noexcept
 {
-    SelectableManager::GetInstance().RemoveSelectable(this);
+    Unsubscribe();
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -111,6 +115,18 @@ template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 void TextBox<T, TProcessData>::OnUnselect()
 {
     _processDataStrategy->StopProcessData();
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+void TextBox<T, TProcessData>::Subscribe()
+{
+    SelectableManager::GetInstance().AddSelectable(this);
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+void TextBox<T, TProcessData>::Unsubscribe()
+{
+    SelectableManager::GetInstance().RemoveSelectable(this);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

@@ -116,8 +116,6 @@ void WindowManager::Update()
 
     DrawManager& drawManager {DrawManager::GetInstance()};
 
-    drawManager.Start();
-
     while (!glfwWindowShouldClose(_window))
     {
         glfwPollEvents();

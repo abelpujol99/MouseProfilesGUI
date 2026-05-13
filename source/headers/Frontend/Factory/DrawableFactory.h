@@ -50,7 +50,8 @@ public:
 
     template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
     static std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> CreateRecycleView(uint8_t viewsPerRow,
-        ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, bool isHidden = false);
+        ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable,
+        std::function<void(TDrawableComponent&)>&& onDisable, bool isHidden = false);
 
     template<DerivedFromDrawableComponent TDrawableComponent>
     static std::unique_ptr<Dropdown<TDrawableComponent>> CreateDropdown(RectangleData&& buttonRectangleData,
@@ -58,12 +59,15 @@ public:
         ImVec2&& resizableDrawablesPivot, ImVec2&& resizableDrawablesSize, uint8_t bufferSlots, bool isHidden);
 };
 
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> DrawableFactory::CreateRecycleView(uint8_t viewsPerRow,
-    ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, bool isHidden)
+    ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
+    std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
+    bool isHidden)
 {
     return std::make_unique<RecycleView<TDrawableComponent, TRowCreation>>(viewsPerRow, std::move(marginBetweenViews),
-        std::move(rowsSize), bufferRows, isHidden);
+        std::move(rowsSize), std::move(bufferRows), std::move(onEnable), std::move(onDisable), isHidden);
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>

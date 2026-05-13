@@ -30,6 +30,10 @@ public:
 
     void Click() override;
 
+    void Subscribe() override;
+
+    void Unsubscribe() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:

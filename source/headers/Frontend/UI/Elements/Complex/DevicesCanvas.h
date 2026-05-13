@@ -14,21 +14,20 @@ public:
 
     ~DevicesCanvas() override = default;
 
+    void Enable() override;
+
+    void Disable() override;
+
 private:
 
     void Reload() const;
+
+    std::unique_ptr<Text> _title;
 
     std::unique_ptr<IReadDevicesStrategy> _readDevices;
 
     std::unique_ptr<Button> _reloadButton;
 
-    std::unique_ptr<Text> _title;
-
     std::unique_ptr<RecycleView<Button, NotResizableRow>> _devicesRecycleView;
-
-    std::unique_ptr<Rectangle> _testRect1;
-    std::unique_ptr<Rectangle> _testRect2;
-    std::unique_ptr<Rectangle> _testRect3;
-    std::unique_ptr<Rectangle> _testRect4;
 
 };

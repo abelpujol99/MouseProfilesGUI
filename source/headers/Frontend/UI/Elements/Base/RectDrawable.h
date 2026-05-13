@@ -1,8 +1,7 @@
 #pragma once
 #include "Frontend/UI/Elements/Base/DrawableTransform.h"
 
-#include <forward_list>
-#include <memory>
+#include <set>
 
 #include "Frontend/UI/Elements/Base/DrawableComponent.h"
 #include "Frontend/Utilities/Anchors.h"
@@ -17,7 +16,8 @@ public:
 
     ~RectDrawable() override = default;
 
-    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
+    void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
+        bool* isParentHiddenPointer) override;
 
     void SetAnchors(Anchors&& anchors);
 
@@ -70,7 +70,7 @@ private:
     static float CalculateSize(float desiredSize, float parentSize, float maxAnchor, float minAnchor);
 
     template<Pointer TDrawablePointer>
-    static void DrawDrawables(const std::forward_list<TDrawablePointer>& drawables, ImDrawList* drawList);
+    static void DrawDrawables(const std::set<TDrawablePointer>& drawables, ImDrawList* drawList);
 
     Anchors _anchors;
 
@@ -80,13 +80,13 @@ private:
 
     ImVec2 _desiredSize;
 
-    std::forward_list<DrawableComponent*> _drawableComponents;
+    std::set<DrawableComponent*> _drawableComponents;
 
-    std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
+    std::set<std::unique_ptr<RectDrawable>> _rectDrawables;
 };
 
 template<Pointer TDrawablePointer>
-void RectDrawable::DrawDrawables(const std::forward_list<TDrawablePointer>& drawables, ImDrawList* drawList)
+void RectDrawable::DrawDrawables(const std::set<TDrawablePointer>& drawables, ImDrawList* drawList)
 {
     auto itEnd {drawables.cend()};
 

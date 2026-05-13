@@ -20,7 +20,7 @@ public:
     static VirtualDeviceManager& GetInstance();
 
     void CreateVirtualDevice(InputDevices inputDevice, std::unordered_map<unsigned long, std::unordered_set<int>> capableInputs,
-    uinput_setup inputSetup);
+        uinput_setup inputSetup);
 
     void CreateListeners();
 

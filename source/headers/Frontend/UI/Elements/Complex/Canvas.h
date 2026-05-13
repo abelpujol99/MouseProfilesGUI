@@ -1,4 +1,5 @@
 #pragma once
+#include <forward_list>
 #include <functional>
 
 #include "Frontend/UI/Elements/Base/RectDrawable.h"
@@ -29,5 +30,5 @@ private:
 
     std::weak_ptr<std::function<void(ImVec2)>> _onSizeChangeWeakAction;
 
-    std::forward_list<std::shared_ptr<RectDrawable>> _rectDrawables;
+    std::forward_list<std::unique_ptr<RectDrawable>> _rectDrawables;
 };

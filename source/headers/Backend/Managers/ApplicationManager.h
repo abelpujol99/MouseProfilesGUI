@@ -23,7 +23,8 @@ public:
     void UnsubscribeToShouldRunObserver(std::weak_ptr<std::function<void(bool)>> action) const;
 
     void SwitchShouldRun() const;
-    bool GetShouldRun() const;
+
+    bool ShouldRun() const;
 
     std::weak_ptr<std::function<void(bool)>> SubscribeToShouldGUIRunObserver(std::function<void(bool)> action) const;
     void UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::function<void(bool)>> action) const;

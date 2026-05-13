@@ -19,7 +19,7 @@ Rectangle::Rectangle(RectangleData&& rectangleData, bool isHidden) :
 
 void Rectangle::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

@@ -54,8 +54,8 @@ Dropdown<TDrawableComponent>::Dropdown(std::unique_ptr<Button>&& button, std::un
 
     _recycleViewContainer->AddDrawableComponent(_recycleView.get());
 
-    _button->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
-    _recycleViewContainer->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    _button->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
+    _recycleViewContainer->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rectangle = DrawableFactory::CreateRectangle(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false}, false);
     _recycleViewContainer->AddDrawableComponent(_rectangle.get());
@@ -94,7 +94,7 @@ void Dropdown<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDrawabl
 template<DerivedFromDrawableComponent TDrawableComponent>
 void Dropdown<TDrawableComponent>::Draw(ImDrawList *drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

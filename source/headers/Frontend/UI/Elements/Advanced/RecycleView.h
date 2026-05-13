@@ -24,7 +24,8 @@ public:
 
     ~RecycleView() noexcept override;
 
-    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
+    void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
+        bool* isParentHiddenPointer) override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 
@@ -128,10 +129,10 @@ RecycleView<TDrawableComponent, TRowCreation>::~RecycleView() noexcept
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::SetParentTransform(ImVec2* parentPositionPointer,
-    ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer)
+void RecycleView<TDrawableComponent, TRowCreation>::SetParentState(ImVec2* parentPositionPointer,
+    ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer, bool* isParentHiddenPointer)
 {
-    DrawableComponent::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    DrawableComponent::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
     UpdateResizableDrawablesCount();
 }
@@ -313,7 +314,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPo
         row->AddRectDrawable(std::move(view));
     }
 
-    row->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    row->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rows.push_back(std::move(row));
 }
@@ -440,7 +441,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::Clear()
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 bool RecycleView<TDrawableComponent, TRowCreation>::CanBeScrolled()
 {
-    return !_isHidden;
+    return !_mustBeHidden;
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -602,7 +603,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::UpdateViewContent(RectDrawab
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

@@ -23,14 +23,14 @@ void Button::SetText(std::unique_ptr<Text>&& text)
     _text = std::move(text);
 }
 
-void Button::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
-    ImVec2* parentSizePointer)
+void Button::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer, bool* isParentHiddenPointer)
 {
-    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    BaseDrawable::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
-    _rectangle->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    _rectangle->SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
-    _text->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    _text->SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 }
 
 ImVec2 Button::GetParentPosition() const
@@ -45,7 +45,7 @@ ImVec2 Button::GetParentBottomRightPosition() const
 
 bool Button::CanBeClicked() const
 {
-    return !_isHidden;
+    return !IsHidden();
 }
 
 void Button::SetAction(std::function<void()>&& action)
@@ -60,7 +60,7 @@ void Button::Click()
 
 void Button::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

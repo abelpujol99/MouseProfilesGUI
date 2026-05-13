@@ -11,10 +11,10 @@ Text::Text(TextData&& textData, bool isHidden) :
         _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize), _color(textData.color)
 {}
 
-void Text::SetParentTransform(ImVec2 *parentPositionPointer, ImVec2 *parentBottomRightPositionPointer,
-    ImVec2 *parentSizePointer)
+void Text::SetParentState(ImVec2 *parentPositionPointer, ImVec2 *parentBottomRightPositionPointer,
+    ImVec2 *parentSizePointer, bool* isParentHiddenPointer)
 {
-    DrawableComponent::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    DrawableComponent::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
     CalculateTextSize();
 }
@@ -143,7 +143,7 @@ ImVec2 Text::GetTextSize() const
 
 void Text::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

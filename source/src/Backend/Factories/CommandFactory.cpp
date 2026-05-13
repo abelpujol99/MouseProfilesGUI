@@ -1,6 +1,6 @@
 #include "Backend/Factory/CommandFactory.h"
 
-#include "Backend/Command/SwitchToProfileCommand.h"
+#include "Backend/Command/SwitchToSubProfileCommand.h"
 #include "Backend/Command/ShutdownApplicationCommand.h"
 #include "Backend/Command/EmitInputEventCommand.h"
 
@@ -8,12 +8,12 @@
 
 std::unique_ptr<ICommand> CommandFactory::CreateSwitchToProfileCommand(int profileIndex)
 {
-    return std::make_unique<SwitchToProfileCommand>(profileIndex);
+    return std::make_unique<SwitchToSubProfileCommand>(profileIndex);
 }
 
 std::unique_ptr<ICommand> CommandFactory::CreateSwitchToMainProfileCommand()
 {
-    return std::make_unique<SwitchToProfileCommand>(MAIN_PROFILE);
+    return std::make_unique<SwitchToSubProfileCommand>(MAIN_PROFILE);
 }
 
 std::unique_ptr<ICommand> CommandFactory::CreateShutdownApplicationCommand()

@@ -21,7 +21,8 @@ public:
 
     void SetText(std::unique_ptr<Text> text);
 
-    void SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer) override;
+    void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
+        bool* isParentHiddenPointer) override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 
@@ -72,14 +73,14 @@ void TextBox<T, TProcessData>::SetText(std::unique_ptr<Text> text)
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
-    ImVec2* parentSizePointer)
+void TextBox<T, TProcessData>::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer, bool* isParentHiddenPointer)
 {
-    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    BaseDrawable::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
-    _rectangle->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    _rectangle->SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
-    _text->SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    _text->SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -97,7 +98,7 @@ ImVec2 TextBox<T, TProcessData>::GetParentBottomRightPosition() const
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 bool TextBox<T, TProcessData>::CanBeSelected()
 {
-    return !_isHidden;
+    return !IsHidden();
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -115,7 +116,7 @@ void TextBox<T, TProcessData>::OnUnselect()
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 void TextBox<T, TProcessData>::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

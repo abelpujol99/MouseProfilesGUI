@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "Frontend/UI/Helpers/IDrawable.h"
 
 class BaseDisplay : public IDrawable
@@ -11,17 +13,23 @@ public:
 
     [[nodiscard]] bool IsHidden() const;
 
+    [[nodiscard]] ImVec2 GetParentSize() const override;
+
 protected:
 
     BaseDisplay(bool isHidden);
 
     virtual void SetParentSizePointer(ImVec2* parentSizePointer);
 
-    [[nodiscard]] ImVec2 GetParentSize() const override;
+    virtual void SetIsParentHiddenPointer(bool* isParentHiddenPointer);
+
+    std::unique_ptr<bool> _mustBeHidden;
+
+private:
 
     bool _isHidden;
 
-private:
+    bool* _isParentHidden {nullptr};
 
     ImVec2* _parentSize {nullptr};
 };

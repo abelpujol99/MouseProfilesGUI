@@ -58,6 +58,16 @@ VirtualDeviceManager::VirtualDeviceManager()
     CreateVirtualDevice(MOUSE, mouseCapableInputs, usetup);
 }
 
+VirtualDeviceManager& VirtualDeviceManager::GetInstance()
+{
+    if (!_virtualDeviceManagerInstance)
+    {
+        _virtualDeviceManagerInstance.reset(new VirtualDeviceManager());
+    }
+
+    return *_virtualDeviceManagerInstance;
+}
+
 void VirtualDeviceManager::CreateVirtualDevice(InputDevices inputDevice, std::unordered_map<unsigned long, std::unordered_set<int>> capableInputs,
     uinput_setup inputSetup)
 {
@@ -83,16 +93,6 @@ void VirtualDeviceManager::CreateVirtualDevice(InputDevices inputDevice, std::un
     ioctl(virtualFile, UI_DEV_CREATE);
 
     _virtualDevices.try_emplace(inputDevice, virtualFile);
-}
-
-VirtualDeviceManager& VirtualDeviceManager::GetInstance()
-{
-    if (!_virtualDeviceManagerInstance)
-    {
-        _virtualDeviceManagerInstance.reset(new VirtualDeviceManager());
-    }
-
-    return *_virtualDeviceManagerInstance;
 }
 
 void VirtualDeviceManager::CreateListeners()

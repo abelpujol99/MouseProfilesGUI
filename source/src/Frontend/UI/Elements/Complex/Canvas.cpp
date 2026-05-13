@@ -20,7 +20,7 @@ Canvas::Canvas(bool isHidden) :
 
 void Canvas::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 {
-    rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    rectDrawable->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rectDrawables.push_front(std::move(rectDrawable));
 }
@@ -62,7 +62,7 @@ ImVec2 Canvas::GetParentSize() const
 
 void Canvas::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (*_mustBeHidden)
     {
         return;
     }

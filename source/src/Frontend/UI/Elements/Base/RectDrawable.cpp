@@ -9,10 +9,10 @@ RectDrawable::RectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePo
         ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}), _desiredSize(std::move(desiredSize))
 {}
 
-void RectDrawable::SetParentTransform(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
-    ImVec2* parentSizePointer)
+void RectDrawable::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+    ImVec2* parentSizePointer, bool* isParentHiddenPointer)
 {
-    BaseDrawable::SetParentTransform(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer);
+    BaseDrawable::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
     UpdatePosition();
 
@@ -115,30 +115,23 @@ void RectDrawable::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
         return;
     }
 
-    rectDrawable->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    rectDrawable->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
-    rectDrawable->SetIsHidden(false);
-
-    _rectDrawables.push_front(std::move(rectDrawable));
+    _rectDrawables.insert(std::move(rectDrawable));
 }
 
 void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
 {
-    rectDrawable->SetIsHidden(true);
-
     auto itEnd {_rectDrawables.cend()};
-
-    auto itPrevious {_rectDrawables.before_begin()};
 
     for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
     {
         if (it->get() != rectDrawable)
         {
-            itPrevious = it;
             continue;
         }
 
-        _rectDrawables.erase_after(itPrevious);
+        _rectDrawables.erase(it);
 
         return;
     }
@@ -146,33 +139,14 @@ void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
 
 void RectDrawable::AddDrawableComponent(DrawableComponent* drawableComponent)
 {
-    drawableComponent->SetParentTransform(_position.get(), _bottomRightPosition.get(), _size.get());
+    drawableComponent->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
-    drawableComponent->SetIsHidden(false);
-
-    _drawableComponents.push_front(std::move(drawableComponent));
+    _drawableComponents.insert(drawableComponent);
 }
 
 void RectDrawable::RemoveDrawableComponent(DrawableComponent* drawableComponent)
 {
-    drawableComponent->SetIsHidden(true);
-
-    auto itEnd {_drawableComponents.cend()};
-
-    auto itPrevious {_drawableComponents.before_begin()};
-
-    for (auto it {_drawableComponents.begin()}; it != itEnd; ++it)
-    {
-        if (*it != drawableComponent)
-        {
-            itPrevious = it;
-            continue;
-        }
-
-        _drawableComponents.erase_after(itPrevious);
-
-        return;
-    }
+    _drawableComponents.erase(drawableComponent);
 }
 
 void RectDrawable::ClearDrawableComponents()
@@ -296,7 +270,7 @@ float RectDrawable::CalculateSize(float desiredSize, float parentSize, float max
 
 void RectDrawable::Draw(ImDrawList* drawList)
 {
-    if (_isHidden)
+    if (IsHidden())
     {
         return;
     }

@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.28.3)
 
 function(GetProjectDir out_dir)
     set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-    cmake_path(GET PROJECT_DIR PARENT_PATH ROOT_DIR)
-    set(${out_dir} ${ROOT_DIR} PARENT_SCOPE)
+    set(${out_dir} ${PROJECT_DIR} PARENT_SCOPE)
 endfunction()
 
 function(GetSourceDir out_dir)

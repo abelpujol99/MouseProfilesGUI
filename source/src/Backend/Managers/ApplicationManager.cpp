@@ -64,7 +64,7 @@ void ApplicationManager::SwitchShouldRun() const
     _shouldRunObserver->SetValue(false);
 }
 
-bool ApplicationManager::GetShouldRun() const
+bool ApplicationManager::ShouldRun() const
 {
     return _shouldRunObserver->GetValue();
 }

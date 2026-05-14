@@ -16,7 +16,7 @@ public:
     CommandFactory(CommandFactory&& other) = delete;
     CommandFactory&& operator=(CommandFactory&& other) = delete;
 
-    [[nodiscard]] static std::unique_ptr<ICommand> CreateSwitchToProfileCommand(int profileIndex);
+    [[nodiscard]] static std::unique_ptr<ICommand> CreateSwitchToProfileCommand(uint8_t profileIndex);
 
     [[nodiscard]] static std::unique_ptr<ICommand> CreateSwitchToMainProfileCommand();
 

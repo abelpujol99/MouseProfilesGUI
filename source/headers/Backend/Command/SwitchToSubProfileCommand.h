@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Backend/Command/ICommand.h"
 
 class SwitchToSubProfileCommand : public ICommand
 {
 public:
 
-    SwitchToSubProfileCommand(int profileIndex);
+    SwitchToSubProfileCommand(uint8_t subProfileIndex);
 
     ~SwitchToSubProfileCommand() override = default;
 
@@ -14,5 +16,5 @@ public:
 
 private:
 
-    int _profileIndex;
+    uint8_t _subProfileIndex;
 };

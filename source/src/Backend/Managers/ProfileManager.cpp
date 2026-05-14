@@ -11,7 +11,7 @@
 
 std::unique_ptr<ProfileManager> ProfileManager::_profileManagerInstance = nullptr;
 
-ProfileManager::ProfileManager() : _currentProfileIndex(0), _shouldMouseInputLoopRun(std::make_shared<bool>(false))
+ProfileManager::ProfileManager() : _currentSubProfileIndex(0), _shouldMouseInputLoopRun(std::make_shared<bool>(false))
 {
     ApplicationManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
         *_shouldMouseInputLoopRun = value;
@@ -30,7 +30,7 @@ ProfileManager& ProfileManager::GetInstance()
 
 void ProfileManager::OnChangeApplicationFocus()
 {
-    _allProfilesCodes.clear();
+    _allSubProfilesCodes.clear();
 
     //TODO PROCESS PARAMETER DATA
 
@@ -46,7 +46,7 @@ void ProfileManager::OnChangeApplicationFocus()
     codes.emplace_front(275); //SIDE BUTTON
     codes.emplace_front(276); //EXTRA BUTTON
 
-    _allProfilesCodes.try_emplace(0, codes);
+    _allSubProfilesCodes.try_emplace(0, codes);
 
     codes.clear();
 
@@ -54,19 +54,19 @@ void ProfileManager::OnChangeApplicationFocus()
     codes.emplace_front(273); //RIGHT BUTTON
     codes.emplace_front(275); //SIDE BUTTON
 
-    _allProfilesCodes.try_emplace(1, codes);
+    _allSubProfilesCodes.try_emplace(1, codes);
 
     CreateProfile();
 }
 
 void ProfileManager::CreateProfile()
 {
-#define PROFILES 2
+#define SUB_PROFILES 2
 
-    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> profiles;
+    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> profile;
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonLeftInputCommands;
-    buttonLeftInputCommands.reserve(PROFILES);
+    buttonLeftInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonLeftPressEmits;
     buttonLeftPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_LEFTCTRL, 1}));
@@ -88,7 +88,7 @@ void ProfileManager::CreateProfile()
                 nullptr, Duration(500), Duration(20)));
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonRightInputCommands;
-    buttonRightInputCommands.reserve(PROFILES);
+    buttonRightInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonRightPressEmits;
     buttonRightPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_LEFTCTRL, 1}));
@@ -110,7 +110,7 @@ void ProfileManager::CreateProfile()
                 nullptr, Duration(500), Duration(20)));
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonBackInputCommands;
-    buttonBackInputCommands.reserve(PROFILES);
+    buttonBackInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonBackPressEmits;
     buttonBackPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_LEFTCTRL, 1}));
@@ -131,7 +131,7 @@ void ProfileManager::CreateProfile()
     buttonBackInputCommands.emplace_back(nullptr);
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonForwardInputCommands;
-    buttonForwardInputCommands.reserve(PROFILES);
+    buttonForwardInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonForwardPressEmits;
     buttonForwardPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_LEFTCTRL, 1}));
@@ -151,7 +151,7 @@ void ProfileManager::CreateProfile()
     buttonForwardInputCommands.emplace_back(nullptr);
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonSideInputCommands;
-    buttonSideInputCommands.reserve(PROFILES);
+    buttonSideInputCommands.reserve(SUB_PROFILES);
 
     buttonSideInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
         CommandFactory::CreateSwitchToProfileCommand(1), nullptr, nullptr, Duration(500), Duration(20)));
@@ -160,7 +160,7 @@ void ProfileManager::CreateProfile()
         nullptr, nullptr, CommandFactory::CreateSwitchToMainProfileCommand(), Duration(500), Duration(20)));
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonExtraInputCommands;
-    buttonExtraInputCommands.reserve(PROFILES);
+    buttonExtraInputCommands.reserve(SUB_PROFILES);
 
     buttonExtraInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
         CommandFactory::CreateShutdownApplicationCommand(), nullptr, nullptr, Duration(500), Duration(20)));
@@ -168,7 +168,7 @@ void ProfileManager::CreateProfile()
     buttonExtraInputCommands.emplace_back(nullptr);
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonTaskInputCommands;
-    buttonTaskInputCommands.reserve(PROFILES);
+    buttonTaskInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonTaskPressEmits;
     buttonTaskPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_R, 1}));
@@ -189,24 +189,24 @@ void ProfileManager::CreateProfile()
     buttonTaskInputCommands.emplace_back(nullptr);
 
     std::vector<std::unique_ptr<ButtonInputCommand>> buttonHiddenInputCommands;
-    buttonHiddenInputCommands.reserve(PROFILES);
+    buttonHiddenInputCommands.reserve(SUB_PROFILES);
 
     buttonHiddenInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
         CommandFactory::CreateShutdownApplicationCommand(), nullptr, nullptr, Duration(500), Duration(20)));
 
     buttonHiddenInputCommands.emplace_back(nullptr);
 
-    profiles.try_emplace(80, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonHiddenInputCommands)));
-    profiles.try_emplace(81, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonTaskInputCommands)));
-    profiles.try_emplace(82, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonBackInputCommands)));
-    profiles.try_emplace(84, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonForwardInputCommands)));
-    profiles.try_emplace(272, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonLeftInputCommands)));
-    profiles.try_emplace(273, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonRightInputCommands)));
-    profiles.try_emplace(275, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonSideInputCommands)));
-    profiles.try_emplace(276, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonExtraInputCommands)));
+    profile.try_emplace(80, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonHiddenInputCommands)));
+    profile.try_emplace(81, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonTaskInputCommands)));
+    profile.try_emplace(82, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonBackInputCommands)));
+    profile.try_emplace(84, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonForwardInputCommands)));
+    profile.try_emplace(272, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonLeftInputCommands)));
+    profile.try_emplace(273, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonRightInputCommands)));
+    profile.try_emplace(275, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonSideInputCommands)));
+    profile.try_emplace(276, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonExtraInputCommands)));
 
     std::vector<std::unique_ptr<ButtonInputCommand>> wheelNegativeTiltInputCommands;
-    buttonHiddenInputCommands.reserve(PROFILES);
+    buttonHiddenInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> wheelNegativeTiltPressEmits;
     wheelNegativeTiltPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_LEFTALT, 1}));
@@ -228,7 +228,7 @@ void ProfileManager::CreateProfile()
     wheelNegativeTiltInputCommands.emplace_back(nullptr);
 
     std::vector<std::unique_ptr<ButtonInputCommand>> wheelPositiveTiltInputCommands;
-    wheelPositiveTiltInputCommands.reserve(PROFILES);
+    wheelPositiveTiltInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> wheelPositiveTiltPressEmits;
     wheelPositiveTiltPressEmits.emplace_back(EmitData(KEYBOARD, {EV_KEY, KEY_LEFTALT, 1}));
@@ -249,8 +249,8 @@ void ProfileManager::CreateProfile()
 
     wheelPositiveTiltInputCommands.emplace_back(nullptr);
 
-    profiles.try_emplace(32, std::make_unique<ButtonInputCommandStrategy>(std::move(wheelNegativeTiltInputCommands)));
-    profiles.try_emplace(64, std::make_unique<ButtonInputCommandStrategy>(std::move(wheelPositiveTiltInputCommands)));
+    profile.try_emplace(32, std::make_unique<ButtonInputCommandStrategy>(std::move(wheelNegativeTiltInputCommands)));
+    profile.try_emplace(64, std::make_unique<ButtonInputCommandStrategy>(std::move(wheelPositiveTiltInputCommands)));
 
     std::unordered_map<unsigned long, std::unordered_set<int>> mouseCapableInputs;
 
@@ -285,17 +285,17 @@ void ProfileManager::CreateProfile()
 
     VirtualDeviceManager::GetInstance().CreateVirtualDevice(KEYBOARD, mouseCapableInputs, usetup);
 
-    SetProfiles(std::move(profiles));
+    SetProfile(std::move(profile));
 }
 
-void ProfileManager::SetProfiles(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& inputStrategies)
+void ProfileManager::SetProfile(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& profile)
 {
-    _inputStrategies = std::move(inputStrategies);
+    _profile = std::move(profile);
 
     UpdateCodesBindings();
 }
 
-void ProfileManager::ChangeCurrentProfile(unsigned char profileIndex)
+void ProfileManager::ChangeCurrentSubProfile(uint8_t subProfileIndex)
 {
     for (const auto& action : _actionsOnChangeProfile)
     {
@@ -303,9 +303,9 @@ void ProfileManager::ChangeCurrentProfile(unsigned char profileIndex)
     }
 
     _actionsOnChangeProfile.clear();
-    _currentProfileCodes.clear();
+    _currentSubProfileCodes.clear();
 
-    _currentProfileIndex = profileIndex;
+    _currentSubProfileIndex = subProfileIndex;
 
     UpdateCodesBindings();
 }
@@ -318,20 +318,20 @@ void ProfileManager::ChangeMouseInputState(IMouseInputState* mouseInputState)
     ThreadsManager::GetInstance().SetProfileAction([&](){MouseInputStateLoop(_shouldMouseInputLoopRun);});
 }
 
-bool ProfileManager::IsCodeInUse(unsigned short code) const
+bool ProfileManager::IsCodeInUse(Code code) const
 {
-    return _currentProfileCodes.contains(code);
+    return _currentSubProfileCodes.contains(code);
 }
 
 void ProfileManager::UpdateCodesBindings()
 {
-    std::forward_list<Code>& codes {_allProfilesCodes.at(_currentProfileIndex)};
+    std::forward_list<Code>& codes {_allSubProfilesCodes.at(_currentSubProfileIndex)};
 
     for (auto& code : codes)
     {
-        _currentProfileCodes.emplace(code);
+        _currentSubProfileCodes.emplace(code);
 
-        _inputStrategies.at(code)->ChangeProfile(_currentProfileIndex);
+        _profile.at(code)->ChangeProfile(_currentSubProfileIndex);
     }
 }
 
@@ -384,7 +384,7 @@ void ProfileManager::MouseInputStateLoop(std::shared_ptr<bool> shouldKeepRun)
 void ProfileManager::RegisterInput(Code code, int value) const
 {
     _mutex.lock();
-    _inputStrategies.at(code)->RegisterValue(value);
+    _profile.at(code)->RegisterValue(value);
     _mutex.unlock();
 }
 

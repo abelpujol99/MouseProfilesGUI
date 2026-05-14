@@ -6,7 +6,7 @@
 
 #define MAIN_PROFILE 0
 
-std::unique_ptr<ICommand> CommandFactory::CreateSwitchToProfileCommand(int profileIndex)
+std::unique_ptr<ICommand> CommandFactory::CreateSwitchToProfileCommand(uint8_t profileIndex)
 {
     return std::make_unique<SwitchToSubProfileCommand>(profileIndex);
 }

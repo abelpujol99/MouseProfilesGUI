@@ -26,7 +26,7 @@ public:
 
     void OnChangeApplicationFocus();
 
-    void ChangeCurrentProfile(unsigned char profileIndex);
+    void ChangeCurrentSubProfile(uint8_t subProfileIndex);
 
     void ChangeMouseInputState(IMouseInputState* mouseInputState);
 
@@ -42,7 +42,7 @@ private:
 
     void CreateProfile();
 
-    void SetProfiles(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& inputStrategies);
+    void SetProfile(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& profile);
 
     void UpdateCodesBindings();
 
@@ -50,15 +50,15 @@ private:
 
     static std::unique_ptr<ProfileManager> _profileManagerInstance;
 
-    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> _inputStrategies;
+    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> _profile;
 
-    std::unordered_map<unsigned char, std::forward_list<Code>> _allProfilesCodes;
+    std::unordered_map<uint8_t, std::forward_list<Code>> _allSubProfilesCodes;
 
-    std::unordered_set<Code> _currentProfileCodes;
+    std::unordered_set<Code> _currentSubProfileCodes;
 
-    unsigned char _currentProfileIndex;
+    uint8_t _currentSubProfileIndex;
 
-    IMouseInputState* _mouseInputState;
+    IMouseInputState* _mouseInputState {nullptr};
 
     std::vector<std::shared_ptr<std::function<void()>>> _actionsOnChangeProfile;
 

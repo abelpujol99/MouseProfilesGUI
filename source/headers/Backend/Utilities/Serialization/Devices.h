@@ -1,7 +1,5 @@
 #pragma once
 
-#include <unordered_map>
-
 #include "Backend/Utilities/Serialization/DeviceProfiles.h"
 
 struct Devices

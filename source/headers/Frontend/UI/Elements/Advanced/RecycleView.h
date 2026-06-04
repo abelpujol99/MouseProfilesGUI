@@ -36,6 +36,8 @@ public:
 
     void RemoveDrawableComponent(uint8_t index);
 
+    [[nodiscard]] size_t GetDrawableComponentsSize() const;
+
     bool CanBeScrolled() override;
 
     void Scroll(float scrollValue) override;
@@ -354,9 +356,9 @@ void RecycleView<TDrawableComponent, TRowCreation>::DeleteLastRow()
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
 {
-    uint8_t drawableComponentsSize {static_cast<uint8_t>(_drawableComponents.size())};
+    uint8_t drawableComponentsCount {static_cast<uint8_t>(_drawableComponents.size())};
 
-    _componentViewsIndex.emplace(drawableComponentsSize, nullptr);
+    _componentViewsIndex.emplace(drawableComponentsCount, nullptr);
 
     auto itEnd {_viewsComponentIndex.cend()};
 
@@ -364,12 +366,12 @@ void RecycleView<TDrawableComponent, TRowCreation>::AddDrawableComponent(std::un
     {
         auto& pair {*it};
 
-        if (pair.second != drawableComponentsSize)
+        if (pair.second != drawableComponentsCount)
         {
             continue;
         }
 
-        _componentViewsIndex.at(drawableComponentsSize) = pair.first;
+        _componentViewsIndex.at(drawableComponentsCount) = pair.first;
 
         pair.first->AddDrawableComponent(drawableComponent.get());
 
@@ -415,6 +417,12 @@ void RecycleView<TDrawableComponent, TRowCreation>::RemoveDrawableComponent(uint
     CalculateFirstViewIndexReference();
 
     CalculateLastViewIndexReference();
+}
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+size_t RecycleView<TDrawableComponent, TRowCreation>::GetDrawableComponentsSize() const
+{
+    return _drawableComponents.size();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>

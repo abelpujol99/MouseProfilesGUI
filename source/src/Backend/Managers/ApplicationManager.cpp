@@ -2,6 +2,7 @@
 
 #include "Backend/Managers/ThreadsManager.h"
 #include "Backend/Managers/ProfileManager.h"
+#include "Backend/Managers/SerializationManager.h"
 #include "Backend/Managers/VirtualDeviceManager.h"
 
 #include "Frontend/Managers/View/WindowManager.h"
@@ -10,6 +11,8 @@ std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInsta
 
 ApplicationManager::ApplicationManager()
 {
+    _devices = SerializationManager::GetInstance().DeserializeDevicesProfiles();
+
     _shouldRunObserver = std::make_unique<ObserverSingleValue<bool>>();
 
     _shouldRunObserver->SetValue(true);
@@ -41,6 +44,8 @@ void ApplicationManager::Start()
 #endif
 
     ThreadsManager::GetInstance().Start();
+
+    //SerializationManager::GetInstance().SerializeDevices(_devices);
 }
 
 std::string ApplicationManager::GetPathToSwitchScrollMode() const
@@ -80,6 +85,88 @@ void ApplicationManager::UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::fu
     _shouldGUIRunObserver->Unsubscribe(std::move(action));
 }
 
+void ApplicationManager::SetEditingDeviceProfiles(std::string deviceName)
+{
+    if (!_devices.devicesProfiles.contains(deviceName))
+    {
+        _devices.devicesProfiles.emplace(deviceName, DeviceProfiles{});
+    }
+
+    _editingDeviceProfiles = &_devices.devicesProfiles.at(deviceName);
+}
+
+std::string ApplicationManager::CreateProfile()
+{
+    std::string profileName {"Profile "};
+    profileName += std::to_string(_editingDeviceProfiles->profiles.size() + 1);
+
+    Profile profile{};
+
+    profile.isCurrentProfile = false;
+
+    _editingDeviceProfiles->profiles.emplace(profileName, profile);
+
+    return profileName;
+}
+
+void ApplicationManager::DeleteProfile(std::string profileName)
+{
+    _editingDeviceProfiles->profiles.erase(profileName);
+}
+
+void ApplicationManager::SetEditingProfile(std::string profileName)
+{
+    _editingProfile = &_editingDeviceProfiles->profiles.at(profileName);
+}
+
+void ApplicationManager::CreateSubProfile()
+{
+    _editingProfile->subProfiles.emplace_back();
+}
+
+void ApplicationManager::DeleteSubProfile(uint8_t index)
+{
+    uint8_t count{0};
+
+    auto itEnd {_editingProfile->subProfiles.cend()};
+
+    for (auto it{_editingProfile->subProfiles.begin()}; it != itEnd; ++it)
+    {
+        if (count != index)
+        {
+            count++;
+            continue;
+        }
+
+        _editingProfile->subProfiles.erase(it);
+    }
+}
+
+void ApplicationManager::SetEditingSubProfile(uint8_t index)
+{
+    _editingSubProfile = &_editingProfile->subProfiles.at(index);
+}
+
+void ApplicationManager::CreateCodeRemap(Code code, CodeRemap codeRemap)
+{
+    _editingSubProfile->codesRemaps.emplace(code, codeRemap);
+}
+
+void ApplicationManager::DeleteCodeRemap(Code code)
+{
+    _editingSubProfile->codesRemaps.erase(code);
+}
+
+std::unordered_map<std::string, Profile> ApplicationManager::GetDeviceProfiles(std::string deviceName)
+{
+    if (_devices.devicesProfiles.contains(deviceName))
+    {
+        return _devices.devicesProfiles.at(deviceName).profiles;
+    }
+
+    return {};
+}
+
 void ApplicationManager::StartGUI()
 {
     WindowManager& windowManager {WindowManager::GetInstance()};
@@ -97,4 +184,5 @@ void ApplicationManager::TurnOnGUI() const
 void ApplicationManager::TurnOffGUI() const
 {
     _shouldGUIRunObserver->SetValue(false);
+    SerializationManager::GetInstance().SerializeDevices(_devices);
 }

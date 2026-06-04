@@ -143,6 +143,20 @@ void WindowManager::Update()
 
     Cleanse();
 
+    ApplicationManager& applicationManager {ApplicationManager::GetInstance()};
+
+    applicationManager.SetEditingDeviceProfiles("Generic X-Box pad");
+
+    std::string profileName {applicationManager.CreateProfile()};
+
+    applicationManager.SetEditingProfile(profileName);
+
+    applicationManager.CreateSubProfile();
+
+    applicationManager.SetEditingSubProfile(0);
+
+    applicationManager.CreateCodeRemap(32, {CommandType::SWITCH_TO_SUB_PROFILE, {}, 1});
+
     ApplicationManager::GetInstance().TurnOffGUI();
 }
 

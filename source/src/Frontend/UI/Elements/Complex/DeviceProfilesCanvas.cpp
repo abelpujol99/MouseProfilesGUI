@@ -1,5 +1,6 @@
 #include "Frontend/UI/Elements/Complex/DeviceProfilesCanvas.h"
 
+#include "Backend/Managers/ApplicationManager.h"
 #include "Frontend/RectangleDefines.h"
 #include "Frontend/TextDefines.h"
 #include "Frontend/Factory/Font/FontFamilyTypes.h"
@@ -17,7 +18,7 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
     std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(ANCHORS_MIDDLE_STRETCH,
         PIVOT_MIDDLE_CENTER, {0, 0}, {0, 0}, false)};
 
-    _title = DrawableFactory::CreateText(TextData{"Devices", TextHorizontalAlignments::CENTER,
+    _title = DrawableFactory::CreateText(TextData{"", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE_SIZE, WHITE});
 
     titleRect->AddDrawableComponent(_title.get());
@@ -98,6 +99,23 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
 void DeviceProfilesCanvas::SetTitle(std::string title)
 {
     _title->SetText(title);
+
+    ApplicationManager& applicationManager {ApplicationManager::GetInstance()};
+
+    applicationManager.SetEditingDeviceProfiles(_title->GetText());
+
+    std::unordered_map<std::string, Profile> deviceProfiles {applicationManager.GetDeviceProfiles(_title->GetText())};
+
+    for (auto [profileName, profile] : deviceProfiles)
+    {
+        _profilesRecycleView->AddDrawableComponent(DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+            TextData{profileName, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+            SUB_TITLE_SIZE, WHITE},
+            [profileName, profile]()
+            {
+                //TODO PASS TO DEVICE PROFILE CANVAS
+            }, false));
+    }
 }
 
 void DeviceProfilesCanvas::Enable()

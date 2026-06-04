@@ -2,8 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake,clion,c++
 
 builds
-source/libraries/*
-!source/libraries/glad
+gui/libraries/*
+!gui/libraries/glad
 
 ### C++ ###
 # Prerequisites

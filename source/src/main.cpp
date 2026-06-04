@@ -1,8 +1,0 @@
-#include "Backend/Managers/ApplicationManager.h"
-
-int main()
-{
-    ApplicationManager::GetInstance().Start();
-
-    return 0;
-}

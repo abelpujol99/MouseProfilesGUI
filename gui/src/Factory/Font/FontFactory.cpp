@@ -28,5 +28,5 @@ FontFactory& FontFactory::GetInstance()
 
 ImFont* FontFactory::GetFontFamily(FontFamilyTypes fontFamilyType) const
 {
-    return _fontFamilies.at(fontFamilyType).get();
+    return _fontFamilies.at(fontFamilyType);
 }

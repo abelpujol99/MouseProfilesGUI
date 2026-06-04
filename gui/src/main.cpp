@@ -1,10 +1,15 @@
-#include "Managers/ApplicationManager.h"
+#include "Managers/View/WindowManager.h"
 
-#include <iostream>
+#define WIDTH 1500
+#define HEIGHT 700
 
 int main()
 {
-    std::cout << "Hello World" << std::endl;
+    WindowManager& windowManager {WindowManager::GetInstance()};
+
+    windowManager.SetInitialSize(WIDTH, HEIGHT);
+    windowManager.Start();
+    windowManager.Update();
 
     return 0;
 }

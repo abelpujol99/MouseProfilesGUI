@@ -1,6 +1,5 @@
-#include "UI/Elements/Complex/DeviceProfilesCanvas.h"
+#include "MVP/View/DeviceProfilesView.h"
 
-#include "Managers/ApplicationManager.h"
 #include "RectangleDefines.h"
 #include "TextDefines.h"
 #include "Factory/Font/FontFamilyTypes.h"
@@ -10,7 +9,13 @@
 #include "UI/Structs/RectangleData.h"
 #include "UI/Structs/TextData.h"
 
-DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
+#define RECYCLE_VIEW_VIEWS_PER_ROW 4
+#define RECYCLE_VIEW_BUFFER_ROWS 2
+#define RECYCLE_VIEW_HORIZONTAL_MARGIN 0.1
+#define RECYCLE_VIEW_VERTICAL_MARGIN 0.1
+#define RECYCLE_VIEW_ROW_HEIGHT 150
+
+DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden)
 {
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(Anchors{{0, 0}, {1, 0.15}},
         PIVOT_MIDDLE_CENTER,{0, 0}, {0, 0}, false)};
@@ -29,7 +34,11 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
 
     _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, true},
         TextData{"Back", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-            SUB_TITLE_SIZE, WHITE}, [&](){Back();}, false);
+            SUB_TITLE_SIZE, WHITE},
+            [&]()
+            {
+                _presenter->OnPressBackButton();
+            }, false);
 
     backButtonRect->AddDrawableComponent(_backButton.get());
     topBarRect->AddRectDrawable(std::move(backButtonRect));
@@ -61,7 +70,12 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
 
     _editCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{BLUE, LOW_ROUNDING, THIN_BORDER, true},
         TextData{"Edit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&](){Edit();}, false);
+        SUB_TITLE_SIZE, WHITE},
+        [&]()
+        {
+            //TODO NOTIFY TO EDIT
+            Edit();
+        }, false);
 
     currentProfileEditButtonRect->AddDrawableComponent(_editCurrentProfileButton.get());
 
@@ -70,7 +84,12 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
 
     _unloadCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{BLUE, LOW_ROUNDING, THIN_BORDER, true},
         TextData{"Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&](){Unload();}, false);
+        SUB_TITLE_SIZE, WHITE},
+        [&]()
+        {
+            //TODO NOTIFY TO UNLOAD
+            Unload();
+        }, false);
 
     currentProfileUnloadButtonRect->AddDrawableComponent(_unloadCurrentProfileButton.get());
 
@@ -84,10 +103,32 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
     std::unique_ptr<RectDrawable> profileRecycleViewRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.35}, {1, 1}},
         PIVOT_MIDDLE_CENTER, {0, 0}, {0, 0}, false)};
 
-    _profilesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(4, {0.1, 0.1},{0, 150}, 2,
+    _profilesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(RECYCLE_VIEW_VIEWS_PER_ROW,
+        {RECYCLE_VIEW_HORIZONTAL_MARGIN, RECYCLE_VIEW_VERTICAL_MARGIN}, {0, RECYCLE_VIEW_ROW_HEIGHT}, RECYCLE_VIEW_BUFFER_ROWS,
         [](Button& button){button.Subscribe();},
         [](Button& button){button.Unsubscribe();},
-        false);
+        []()
+        {
+            return DrawableFactory::CreateButton(
+                RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+                TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+                SUB_TITLE_SIZE, WHITE},
+                [&](){}, true);
+        },
+        {
+            [&](uint8_t items)
+            {
+                _presenter->SetRecycleViewVisibleItemsCount(items);
+            },
+            [&](float size)
+            {
+                _presenter->SetRecyclerViewHeight(size);
+            },
+            [&](float scrollValue)
+            {
+                _presenter->OnScroll(scrollValue);
+            }
+        }, false);
 
     profileRecycleViewRect->AddDrawableComponent(_profilesRecycleView.get());
 
@@ -96,7 +137,7 @@ DeviceProfilesCanvas::DeviceProfilesCanvas(bool isHidden) : Canvas(isHidden)
     AddRectDrawable(std::move(profileRecycleViewRect));
 }
 
-void DeviceProfilesCanvas::SetTitle(std::string title)
+void DeviceProfilesView::SetTitle(std::string title)
 {
     _title->SetText(title);
 
@@ -118,7 +159,7 @@ void DeviceProfilesCanvas::SetTitle(std::string title)
     }*/
 }
 
-void DeviceProfilesCanvas::Enable()
+void DeviceProfilesView::Enable()
 {
     *_mustBeHidden = false;
 
@@ -131,7 +172,7 @@ void DeviceProfilesCanvas::Enable()
     _profilesRecycleView->Enable();
 }
 
-void DeviceProfilesCanvas::Disable()
+void DeviceProfilesView::Disable()
 {
     *_mustBeHidden = true;
 
@@ -144,19 +185,19 @@ void DeviceProfilesCanvas::Disable()
     _profilesRecycleView->Disable();
 }
 
-void DeviceProfilesCanvas::Back() const
+void DeviceProfilesView::Back() const
 {
-    DrawManager::GetInstance().EnableDevicesCanvas();
+    DrawManager::GetInstance().EnableDevicesView();
 }
 
 #include <iostream>
 
-void DeviceProfilesCanvas::Edit() const
+void DeviceProfilesView::Edit() const
 {
     std::cout << "Edit" << std::endl;
 }
 
-void DeviceProfilesCanvas::Unload() const
+void DeviceProfilesView::Unload() const
 {
     std::cout << "Unload" << std::endl;
 }

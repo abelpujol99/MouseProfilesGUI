@@ -8,7 +8,6 @@
 template<typename T>
 class ObserverSingleValue : public IObserver
 {
-private:
 
 	using TEventHandler = std::function<void(T)>;
 	using TEventList = std::list<std::shared_ptr<TEventHandler>>;
@@ -79,7 +78,13 @@ T ObserverSingleValue<T>::GetValue() const
 template <typename T>
 void ObserverSingleValue<T>::SetValue(T data)
 {
+	T previousData {_data};
 	_data = _action(data);
+
+	if (previousData == _data)
+	{
+		return;
+	}
 
 	TEventListConstIterator itEnd{_events.cend()};
 
@@ -93,7 +98,7 @@ template <typename T>
 std::weak_ptr<typename ObserverSingleValue<T>::TEventHandler> ObserverSingleValue<T>::Subscribe(TEventHandler action)
 {
 	std::shared_ptr<TEventHandler> sharedAction {std::make_shared<TEventHandler>(action)};
-	_events.emplace_front(sharedAction);
+	_events.push_back(sharedAction);
 	return sharedAction;
 }
 

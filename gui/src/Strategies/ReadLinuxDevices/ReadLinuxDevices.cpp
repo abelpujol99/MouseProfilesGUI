@@ -45,8 +45,11 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
 
         DeviceInfo deviceInfo;
 
-        deviceInfo.path = path.c_str();
-        ioctl(file, EVIOCGNAME(sizeof(deviceInfo.name)), deviceInfo.name);
+        char deviceName[256];
+        ioctl(file, EVIOCGNAME(sizeof(deviceName)), deviceName);
+
+        deviceInfo.path = path;
+        deviceInfo.name = deviceName;
 
         devicesInfo.push_back(deviceInfo);
 

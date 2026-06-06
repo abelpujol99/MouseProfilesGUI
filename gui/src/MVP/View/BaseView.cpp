@@ -1,8 +1,8 @@
-#include "UI/Elements/Complex/Canvas.h"
+/*#include "MVP/View/BaseView.h"
 
 #include "Managers/View/WindowManager.h"
 
-Canvas::Canvas(bool isHidden) :
+BaseView::BaseView(bool isHidden) :
         BaseDisplay(isHidden)
 {
     _onSizeChangeWeakAction = WindowManager::GetInstance().SubscribeToSizeObserver([&](ImVec2 size) {
@@ -18,14 +18,14 @@ Canvas::Canvas(bool isHidden) :
     });
 }
 
-void Canvas::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
+void BaseView::AddRectDrawable(std::unique_ptr<RectDrawable>&& rectDrawable)
 {
     rectDrawable->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rectDrawables.push_front(std::move(rectDrawable));
 }
 
-void Canvas::RemoveRectDrawable(RectDrawable* rectDrawable)
+void BaseView::RemoveRectDrawable(RectDrawable* rectDrawable)
 {
     auto itEnd {_rectDrawables.cend()};
 
@@ -45,22 +45,22 @@ void Canvas::RemoveRectDrawable(RectDrawable* rectDrawable)
     }
 }
 
-ImVec2 Canvas::GetParentPosition() const
+ImVec2 BaseView::GetParentPosition() const
 {
     return {0, 0};
 }
 
-ImVec2 Canvas::GetParentBottomRightPosition() const
+ImVec2 BaseView::GetParentBottomRightPosition() const
 {
     return {GetParentPosition().x + GetParentSize().x, GetParentPosition().y + GetParentSize().y};
 }
 
-ImVec2 Canvas::GetParentSize() const
+ImVec2 BaseView::GetParentSize() const
 {
     return *_size;
 }
 
-void Canvas::Draw(ImDrawList* drawList)
+void BaseView::Draw(ImDrawList* drawList)
 {
     if (*_mustBeHidden)
     {
@@ -75,7 +75,7 @@ void Canvas::Draw(ImDrawList* drawList)
     }
 }
 
-void Canvas::UpdateRectDrawables() const
+void BaseView::UpdateRectDrawables() const
 {
     const auto itEnd{_rectDrawables.cend()};
 
@@ -83,4 +83,4 @@ void Canvas::UpdateRectDrawables() const
     {
         (*it)->UpdateAttributes();
     }
-}
+}*/

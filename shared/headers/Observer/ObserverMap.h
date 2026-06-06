@@ -2,7 +2,7 @@
 #include "Observer/IObserver.h"
 
 #include <functional>
-#include <list>
+#include <vector>
 #include <memory>
 
 template<typename TKey, typename TValue>
@@ -10,7 +10,7 @@ class ObserverMap : public IObserver
 {
 	using TEvent = std::function<void(TValue)>;
 
-	using TEventList = std::list<std::shared_ptr<TEvent>>;
+	using TEventList = std::vector<std::shared_ptr<TEvent>>;
 	using TEventListIterator = typename TEventList::iterator;
 	using TEventListConstIterator = typename TEventList::const_iterator;
 
@@ -99,7 +99,13 @@ TValue ObserverMap<TKey, TValue>::GetValue(TKey key) const
 template <typename TKey, typename TValue>
 void ObserverMap<TKey, TValue>::SetValue(TKey key, TValue data)
 {
+	TValue previousData {_data.at(key)};
 	_data.at(key) = _actions.at(key)(data);
+
+	if (previousData == _data.at(key))
+	{
+		return;
+	}
 
 	TEventListConstIterator itEnd {_events.at(key).cend()};
 

@@ -1,4 +1,4 @@
-#include "Factory/CanvasFactory.h"
+/*#include "Factory/CanvasFactory.h"
 
 #include <filesystem>
 #include <iostream>
@@ -14,20 +14,20 @@
 #include "RectangleDefines.h"
 #include "UI/Elements/Advanced/RecycleView.h"
 #include "UI/Elements/Advanced/Dropdown.h"
-#include "UI/Elements/Complex/DevicesCanvas.h"
+#include "MVP/View/DevicesView.h"
 
-std::unique_ptr<Canvas> CanvasFactory::CreateDevicesCanvas(bool isHidden)
+std::unique_ptr<IView> CanvasFactory::CreateDevicesCanvas(bool isHidden)
 {
-    std::unique_ptr<Canvas> devicesScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
+    std::unique_ptr<IView> devicesScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
 
     return devicesScreen;
 }
 
-std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
+std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
 {
-    std::unique_ptr<Canvas> profileScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
+    std::unique_ptr<IView> profileScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
 
-/*#pragma region Device Name
+#pragma region Device Name
 
     std::unique_ptr<RectDrawable> deviceNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 0.1}}, PIVOT_TOP_CENTER,
         {0, 10}, {0, 50}, isHidden)};
@@ -256,7 +256,7 @@ std::unique_ptr<Canvas> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     profileScreen->AddRectDrawable(std::move(outputRect));
 
-#pragma endregion*/
+#pragma endregion
 
     return profileScreen;
 }
@@ -270,4 +270,4 @@ std::unique_ptr<Text> CanvasFactory::GetText(std::string string)
 {
     return std::make_unique<Text>(TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
         FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, false);
-}
+}*/

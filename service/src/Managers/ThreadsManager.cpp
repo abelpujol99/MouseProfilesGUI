@@ -1,6 +1,6 @@
 #include "Managers/ThreadsManager.h"
 
-#include "Managers/ApplicationManager.h"
+#include "Managers/MVPManager.h"
 #include "TimeUsings.h"
 #include "TimeDefines.h"
 
@@ -25,11 +25,11 @@ void ThreadsManager::SetProfileAction(std::function<void()>&& profileAction)
 
 void ThreadsManager::Start() {
 
-    ApplicationManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
+    MVPManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
         _shouldKeepRunning = value;
     });
 
-    ApplicationManager::GetInstance().SubscribeToShouldGUIRunObserver([&](bool value) {
+    MVPManager::GetInstance().SubscribeToShouldGUIRunObserver([&](bool value) {
         _shouldGUIKeepRunning = value;
     });
 
@@ -73,6 +73,6 @@ void ThreadsManager::GUIThreadLoop()
             continue;
         }
 
-        ApplicationManager::GetInstance().StartGUI();
+        MVPManager::GetInstance().StartGUI();
     }
 }

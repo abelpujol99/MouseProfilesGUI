@@ -1,6 +1,6 @@
 #include "Managers/ProfileManager.h"
 
-#include "Managers/ApplicationManager.h"
+#include "Managers/MVPManager.h"
 #include "Managers/ThreadsManager.h"
 #include "Managers/VirtualDeviceManager.h"
 #include "Factory/CommandFactory.h"
@@ -13,7 +13,7 @@ std::unique_ptr<ProfileManager> ProfileManager::_profileManagerInstance = nullpt
 
 ProfileManager::ProfileManager() : _currentSubProfileIndex(0), _shouldMouseInputLoopRun(std::make_shared<bool>(false))
 {
-    ApplicationManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
+    MVPManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
         *_shouldMouseInputLoopRun = value;
     });
 }

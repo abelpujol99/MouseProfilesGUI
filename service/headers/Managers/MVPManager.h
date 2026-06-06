@@ -3,18 +3,18 @@
 #include "Utilities/Serialization/Devices.h"
 #include "Observer/ObserverSingleValue.h"
 
-class ApplicationManager
+class MVPManager
 {
 public:
 
-    ~ApplicationManager() = default;
+    ~MVPManager() = default;
 
-    ApplicationManager(const ApplicationManager& other) = delete;
-    ApplicationManager& operator=(const ApplicationManager& other) = delete;
-    ApplicationManager(ApplicationManager&& other) = delete;
-    ApplicationManager& operator=(ApplicationManager&& other) = delete;
+    MVPManager(const MVPManager& other) = delete;
+    MVPManager& operator=(const MVPManager& other) = delete;
+    MVPManager(MVPManager&& other) = delete;
+    MVPManager& operator=(MVPManager&& other) = delete;
 
-    static ApplicationManager& GetInstance();
+    static MVPManager& GetInstance();
 
     void Start();
 
@@ -58,9 +58,9 @@ public:
 
 private:
 
-    ApplicationManager();
+    MVPManager();
 
-    static std::unique_ptr<ApplicationManager> _applicationManagerInstance;
+    static std::unique_ptr<MVPManager> _applicationManagerInstance;
 
     Devices _devices;
 

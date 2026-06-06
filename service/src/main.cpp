@@ -1,8 +1,8 @@
-#include "Managers/ApplicationManager.h"
+#include "Managers/MVPManager.h"
 
 int main()
 {
-    ApplicationManager::GetInstance().Start();
+    MVPManager::GetInstance().Start();
 
     return 0;
 }

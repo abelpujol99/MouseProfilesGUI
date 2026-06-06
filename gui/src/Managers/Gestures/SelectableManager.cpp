@@ -4,7 +4,7 @@
 #include "Managers/Input/InputManager.h"
 #include "Managers/Input/MouseButton/MouseButtons.h"
 #include "UI/Helpers/ISelectable.h"
-#include "Utilities/Boundaries.h"
+#include "Utilities/UI/Boundaries.h"
 
 SelectableManager* SelectableManager::_selectableManagerInstance {nullptr};
 

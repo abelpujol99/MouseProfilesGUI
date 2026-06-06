@@ -1,14 +1,9 @@
 #include "Factory/DrawableFactory.h"
 
-#include "UI/Elements/Complex/DevicesCanvas.h"
-
-std::unique_ptr<Canvas> DrawableFactory::CreateDevicesCanvas(bool isHidden)
-{
-    return std::make_unique<DevicesCanvas>(isHidden);
-}
+#include "MVP/View/Devices/DevicesView.h"
 
 std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, Pivot&& pivot ,ImVec2&& relativePosition,
-        ImVec2&& desiredSize, bool isHidden)
+                                                                  ImVec2&& desiredSize, bool isHidden)
 {
     return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
         std::move(desiredSize), isHidden);
@@ -58,7 +53,7 @@ std::unique_ptr<Button> DrawableFactory::CreateButton(RectangleData&& rectangleD
 
     button->SetRectangle(CreateRectangle(std::move(rectangleData), isHidden));
 
-    button->SetText(CreateText(std::move(textData), isHidden));
+    button->SetTextComponent(CreateText(std::move(textData), isHidden));
 
     return button;
 }

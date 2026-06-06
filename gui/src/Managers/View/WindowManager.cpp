@@ -1,5 +1,7 @@
 #include "Managers/View/WindowManager.h"
 
+#include <utility>
+
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
@@ -11,6 +13,7 @@
 #include "Managers/Gestures/ClickableManager.h"
 #include "Managers/Gestures/SelectableManager.h"
 #include "Managers/Gestures/ScrollableManager.h"
+#include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"
 
 WindowManager* WindowManager::_windowManagerInstance {nullptr};
@@ -36,10 +39,10 @@ void WindowManager::SetInitialSize(int width, int height)
     _initialWidth = width;
     _initialHeight = height;
 
-    _sizeObserver.SetValue({static_cast<float>(_initialWidth), static_cast<float>(_initialHeight)});
+    _sizeObserver.SetValue({_initialWidth, _initialHeight});
 }
 
-ImVec2 WindowManager::GetSize() const
+WindowSize WindowManager::GetSize() const
 {
     return _sizeObserver.GetValue();
 }
@@ -113,6 +116,8 @@ void WindowManager::Update()
 
     ScrollableManager& scrollableManager {ScrollableManager::GetInstance()};
 
+    MVPManager& mvpManager {MVPManager::GetInstance()};
+
     DrawManager& drawManager {DrawManager::GetInstance()};
 
     while (!glfwWindowShouldClose(_window))
@@ -174,15 +179,15 @@ void WindowManager::RenderWindow()
 
     glfwSwapBuffers(_window);
 
-    _sizeObserver.SetValue({static_cast<float>(displayWidth), static_cast<float>(displayHeight)});
+    _sizeObserver.SetValue({displayWidth, displayHeight});
 }
 
-std::weak_ptr<std::function<void(ImVec2)>> WindowManager::SubscribeToSizeObserver(std::function<void(ImVec2)> action)
+std::weak_ptr<std::function<void(WindowSize)>> WindowManager::SubscribeToSizeObserver(std::function<void(WindowSize)> action)
 {
-    return _sizeObserver.Subscribe(action);
+    return _sizeObserver.Subscribe(std::move(action));
 }
 
-void WindowManager::UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(ImVec2)>> weakAction)
+void WindowManager::UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(WindowSize)>> weakAction)
 {
     _sizeObserver.Unsubscribe(weakAction);
 }

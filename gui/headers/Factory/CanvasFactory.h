@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UI/Elements/Complex/Canvas.h"
+#include "MVP/View/BaseView.h"
 
 class Rectangle;
 class Text;
@@ -9,9 +9,9 @@ class CanvasFactory
 {
 public:
 
-    [[nodiscard]] static std::unique_ptr<Canvas> CreateDevicesCanvas(bool isHidden);
+    /*[[nodiscard]] static std::unique_ptr<IView> CreateDevicesCanvas(bool isHidden);
 
-    [[nodiscard]] static std::unique_ptr<Canvas> CreateProfileCanvas(bool isHidden);
+    [[nodiscard]] static std::unique_ptr<IView> CreateProfileCanvas(bool isHidden);*/
 
 private:
 

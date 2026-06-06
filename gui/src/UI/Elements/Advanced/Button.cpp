@@ -13,14 +13,28 @@ Button::~Button() noexcept
     Unsubscribe();
 }
 
+void Button::SetIsHidden(bool isHidden)
+{
+    DrawableComponent::SetIsHidden(isHidden);
+
+    _rectangle->SetIsHidden(isHidden);
+
+    _text->SetIsHidden(isHidden);
+}
+
 void Button::SetRectangle(std::unique_ptr<Rectangle>&& rectangle)
 {
     _rectangle = std::move(rectangle);
 }
 
-void Button::SetText(std::unique_ptr<Text>&& text)
+void Button::SetTextComponent(std::unique_ptr<Text>&& text)
 {
     _text = std::move(text);
+}
+
+void Button::SetText(std::string&& text)
+{
+    _text->SetText(text);
 }
 
 void Button::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,

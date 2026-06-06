@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UI/Elements/Complex/DeviceProfilesCanvas.h"
-#include "UI/Elements/Complex/DevicesCanvas.h"
+#include "MVP/View/DeviceProfilesView.h"
+#include "MVP/View/Devices/DevicesView.h"
 
 class DrawManager
 {
@@ -16,9 +16,9 @@ public:
 
     static DrawManager& GetInstance();
 
-    void EnableDevicesCanvas();
+    void EnableDevicesView();
 
-    void EnableDeviceProfilesCanvas(std::string deviceName);
+    void EnableDeviceProfilesView(std::string deviceName);
 
     void DrawElements(ImDrawList* drawList);
 
@@ -28,8 +28,8 @@ private:
 
     static DrawManager* _drawManagerInstance;
 
-    Canvas* _currentCanvas;
+    IView* _currentView;
 
-    std::unique_ptr<DevicesCanvas> _devicesCanvas;
-    std::unique_ptr<DeviceProfilesCanvas> _deviceProfilesCanvas;
+    std::unique_ptr<DevicesView> _devicesView;
+    std::unique_ptr<DeviceProfilesView> _deviceProfilesView;
 };

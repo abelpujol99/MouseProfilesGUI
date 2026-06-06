@@ -5,7 +5,8 @@
 
 #include "AnchorsDefines.h"
 #include "PivotDefines.h"
-#include "UI/Elements/Complex/Canvas.h"
+#include "MVP/View/BaseView.h"
+#include "MVP/View/Devices/DevicesPresenterRecycleViewActions.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/Text/TextBox.h"
 #include "UI/Elements/Intermediate/Texture.h"
@@ -28,8 +29,6 @@ public:
 
     DrawableFactory() = delete;
 
-    static std::unique_ptr<Canvas> CreateDevicesCanvas(bool isHidden = false);
-
     static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
     ImVec2&& desiredSize, bool isHidden);
 
@@ -51,7 +50,8 @@ public:
     template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
     static std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> CreateRecycleView(uint8_t viewsPerRow,
         ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable,
-        std::function<void(TDrawableComponent&)>&& onDisable, bool isHidden = false);
+        std::function<void(TDrawableComponent&)>&& onDisable, std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault,
+        DevicesPresenterRecycleViewActions&& devicesPresenterActions, bool isHidden = false);
 
     template<DerivedFromDrawableComponent TDrawableComponent>
     static std::unique_ptr<Dropdown<TDrawableComponent>> CreateDropdown(RectangleData&& buttonRectangleData,
@@ -64,10 +64,11 @@ template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCre
 std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> DrawableFactory::CreateRecycleView(uint8_t viewsPerRow,
     ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
     std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
-    bool isHidden)
+    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, DevicesPresenterRecycleViewActions&& devicesPresenterActions, bool isHidden)
 {
     return std::make_unique<RecycleView<TDrawableComponent, TRowCreation>>(viewsPerRow, std::move(marginBetweenViews),
-        std::move(rowsSize), std::move(bufferRows), std::move(onEnable), std::move(onDisable), isHidden);
+        std::move(rowsSize), std::move(bufferRows), std::move(onEnable), std::move(onDisable), std::move(createDefault),
+        std::move(devicesPresenterActions), isHidden);
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>

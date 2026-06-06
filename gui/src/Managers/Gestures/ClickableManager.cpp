@@ -3,7 +3,7 @@
 #include "Factory/ImGuiFactory.h"
 #include "Managers/Input/InputManager.h"
 #include "Managers/Input/MouseButton/MouseButtons.h"
-#include "Utilities/Boundaries.h"
+#include "Utilities/UI/Boundaries.h"
 #include "UI/Helpers/IClickable.h"
 
 ClickableManager* ClickableManager::_clickableManagerInstance {nullptr};

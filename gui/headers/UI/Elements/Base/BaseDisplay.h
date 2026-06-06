@@ -9,7 +9,7 @@ public:
 
     ~BaseDisplay() override = default;
 
-    void SetIsHidden(bool isHidden);
+    virtual void SetIsHidden(bool isHidden);
 
     [[nodiscard]] bool IsHidden() const;
 

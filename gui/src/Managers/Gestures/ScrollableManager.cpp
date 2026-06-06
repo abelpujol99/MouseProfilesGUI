@@ -3,7 +3,7 @@
 #include "Factory/ImGuiFactory.h"
 #include "Managers/Input/InputManager.h"
 #include "UI/Helpers/IScrollable.h"
-#include "Utilities/Boundaries.h"
+#include "Utilities/UI/Boundaries.h"
 
 ScrollableManager* ScrollableManager::_scrollableManagerInstance {nullptr};
 

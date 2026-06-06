@@ -11,6 +11,8 @@
 #include "UI/Helpers/IScrollable.h"
 #include "Utilities/Math.h"
 #include "ColorDefines.h"
+#include "MVP/View/Devices/DevicesPresenterRecycleViewActions.h"
+#include "UI/Structs/RectangleData.h"
 
 #define SCROLL_MULTIPLIER 10
 
@@ -21,6 +23,7 @@ public:
 
     RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
         std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
+        std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, DevicesPresenterRecycleViewActions&& devicesPresenterActions,
         bool isHidden = false);
 
     ~RecycleView() noexcept override;
@@ -34,15 +37,19 @@ public:
 
     void AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent);
 
-    void RemoveDrawableComponent(uint8_t index);
+    void RemoveLastDrawableComponent();
 
-    [[nodiscard]] size_t GetDrawableComponentsSize() const;
+    [[nodiscard]] std::vector<TDrawableComponent*> GetDrawableComponents() const;
 
     bool CanBeScrolled() override;
 
     void Scroll(float scrollValue) override;
 
-    void Clear();
+    void SetCurrentScroll(float currentScroll);
+
+    void SetIsFirstItemPresent(bool isFirstItemPresent);
+
+    void SetIsLastItemPresent(bool isLastItemPresent);
 
     void Enable();
 
@@ -60,25 +67,11 @@ private:
 
     void UpdateResizableDrawablesCount();
 
-    void Reset();
-
-    void CalculateFirstViewIndexReference();
-
-    void CalculateLastViewIndexReference();
-
-    void CalculateMaxScroll();
-
     void CreateRow(ImVec2&& lastRowPosition);
 
     void DeleteLastRow();
 
-    void MoveContainers(float scrollValue);
-
-    void UpdateViewContent(RectDrawable* view, int newIndex);
-
-    void HandleMoveUp(float scrollValue);
-
-    void HandleMoveDown(float scrollValue);
+    void HandleMove();
 
     uint8_t _viewsPerRow;
 
@@ -88,8 +81,6 @@ private:
 
     uint8_t _bufferRows;
 
-    uint8_t _totalRows;
-
     float _widthPerView;
 
     std::vector<std::unique_ptr<RectDrawable>> _rows;
@@ -98,13 +89,11 @@ private:
 
     std::vector<std::unique_ptr<TDrawableComponent>> _drawableComponents;
 
-    std::map<RectDrawable*, uint8_t> _viewsComponentIndex;
-
-    std::map<uint8_t, RectDrawable*> _componentViewsIndex;
-
     float _currentScroll {0};
 
-    float _maxScroll{0};
+    bool _isFirstItemPresent;
+
+    bool _isLastItemPresent;
 
     std::unique_ptr<TRowCreation> _rowCreationStrategy;
 
@@ -112,21 +101,23 @@ private:
 
     std::function<void(TDrawableComponent&)> _onDisable;
 
-    RectDrawable** _firstComponentViewReference {nullptr};
-    RectDrawable** _lastComponentViewReference {nullptr};
+    std::function<std::unique_ptr<TDrawableComponent>()> _createDefault;
+
+    DevicesPresenterRecycleViewActions _devicesPresenterActions;
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize,
     uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
-    bool isHidden) :
+    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, DevicesPresenterRecycleViewActions&& devicesPresenterActions, bool isHidden) :
         DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews({marginBetweenViews.x / _viewsPerRow, marginBetweenViews.y}),
         _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2), _widthPerView(1 / static_cast<float>(_viewsPerRow)),
-        _rowCreationStrategy(std::make_unique<TRowCreation>()), _onEnable(std::move(onEnable)), _onDisable(std::move(onDisable))
+        _rowCreationStrategy(std::make_unique<TRowCreation>()), _onEnable(std::move(onEnable)), _onDisable(std::move(onDisable)),
+        _createDefault(std::move(createDefault)), _devicesPresenterActions(std::move(devicesPresenterActions))
 {
-    ScrollableManager::GetInstance().AddScrollable(this);
+    Enable();
 
-    CreateRow({0, -_rowsSize.y});
+    CreateRow({0, -(_rowsSize.y + _marginBetweenViews.y)});
 
     for (uint8_t i {1}; i < _bufferRows; ++i)
     {
@@ -137,7 +128,7 @@ RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 RecycleView<TDrawableComponent, TRowCreation>::~RecycleView() noexcept
 {
-    ScrollableManager::GetInstance().RemoveScrollable(this);
+    Disable();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -170,8 +161,6 @@ void RecycleView<TDrawableComponent, TRowCreation>::OnParentPositionUpdated()
     {
         row->UpdateAttributes();
     }
-
-    UpdateResizableDrawablesCount();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -183,8 +172,6 @@ void RecycleView<TDrawableComponent, TRowCreation>::OnParentBottomRightPositionU
     {
         row->UpdateAttributes();
     }
-
-    UpdateResizableDrawablesCount();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -192,7 +179,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::OnParentSizeUpdated()
 {
     *_size = GetParentSize();
 
-    CalculateMaxScroll();
+    _devicesPresenterActions.ExecuteOnUpdateSize(_size->y);
 
     for (auto&& row : _rows)
     {
@@ -209,7 +196,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::UpdateResizableDrawablesCoun
 
     int slots {_bufferRows};
 
-    float availableSlots {std::ceil(parentSizeY / _rowsSize.y)};
+    float availableSlots {std::ceil(parentSizeY / _rowsSize.y + _marginBetweenViews.y * 2)};
 
     if (!std::isnan(availableSlots))
     {
@@ -238,66 +225,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::UpdateResizableDrawablesCoun
         _rows.shrink_to_fit();
     }
 
-    Reset();
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::Reset()
-{
-    _currentScroll = 0;
-
-    uint8_t rowsCount {static_cast<uint8_t>(_rows.size())};
-
-    for (uint8_t i {0}; i < rowsCount; ++i)
-    {
-        _rows[i]->SetRelativePosition({0, i * _rowsSize.y});
-
-        for (uint8_t j {0}; j < _viewsPerRow; ++j)
-        {
-            UpdateViewContent(_views.at(_rows.at(i).get()).at(j), i * _viewsPerRow + j);
-        }
-    }
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::CalculateFirstViewIndexReference()
-{
-    int index {0};
-
-    if (!_componentViewsIndex.contains(index))
-    {
-        _firstComponentViewReference = nullptr;
-        return;
-    }
-
-    _firstComponentViewReference = &_componentViewsIndex.at(index);
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::CalculateLastViewIndexReference()
-{
-    const size_t index {_drawableComponents.size() - 1};
-
-    if (!_componentViewsIndex.contains(index))
-    {
-        _lastComponentViewReference = nullptr;
-        return;
-    }
-
-    _lastComponentViewReference = &_componentViewsIndex.at(index);
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::CalculateMaxScroll()
-{
-    _maxScroll = -(std::ceil(static_cast<float>(_drawableComponents.size()) / static_cast<float>(_viewsPerRow)) * _rowsSize.y) + GetParentSize().y;
-
-    if (_maxScroll <= 0)
-    {
-        return;
-    }
-
-    _maxScroll = 0;
+    _devicesPresenterActions.ExecuteOnUpdateRowsCount(_rows.size() * _viewsPerRow);
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -308,18 +236,12 @@ void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPo
 
     _views.emplace(row.get(), std::vector<RectDrawable*>{});
 
-    uint8_t offsetIndex {static_cast<uint8_t>(_viewsPerRow * _rows.size())};
-
     for (uint8_t i {0}; i < _viewsPerRow; ++i)
     {
         std::unique_ptr<RectDrawable> view {DrawableFactory::CreateRectDrawable(
             Anchors{{i * _widthPerView + _marginBetweenViews.x, _marginBetweenViews.y},
                 {(i + 1) * _widthPerView - _marginBetweenViews.x, 1 - _marginBetweenViews.y}}, PIVOT_MIDDLE_CENTER,
                 {0, 0}, {0, 0}, false)};
-
-        uint8_t index {static_cast<uint8_t>(i + offsetIndex)};
-
-        _viewsComponentIndex.emplace(view.get(), index);
 
         _views.at(row.get()).push_back(view.get());
 
@@ -329,135 +251,66 @@ void RecycleView<TDrawableComponent, TRowCreation>::CreateRow(ImVec2&& lastRowPo
     row->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
     _rows.push_back(std::move(row));
+
+    for (uint8_t i {0}; i < _viewsPerRow; ++i)
+    {
+        AddDrawableComponent(_createDefault());
+    }
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::DeleteLastRow()
 {
-    for (auto&& view : _views.at(_rows.back().get()))
-    {
-        uint8_t index {_viewsComponentIndex.at(view)};
-
-        _viewsComponentIndex.erase(view);
-
-        if (!_componentViewsIndex.contains(index))
-        {
-            continue;
-        }
-
-        _componentViewsIndex.at(index) = nullptr;
-    }
-
     _views.erase(_rows.back().get());
 
     _rows.pop_back();
+
+    for (uint8_t i{0}; i < _viewsPerRow; ++i)
+    {
+        RemoveLastDrawableComponent();
+    }
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
 {
-    uint8_t drawableComponentsCount {static_cast<uint8_t>(_drawableComponents.size())};
-
-    _componentViewsIndex.emplace(drawableComponentsCount, nullptr);
-
-    auto itEnd {_viewsComponentIndex.cend()};
-
-    for (auto it{_viewsComponentIndex.begin()}; it != itEnd; ++it)
     {
-        auto& pair {*it};
+        uint8_t drawableComponentsCount {static_cast<uint8_t>(_drawableComponents.size())};
 
-        if (pair.second != drawableComponentsCount)
-        {
-            continue;
-        }
+        int quotient {drawableComponentsCount / _viewsPerRow};
 
-        _componentViewsIndex.at(drawableComponentsCount) = pair.first;
+        int module {drawableComponentsCount % _viewsPerRow};
 
-        pair.first->AddDrawableComponent(drawableComponent.get());
-
-        break;
+        _views.at(_rows.at(quotient).get()).at(module)->AddDrawableComponent(drawableComponent.get());
     }
 
     _drawableComponents.push_back(std::move(drawableComponent));
-
-    CalculateMaxScroll();
-
-    CalculateFirstViewIndexReference();
-
-    CalculateLastViewIndexReference();
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::RemoveDrawableComponent(uint8_t index)
-{
-    uint8_t auxIndex = index;
-
-    RectDrawable* view {nullptr};
-
-    do{
-        view = _componentViewsIndex.at(auxIndex);
-
-        view->RemoveDrawableComponent(_drawableComponents.at(auxIndex));
-
-        if (_drawableComponents.size() == ++auxIndex)
-        {
-            break;
-        }
-
-        view->AddDrawableComponent(_drawableComponents.at(auxIndex));
-
-    }while(true);
-
-    _drawableComponents.erase(index);
-
-    _componentViewsIndex.erase(_componentViewsIndex.cend());
-
-    CalculateMaxScroll();
-
-    CalculateFirstViewIndexReference();
-
-    CalculateLastViewIndexReference();
 }
 
 template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-size_t RecycleView<TDrawableComponent, TRowCreation>::GetDrawableComponentsSize() const
+void RecycleView<TDrawableComponent, TRowCreation>::RemoveLastDrawableComponent()
 {
-    return _drawableComponents.size();
+    _drawableComponents.pop_back();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::Clear()
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+std::vector<TDrawableComponent*> RecycleView<TDrawableComponent, TRowCreation>::GetDrawableComponents() const
 {
-    Reset();
+    std::vector<TDrawableComponent*> drawableComponents;
 
-    auto itEnd {_componentViewsIndex.cend()};
-
-    for (auto it{_componentViewsIndex.begin()}; it != itEnd; ++it)
+    for (auto& drawableComponent : _drawableComponents)
     {
-        RectDrawable* view {it->second};
-
-        if (view == nullptr)
-        {
-            continue;
-        }
-
-        view->RemoveDrawableComponent(_drawableComponents.at(it->first).get());
+        drawableComponents.push_back(drawableComponent.get());
     }
 
-    _drawableComponents.clear();
-
-    _componentViewsIndex.clear();
-
-    CalculateMaxScroll();
-
-    CalculateFirstViewIndexReference();
-
-    CalculateLastViewIndexReference();
+    return drawableComponents;
 }
 
 template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::Enable()
 {
+    ScrollableManager::GetInstance().AddScrollable(this);
+
     for (auto&& drawableComponent : _drawableComponents)
     {
         _onEnable(*drawableComponent);
@@ -467,6 +320,8 @@ void RecycleView<TDrawableComponent, TRowCreation>::Enable()
 template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::Disable()
 {
+    ScrollableManager::GetInstance().RemoveScrollable(this);
+
     for (auto&& drawableComponent : _drawableComponents)
     {
         _onDisable(*drawableComponent);
@@ -476,7 +331,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::Disable()
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 bool RecycleView<TDrawableComponent, TRowCreation>::CanBeScrolled()
 {
-    return !_mustBeHidden;
+    return !IsHidden();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -484,156 +339,68 @@ void RecycleView<TDrawableComponent, TRowCreation>::Scroll(float scrollValue)
 {
     scrollValue *= SCROLL_MULTIPLIER;
 
-    scrollValue = Utilities::Math::Clamp(scrollValue, -_rowsSize.y, _rowsSize.y);
-
-    float newScrollValue {_currentScroll + scrollValue};
-
-    if (newScrollValue > 0)
-    {
-        if (_currentScroll == 0)
-        {
-            return;
-        }
-
-        scrollValue = -_currentScroll;
-
-        newScrollValue = 0;
-    }
-    else if (newScrollValue < _maxScroll)
-    {
-        if (_currentScroll == _maxScroll)
-        {
-            return;
-        }
-
-        scrollValue = _maxScroll - _currentScroll;
-
-        newScrollValue = _maxScroll;
-    }
-
-    _currentScroll = newScrollValue;
-
-    MoveContainers(scrollValue);
+    _devicesPresenterActions.ExecuteOnScroll(-scrollValue);
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::MoveContainers(float scrollValue)
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::SetCurrentScroll(float currentScroll)
 {
-    if (scrollValue > 0)
-    {
-        HandleMoveUp(scrollValue);
-        return;
-    }
+    _currentScroll = currentScroll;
 
-    HandleMoveDown(scrollValue);
+    HandleMove();
 }
 
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::HandleMoveUp(float scrollValue)
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::SetIsFirstItemPresent(bool isFirstItemPresent)
+{
+    _isFirstItemPresent = isFirstItemPresent;
+}
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::SetIsLastItemPresent(bool isLastItemPresent)
+{
+    _isLastItemPresent = isLastItemPresent;
+}
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::HandleMove()
 {
     const uint8_t halfBufferSlots {static_cast<uint8_t>(_bufferRows / 2)};
 
-    const float lowerLimit {_size->y + _rowsSize.y * (halfBufferSlots - 1)};
+    const float upperBound {-_rowsSize.y * halfBufferSlots};
+
+    const float lowerBound {_size->y + _rowsSize.y * halfBufferSlots};
 
     const size_t rowsCount {_rows.size()};
 
     const float jumpDistance {_rowsSize.y * rowsCount};
 
-    const int indexJump {static_cast<int>(rowsCount * _viewsPerRow)};
-
-    for (int i {static_cast<int>(rowsCount - 1)}; i >= 0; --i)
+    for (size_t i{0}; i < rowsCount; ++i)
     {
         RectDrawable* row {_rows[i].get()};
 
-        ImVec2 currentRelativePosition {row->GetRelativePosition()};
+        float newYPosition {i * _rowsSize.y - _currentScroll};
 
-        float predictedRelativePosition {currentRelativePosition.y + scrollValue};
-
-        std::vector<RectDrawable*>& views {_views.at(row)};
-
-        if (predictedRelativePosition > lowerLimit && *_firstComponentViewReference == nullptr)
+        if (newYPosition > lowerBound && _isFirstItemPresent)
         {
-            uint8_t firstViewIndex {_viewsComponentIndex.at(views.front())};
-
-            if (firstViewIndex - indexJump >= 0)
-            {
-                predictedRelativePosition -= jumpDistance;
-            }
-
-            for (auto&& view : views)
-            {
-                UpdateViewContent(view, _viewsComponentIndex.at(view) - indexJump);
-            }
+            row->SetRelativePosition({0, newYPosition});
+            continue;
         }
 
-        currentRelativePosition.y = predictedRelativePosition;
+        newYPosition -= upperBound;
 
-        row->SetRelativePosition(std::move(currentRelativePosition));
-    }
-}
+        newYPosition = std::fmod(newYPosition, jumpDistance);
 
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::HandleMoveDown(float scrollValue)
-{
-    const uint8_t halfBufferSlots {static_cast<uint8_t>(_bufferRows / 2)};
-
-    const float upperLimit {-_rowsSize.y * halfBufferSlots};
-
-    const size_t rowsCount {_rows.size()};
-
-    const float jumpDistance {_rowsSize.y * rowsCount};
-
-    const int indexJump {static_cast<int>(rowsCount * _viewsPerRow)};
-
-    for (auto&& row : _rows)
-    {
-        ImVec2 currentRelativePosition {row->GetRelativePosition()};
-
-        float predictedRelativePosition {currentRelativePosition.y + scrollValue};
-
-        std::vector<RectDrawable*>& views {_views.at(row.get())};
-
-        if (predictedRelativePosition < upperLimit && *_lastComponentViewReference == nullptr)
+        if (newYPosition < 0)
         {
-            uint8_t firstViewIndex {_viewsComponentIndex.at(views.front())};
-
-            if (firstViewIndex + indexJump < _drawableComponents.size())
-            {
-                predictedRelativePosition += jumpDistance;
-            }
-
-            for (auto&& view : views)
-            {
-                UpdateViewContent(view, _viewsComponentIndex.at(view) + indexJump);
-            }
+            newYPosition += jumpDistance;
         }
 
-        currentRelativePosition.y = predictedRelativePosition;
+        newYPosition += upperBound;
 
-        row->SetRelativePosition(std::move(currentRelativePosition));
+        row->SetRelativePosition({0, newYPosition});
     }
 }
-
-template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
-void RecycleView<TDrawableComponent, TRowCreation>::UpdateViewContent(RectDrawable* view, int newIndex)
-{
-    uint8_t& index {_viewsComponentIndex.at(view)};
-
-    if (index < _drawableComponents.size())
-    {
-        view->RemoveDrawableComponent(_drawableComponents.at(index).get());
-        _componentViewsIndex.at(index) = nullptr;
-    }
-
-    index = newIndex;
-
-    if (index < _drawableComponents.size())
-    {
-        view->AddDrawableComponent(_drawableComponents.at(index).get());
-        _componentViewsIndex.at(index) = view;
-    }
-}
-
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 void RecycleView<TDrawableComponent, TRowCreation>::Draw(ImDrawList* drawList)

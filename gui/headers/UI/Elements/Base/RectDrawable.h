@@ -4,8 +4,8 @@
 #include <set>
 
 #include "UI/Elements/Base/DrawableComponent.h"
-#include "Utilities/Anchors.h"
-#include "Utilities/Pivot.h"
+#include "Utilities/UI/Anchors.h"
+#include "Utilities/UI/Pivot.h"
 #include "Utilities/Concepts/Pointer.h"
 
 class RectDrawable : public BaseDrawable, public DrawableTransform

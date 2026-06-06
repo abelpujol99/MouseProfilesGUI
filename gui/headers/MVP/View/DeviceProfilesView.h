@@ -1,16 +1,18 @@
 #pragma once
-#include "Canvas.h"
+#include "BaseView.h"
+#include "MVP/Presenter/DeviceProfiles/DeviceProfilesPresenter.h"
+
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView.h"
 #include "UI/Elements/Intermediate/Text.h"
 
-class DeviceProfilesCanvas : public Canvas
+class DeviceProfilesView : public BaseView<DeviceProfilesPresenter>
 {
 public:
 
-    DeviceProfilesCanvas(bool isHidden);
+    DeviceProfilesView(bool isHidden);
 
-    ~DeviceProfilesCanvas() override = default;
+    ~DeviceProfilesView() override = default;
 
     void SetTitle(std::string title);
 

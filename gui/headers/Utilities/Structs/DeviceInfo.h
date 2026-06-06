@@ -4,5 +4,10 @@
 struct DeviceInfo
 {
     std::string path;
-    char name[256];
+    std::string name;
 };
+
+inline bool operator==(const DeviceInfo& lhs, const DeviceInfo& rhs)
+{
+    return lhs.path == rhs.path && lhs.name == rhs.name;
+}

@@ -6,11 +6,11 @@ DrawManager* DrawManager::_drawManagerInstance {nullptr};
 
 DrawManager::DrawManager()
 {
-    _devicesCanvas = std::make_unique<DevicesCanvas>(true);
-    _deviceProfilesCanvas = std::make_unique<DeviceProfilesCanvas>(true);
+    _devicesView = std::make_unique<DevicesView>(true);
+    _deviceProfilesView = std::make_unique<DeviceProfilesView>(true);
 
-    _currentCanvas = _devicesCanvas.get();
-    _currentCanvas->Enable();
+    _currentView = _devicesView.get();
+    _currentView->Enable();
 }
 
 DrawManager::~DrawManager() noexcept
@@ -28,22 +28,22 @@ DrawManager& DrawManager::GetInstance()
     return *_drawManagerInstance;
 }
 
-void DrawManager::EnableDevicesCanvas()
+void DrawManager::EnableDevicesView()
 {
-    _currentCanvas->Disable();
-    _currentCanvas = _devicesCanvas.get();
-    _currentCanvas->Enable();
+    _currentView->Disable();
+    _currentView = _devicesView.get();
+    _currentView->Enable();
 }
 
-void DrawManager::EnableDeviceProfilesCanvas(std::string deviceName)
+void DrawManager::EnableDeviceProfilesView(std::string deviceName)
 {
-    _currentCanvas->Disable();
-    _deviceProfilesCanvas->SetTitle(deviceName);
-    _currentCanvas = _deviceProfilesCanvas.get();
-    _currentCanvas->Enable();
+    _currentView->Disable();
+    _deviceProfilesView->SetTitle(deviceName);
+    _currentView = _deviceProfilesView.get();
+    _currentView->Enable();
 }
 
 void DrawManager::DrawElements(ImDrawList* drawList)
 {
-    _currentCanvas->Draw(drawList);
+    _currentView->Draw(drawList);
 }

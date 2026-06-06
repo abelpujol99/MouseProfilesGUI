@@ -1,24 +1,29 @@
 #pragma once
-#include "Canvas.h"
-#include "Strategies/ReadDevicesStrategy/IReadDevicesStrategy.h"
+#include "MVP/View/BaseView.h"
+#include "MVP/Presenter/Devices/DevicesPresenter.h"
 
+#include "Strategies/ReadDevicesStrategy/IReadDevicesStrategy.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView.h"
 #include "Strategies/RecycleViewStrategy/NotResizableRow.h"
 
-class DevicesCanvas : public Canvas
+class DevicesView : public BaseView<DevicesPresenter>
 {
 public:
 
-    DevicesCanvas(bool isHidden);
+    DevicesView(bool isHidden);
 
-    ~DevicesCanvas() override = default;
+    ~DevicesView() override = default;
 
     void Enable() override;
 
     void Disable() override;
 
 private:
+
+    void OnScrollUpdate();
+
+    void OnDevicesRead();
 
     void Reload() const;
 
@@ -29,5 +34,7 @@ private:
     std::unique_ptr<Button> _reloadButton;
 
     std::unique_ptr<RecycleView<Button, NotResizableRow>> _devicesRecycleView;
+
+    std::weak_ptr<std::function<void()>> _actionOnDevicesRead;
 
 };

@@ -13,9 +13,13 @@ public:
 
     ~Button() noexcept override;
 
+    void SetIsHidden(bool isHidden) override;
+
     void SetRectangle(std::unique_ptr<Rectangle>&& rectangle);
 
-    void SetText(std::unique_ptr<Text>&& text);
+    void SetTextComponent(std::unique_ptr<Text>&& text);
+
+    void SetText(std::string&& text);
 
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
         bool* isParentHiddenPointer) override;

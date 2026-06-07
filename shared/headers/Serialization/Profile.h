@@ -1,10 +1,12 @@
 #pragma once
+#include <string>
 #include <vector>
 
-#include "Utilities/Serialization/SubProfile.h"
+#include "Serialization/SubProfile.h"
 
 struct Profile
 {
+    std::string name;
     bool isCurrentProfile;
     std::vector<SubProfile> subProfiles;
 };

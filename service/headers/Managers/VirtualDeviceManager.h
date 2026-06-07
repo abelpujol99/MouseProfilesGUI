@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <linux/uinput.h>
 
-#include "Input/InputDevices.h"
+#include "../../../shared/headers/Input/InputDevices.h"
 #include "Input/InputEvent.h"
 
 class VirtualDeviceManager

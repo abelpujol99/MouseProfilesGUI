@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <functional>
 
-class DevicesPresenterRecycleViewActions
+class RecycleViewActions
 {
 public:
 
-    DevicesPresenterRecycleViewActions(std::function<void(uint8_t)>&& onUpdateRowsCount, std::function<void(float)>&& onUpdateSize,
+    RecycleViewActions(std::function<void(uint8_t)>&& onUpdateRowsCount, std::function<void(float)>&& onUpdateSize,
         std::function<void(float)>&& onScroll);
 
     void ExecuteOnUpdateRowsCount(uint8_t rowsCount) const;

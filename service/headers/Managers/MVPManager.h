@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utilities/Serialization/Devices.h"
+#include "Serialization/Devices.h"
 #include "Observer/ObserverSingleValue.h"
 
 class MVPManager

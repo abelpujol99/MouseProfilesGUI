@@ -56,15 +56,15 @@ void SerializationManager::SerializeDeviceProfiles(DeviceProfiles deviceProfiles
 {
     SerializePrimitiveType<size_t>(deviceProfiles.profiles.size(),file);
 
-    for (auto&& [profileName, profile] : deviceProfiles.profiles)
+    for (auto&& profile : deviceProfiles.profiles)
     {
-        SerializeString(profileName, file);
         SerializeProfile(profile, file);
     }
 }
 
 void SerializationManager::SerializeProfile(Profile profile, std::ofstream& file)
 {
+    SerializeString(profile.name, file);
     SerializePrimitiveType<bool>(profile.isCurrentProfile, file);
     SerializePrimitiveType<size_t>(profile.subProfiles.size(), file);
 
@@ -78,15 +78,15 @@ void SerializationManager::SerializeSubProfile(SubProfile subProfile, std::ofstr
 {
     SerializePrimitiveType<size_t>(subProfile.codesRemaps.size(), file);
 
-    for (auto&& [code, codeRemap] : subProfile.codesRemaps)
+    for (auto&& codeRemap : subProfile.codesRemaps)
     {
-        SerializePrimitiveType<Code>(code, file);
         SerializeCodeRemap(codeRemap, file);
     }
 }
 
 void SerializationManager::SerializeCodeRemap(CodeRemap codeRemap, std::ofstream& file)
 {
+    SerializePrimitiveType<Code>(codeRemap.code, file);
     SerializePrimitiveType<CommandType>(codeRemap.commandType, file);
 
     if (codeRemap.commandType == CommandType::EMIT_INPUT)
@@ -178,10 +178,9 @@ DeviceProfiles SerializationManager::DeserializeDeviceProfiles(std::ifstream& fi
 
     for (size_t j{0}; j < profilesCount; ++j)
     {
-        std::string profileName {DeserializeString(file)};
         Profile profile {DeserializeProfile(file)};
 
-        deviceProfiles.profiles.emplace(profileName, profile);
+        deviceProfiles.profiles.push_back(profile);
     }
 
     return deviceProfiles;
@@ -191,6 +190,7 @@ Profile SerializationManager::DeserializeProfile(std::ifstream& file)
 {
     Profile profile{};
 
+    profile.name = DeserializeString(file);
     profile.isCurrentProfile = DeserializePrimitiveType<bool>(file);
     size_t subProfilesCount {DeserializePrimitiveType<size_t>(file)};
 
@@ -210,10 +210,9 @@ SubProfile SerializationManager::DeserializeSubProfile(std::ifstream& file)
 
     for (size_t i{0}; i < codesRemapsCount; ++i)
     {
-        Code code {DeserializePrimitiveType<Code>(file)};
         CodeRemap codeRemap {DeserializeCodeRemap(file)};
 
-        subProfile.codesRemaps.emplace(code, codeRemap);
+        subProfile.codesRemaps.push_back(codeRemap);
     }
 
     return subProfile;
@@ -223,6 +222,7 @@ CodeRemap SerializationManager::DeserializeCodeRemap(std::ifstream& file)
 {
     CodeRemap codeRemap{};
 
+    codeRemap.code = DeserializePrimitiveType<Code>(file);
     codeRemap.commandType = DeserializePrimitiveType<CommandType>(file);
 
     if (codeRemap.commandType == CommandType::EMIT_INPUT)

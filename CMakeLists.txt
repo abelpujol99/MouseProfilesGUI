@@ -12,8 +12,20 @@ set(shared_target_dir shared)
 
 GetSourceDir(SHARED_SOURCE_DIR ${shared_target_dir})
 
+set(SHARED_SOURCES ${shared_target_dir}/headers ${shared_target_dir}/src)
+set(SHARED_CODE_FILES "")
+foreach (source IN LISTS SHARED_SOURCES)
+        GetCodeFiles(${PROJECT_DIR} ${source} SHARED_SOURCE_CODE_FILES)
+        list(APPEND SHARED_CODE_FILES ${SHARED_SOURCE_CODE_FILES})
+endforeach ()
+
+OrganizeIDECodeFiles(${PROJECT_DIR} SHARED_CODE_FILES)
+
 add_library(shared INTERFACE)
 
+target_sources(shared INTERFACE ${SHARED_CODE_FILES})
+
+#Includes
 set(SHARED_INCLUDE
         ${shared_target_dir}/defines
         ${shared_target_dir}/headers

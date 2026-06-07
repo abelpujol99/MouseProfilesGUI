@@ -1,43 +1,28 @@
-/*#include "Factory/CanvasFactory.h"
+#include "MVP/View/ProfileView.h"
 
-#include <filesystem>
-#include <iostream>
-
+#include "ColorDefines.h"
+#include "RectangleDefines.h"
+#include "TextDefines.h"
 #include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFamilyTypes.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
 #include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "UI/Structs/RectangleData.h"
 #include "UI/Structs/TextData.h"
-#include "ColorDefines.h"
-#include "TextDefines.h"
-#include "RectangleDefines.h"
-#include "UI/Elements/Advanced/RecycleView.h"
-#include "UI/Elements/Advanced/Dropdown.h"
-#include "MVP/View/DevicesView.h"
 
-std::unique_ptr<IView> CanvasFactory::CreateDevicesCanvas(bool isHidden)
+ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<ProfilePresenter>())
 {
-    std::unique_ptr<IView> devicesScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
-
-    return devicesScreen;
-}
-
-std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
-{
-    std::unique_ptr<IView> profileScreen {DrawableFactory::CreateDevicesCanvas(isHidden)};
-
-#pragma region Device Name
+/*#pragma region Device Name
 
     std::unique_ptr<RectDrawable> deviceNameRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.1}, {1, 0.1}}, PIVOT_TOP_CENTER,
         {0, 10}, {0, 50}, isHidden)};
 
     std::unique_ptr<Text> deviceNameText {DrawableFactory::CreateText(TextData{"Razer Basilisk V3", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE, WHITE})};
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE_SIZE, WHITE})};
 
     deviceNameRect->AddDrawableComponent(std::move(deviceNameText));
 
-    profileScreen->AddRectDrawable(std::move(deviceNameRect));
+    AddRectDrawable(std::move(deviceNameRect));
 
 #pragma endregion
 
@@ -51,7 +36,7 @@ std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
 
     profileNameRect->AddDrawableComponent(std::move(profileNameTextBox));
 
-    profileScreen->AddRectDrawable(std::move(profileNameRect));
+    AddRectDrawable(std::move(profileNameRect));
 
 #pragma endregion
 
@@ -85,7 +70,7 @@ std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
     profileButtonsRect->AddRectDrawable(std::move(profileLoadUnloadButtonRect));
     profileButtonsRect->AddRectDrawable(std::move(profileLinkButtonRect));
 
-    profileScreen->AddRectDrawable(std::move(profileButtonsRect));
+    AddRectDrawable(std::move(profileButtonsRect));
 
 #pragma endregion
 
@@ -139,8 +124,6 @@ std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
     auto recyclePtr {subProfileListRecycleView.get()};
 
     subProfileListRect->AddDrawableComponent(std::move(subProfileListRecycleView));
-    subProfileListRect->AddDrawableComponent(GetText("SubProfiles List"));
-    subProfileListRect->AddDrawableComponent(GetRectangle(BROWN));
 
     for (int i {0}; i < 30; ++i)
     {
@@ -158,9 +141,8 @@ std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
     subProfileRect->AddRectDrawable(std::move(subProfileTitleRect));
     subProfileRect->AddRectDrawable(std::move(subProfileButtonsRect));
     subProfileRect->AddRectDrawable(std::move(subProfileListRect));
-    subProfileRect->AddDrawableComponent(GetRectangle(RED));
 
-    profileScreen->AddRectDrawable(std::move(subProfileRect));
+    AddRectDrawable(std::move(subProfileRect));
 
 #pragma endregion
 
@@ -212,15 +194,12 @@ std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
         1, {0, 0},{0, 50}, 2, false)};
 
     inputListRect->AddDrawableComponent(std::move(inputListRecycleView));
-    inputListRect->AddDrawableComponent(GetText("Inputs List"));
-    inputListRect->AddDrawableComponent(GetRectangle(BROWN));
 
     inputRect->AddRectDrawable(std::move(inputTitleRect));
     inputRect->AddRectDrawable(std::move(inputButtonsRect));
     inputRect->AddRectDrawable(std::move(inputListRect));
-    inputRect->AddDrawableComponent(GetRectangle(RED));
 
-    profileScreen->AddRectDrawable(std::move(inputRect));
+    AddRectDrawable(std::move(inputRect));
 
 #pragma endregion
 
@@ -240,34 +219,22 @@ std::unique_ptr<IView> CanvasFactory::CreateProfileCanvas(bool isHidden)
     std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(Anchors{{0, 0.2}, {0.3, 1}}, PIVOT_MIDDLE_CENTER,
         {0, 0}, {0, 0}, isHidden)};
 
-    outputTypeRect->AddDrawableComponent(GetRectangle(BROWN));
-    outputTypeRect->AddDrawableComponent(GetText("Output Types"));
-
     std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(Anchors{{0.3, 0.2}, {1, 1}}, PIVOT_MIDDLE_CENTER,
     {0, 0}, {0, 0}, isHidden)};
-
-    outputTypeDetailsRect->AddDrawableComponent(GetRectangle(BROWN));
-    outputTypeDetailsRect->AddDrawableComponent(GetText("Output Type Details"));
 
     outputRect->AddRectDrawable(std::move(outputTitleRect));
     outputRect->AddRectDrawable(std::move(outputTypeRect));
     outputRect->AddRectDrawable(std::move(outputTypeDetailsRect));
-    outputRect->AddDrawableComponent(GetRectangle(RED));
 
-    profileScreen->AddRectDrawable(std::move(outputRect));
+    AddRectDrawable(std::move(outputRect));
 
-#pragma endregion
-
-    return profileScreen;
+#pragma endregion*/
 }
 
-std::unique_ptr<Rectangle> CanvasFactory::GetRectangle(ImColor color)
+void ProfileView::Enable()
 {
-    return std::make_unique<Rectangle>(RectangleData{color, 0, 1, false}, false);
 }
 
-std::unique_ptr<Text> CanvasFactory::GetText(std::string string)
+void ProfileView::Disable()
 {
-    return std::make_unique<Text>(TextData{string, TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
-        FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, RED}, false);
-}*/
+}

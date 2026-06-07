@@ -4,17 +4,16 @@
 
 #include "DevicesNotifications.h"
 #include "MVP/Model/ServiceModel.h"
-#include "MVP/Presenter/BasePresenter.h"
 #include "Utilities/Notification/NotificationBus.h"
 #include "Utilities/Structs/ButtonInfo.h"
 
-class DevicesPresenter : public BasePresenter
+class DevicesPresenter
 {
 public:
 
     DevicesPresenter();
 
-    ~DevicesPresenter() override = default;
+    ~DevicesPresenter() = default;
 
     void SetRecyclerViewHeight(float recyclerViewHeight);
 
@@ -25,8 +24,6 @@ public:
     void SetRecycleViewVisibleItemsCount(uint8_t visibleItemsCount);
 
     void SetRecyclerViewBufferRows(uint8_t bufferRows);
-
-    void Refresh() override;
 
     void OnPressReloadButton() const;
 
@@ -51,6 +48,8 @@ private:
 
     void UpdateRecycleViewDataDisplay();
 
+    ServiceModel& _serviceModel;
+
     float _recyclerViewHeight {0};
 
     uint8_t _viewsPerRow {0};
@@ -65,7 +64,7 @@ private:
 
     float _maxScroll {0};
 
-    int _firstItemToShowIndex {0};
+    uint8_t _firstItemToShowIndex {0};
 
     std::vector<DeviceInfo> _devices;
 

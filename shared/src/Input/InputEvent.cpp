@@ -1,4 +1,4 @@
-#include "Input/InputEvent.h"
+#include "../../headers/Input/InputEvent.h"
 
 InputEvent::InputEvent(unsigned short type, unsigned short code, int value) : _type(type), _code(code), _value(value)
 {}

@@ -1,4 +1,4 @@
-#include "Input/InputCommand.h"
+#include "../../headers/Input/InputCommand.h"
 
 InputCommand::InputCommand(Duration&& firstDelayInMillis, Duration&& millisToRepeatInput) : _firstDelayInMillis(std::move(firstDelayInMillis)),
     _millisToRepeatInput(std::move(millisToRepeatInput))

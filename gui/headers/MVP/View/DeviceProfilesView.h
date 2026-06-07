@@ -3,10 +3,10 @@
 #include "MVP/Presenter/DeviceProfiles/DeviceProfilesPresenter.h"
 
 #include "UI/Elements/Advanced/Button.h"
-#include "UI/Elements/Advanced/RecycleView.h"
+#include "UI/Elements/Advanced/RecycleView/RecycleView.h"
 #include "UI/Elements/Intermediate/Text.h"
 
-class DeviceProfilesView : public BaseView<DeviceProfilesPresenter>
+class DeviceProfilesView : public BaseView
 {
 public:
 
@@ -22,11 +22,13 @@ public:
 
 private:
 
-    void Back() const;
+    void OnScrollUpdate();
 
-    void Edit() const;
+    void OnCurrentProfileUpdate();
 
-    void Unload() const;
+    void OnProfilesRead();
+
+    std::unique_ptr<DeviceProfilesPresenter> _presenter;
 
     std::unique_ptr<Text> _title;
 
@@ -39,6 +41,8 @@ private:
     std::unique_ptr<Button> _editCurrentProfileButton;
 
     std::unique_ptr<Button> _unloadCurrentProfileButton;
+
+    RectDrawable* _profileRecycleViewRect;
 
     std::unique_ptr<RecycleView<Button, NotResizableRow>> _profilesRecycleView;
 };

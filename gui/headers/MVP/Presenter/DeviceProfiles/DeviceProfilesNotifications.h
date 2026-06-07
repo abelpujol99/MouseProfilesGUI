@@ -2,7 +2,8 @@
 
 enum class DeviceProfilesNotifications
 {
-    DEVICES_UPDATE,
+    PROFILES_UPDATE,
+    CURRENT_PROFILE_UPDATE,
     SCROLL_UPDATE,
     COUNT
 };

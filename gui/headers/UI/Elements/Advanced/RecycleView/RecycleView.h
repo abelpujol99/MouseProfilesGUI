@@ -11,7 +11,7 @@
 #include "UI/Helpers/IScrollable.h"
 #include "Utilities/Math.h"
 #include "ColorDefines.h"
-#include "MVP/View/Devices/DevicesPresenterRecycleViewActions.h"
+#include "RecycleViewActions.h"
 #include "UI/Structs/RectangleData.h"
 
 #define SCROLL_MULTIPLIER 10
@@ -23,7 +23,7 @@ public:
 
     RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
         std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
-        std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, DevicesPresenterRecycleViewActions&& devicesPresenterActions,
+        std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, RecycleViewActions&& devicesPresenterActions,
         bool isHidden = false);
 
     ~RecycleView() noexcept override;
@@ -103,13 +103,13 @@ private:
 
     std::function<std::unique_ptr<TDrawableComponent>()> _createDefault;
 
-    DevicesPresenterRecycleViewActions _devicesPresenterActions;
+    RecycleViewActions _devicesPresenterActions;
 };
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize,
     uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
-    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, DevicesPresenterRecycleViewActions&& devicesPresenterActions, bool isHidden) :
+    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, RecycleViewActions&& devicesPresenterActions, bool isHidden) :
         DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews({marginBetweenViews.x / _viewsPerRow, marginBetweenViews.y}),
         _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2), _widthPerView(1 / static_cast<float>(_viewsPerRow)),
         _rowCreationStrategy(std::make_unique<TRowCreation>()), _onEnable(std::move(onEnable)), _onDisable(std::move(onDisable)),

@@ -1,17 +1,17 @@
-/*#include "MVP/View/BaseView.h"
+#include "MVP/View/BaseView.h"
 
 #include "Managers/View/WindowManager.h"
 
 BaseView::BaseView(bool isHidden) :
         BaseDisplay(isHidden)
 {
-    _onSizeChangeWeakAction = WindowManager::GetInstance().SubscribeToSizeObserver([&](ImVec2 size) {
+    _onSizeChangeWeakAction = WindowManager::GetInstance().SubscribeToSizeObserver([&](WindowSize size) {
 
-        if (_size->x == size.x && _size->y == size.y) {
+        if (static_cast<int>(_size->x) == size.width && static_cast<int>(_size->y) == size.height) {
             return;
         }
 
-        *_size = size;
+        *_size = {static_cast<float>(size.width), static_cast<float>(size.height)};
 
         *_bottomRightPosition = {_size->x, _size->y};
         UpdateRectDrawables();
@@ -83,4 +83,4 @@ void BaseView::UpdateRectDrawables() const
     {
         (*it)->UpdateAttributes();
     }
-}*/
+}

@@ -6,7 +6,7 @@
 #include "AnchorsDefines.h"
 #include "PivotDefines.h"
 #include "MVP/View/BaseView.h"
-#include "MVP/View/Devices/DevicesPresenterRecycleViewActions.h"
+#include "UI/Elements/Advanced/RecycleView/RecycleViewActions.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/Text/TextBox.h"
 #include "UI/Elements/Intermediate/Texture.h"
@@ -51,7 +51,7 @@ public:
     static std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> CreateRecycleView(uint8_t viewsPerRow,
         ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable,
         std::function<void(TDrawableComponent&)>&& onDisable, std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault,
-        DevicesPresenterRecycleViewActions&& devicesPresenterActions, bool isHidden = false);
+        RecycleViewActions&& devicesPresenterActions, bool isHidden = false);
 
     template<DerivedFromDrawableComponent TDrawableComponent>
     static std::unique_ptr<Dropdown<TDrawableComponent>> CreateDropdown(RectangleData&& buttonRectangleData,
@@ -64,7 +64,7 @@ template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCre
 std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> DrawableFactory::CreateRecycleView(uint8_t viewsPerRow,
     ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
     std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
-    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, DevicesPresenterRecycleViewActions&& devicesPresenterActions, bool isHidden)
+    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, RecycleViewActions&& devicesPresenterActions, bool isHidden)
 {
     return std::make_unique<RecycleView<TDrawableComponent, TRowCreation>>(viewsPerRow, std::move(marginBetweenViews),
         std::move(rowsSize), std::move(bufferRows), std::move(onEnable), std::move(onDisable), std::move(createDefault),

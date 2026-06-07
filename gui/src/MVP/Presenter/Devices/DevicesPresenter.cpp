@@ -7,7 +7,7 @@
 #include "Managers/View/DrawManager.h"
 #include "Utilities/Math.h"
 
-DevicesPresenter::DevicesPresenter() : BasePresenter()
+DevicesPresenter::DevicesPresenter() : _serviceModel(MVPManager::GetInstance().GetServiceModel())
 {
     DevicesNotifications devicesNotificationsCount {DevicesNotifications::COUNT};
 
@@ -49,11 +49,6 @@ void DevicesPresenter::SetRecycleViewVisibleItemsCount(uint8_t visibleItemsCount
 void DevicesPresenter::SetRecyclerViewBufferRows(uint8_t bufferRows)
 {
     _bufferRows = bufferRows;
-}
-
-void DevicesPresenter::Refresh()
-{
-
 }
 
 void DevicesPresenter::OnPressReloadButton() const

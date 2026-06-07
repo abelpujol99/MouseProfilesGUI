@@ -3,7 +3,7 @@
 #include <memory>
 #include <fstream>
 
-#include "Utilities/Serialization/Devices.h"
+#include "Serialization/Devices.h"
 
 class SerializationManager
 {

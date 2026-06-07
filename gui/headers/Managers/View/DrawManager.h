@@ -1,7 +1,8 @@
 #pragma once
 
 #include "MVP/View/DeviceProfilesView.h"
-#include "MVP/View/Devices/DevicesView.h"
+#include "MVP/View/DevicesView.h"
+#include "MVP/View/ProfileView.h"
 
 class DrawManager
 {
@@ -20,6 +21,8 @@ public:
 
     void EnableDeviceProfilesView(std::string deviceName);
 
+    void EnableProfileView(std::string deviceName, Profile profile);
+
     void DrawElements(ImDrawList* drawList);
 
 private:
@@ -28,8 +31,9 @@ private:
 
     static DrawManager* _drawManagerInstance;
 
-    IView* _currentView;
+    BaseView* _currentView;
 
     std::unique_ptr<DevicesView> _devicesView;
     std::unique_ptr<DeviceProfilesView> _deviceProfilesView;
+    std::unique_ptr<ProfileView> _profileView;
 };

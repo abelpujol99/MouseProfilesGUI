@@ -1,5 +1,5 @@
 #pragma once
-#include "Input/InputCommand.h"
+#include "../../../../../shared/headers/Input/InputCommand.h"
 
 #include <memory>
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Input/EmitData.h"
+#include "../../../shared/headers/Input/EmitData.h"
 
 class EmitInputEventCommand : public ICommand
 {

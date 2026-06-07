@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Input/InputDevices.h"
+#include "InputDevices.h"
 #include "Input/InputEvent.h"
 
 class EmitData

@@ -1,9 +1,9 @@
 #include "Factory/DrawableFactory.h"
 
-#include "MVP/View/Devices/DevicesView.h"
+#include "MVP/View/DevicesView.h"
 
 std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, Pivot&& pivot ,ImVec2&& relativePosition,
-                                                                  ImVec2&& desiredSize, bool isHidden)
+    ImVec2&& desiredSize, bool isHidden)
 {
     return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
         std::move(desiredSize), isHidden);

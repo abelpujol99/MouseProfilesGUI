@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Input/EmitData.h"
+#include "../../../shared/headers/Input/EmitData.h"
 #include "Input/Button/ButtonInputCommand.h"
 #include "Input/Wheel/Scroll/WheelScrollInputCommand.h"
 #include "Input/Wheel/Tilt/WheelTiltInputCommand.h"

@@ -51,6 +51,10 @@ public:
 
     void ClearDrawableComponents();
 
+    void Enable() override;
+
+    void Disable() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -70,6 +74,12 @@ private:
     static float CalculateSize(float desiredSize, float parentSize, float maxAnchor, float minAnchor);
 
     template<Pointer TDrawablePointer>
+    static void EnableDrawables(const std::set<TDrawablePointer>& drawables);
+
+    template<Pointer TDrawablePointer>
+    static void DisableDrawables(const std::set<TDrawablePointer>& drawables);
+
+    template<Pointer TDrawablePointer>
     static void DrawDrawables(const std::set<TDrawablePointer>& drawables, ImDrawList* drawList);
 
     Anchors _anchors;
@@ -84,6 +94,28 @@ private:
 
     std::set<std::unique_ptr<RectDrawable>> _rectDrawables;
 };
+
+template <Pointer TDrawablePointer>
+void RectDrawable::EnableDrawables(const std::set<TDrawablePointer>& drawables)
+{
+    auto itEnd {drawables.cend()};
+
+    for (auto it {drawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->Enable();
+    }
+}
+
+template <Pointer TDrawablePointer>
+void RectDrawable::DisableDrawables(const std::set<TDrawablePointer>& drawables)
+{
+    auto itEnd {drawables.cend()};
+
+    for (auto it {drawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->Disable();
+    }
+}
 
 template<Pointer TDrawablePointer>
 void RectDrawable::DrawDrawables(const std::set<TDrawablePointer>& drawables, ImDrawList* drawList)

@@ -52,8 +52,6 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _devicesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
         DEVICES_RECYCLE_VIEW_PADDINGS, {0, DEVICES_RECYCLE_VIEW_ROW_HEIGHT}, DEVICES_RECYCLE_VIEW_BUFFER_ROWS,
-        [](Button& button){button.Subscribe();},
-        [](Button& button){button.Unsubscribe();},
         []()
         {
             return DrawableFactory::CreateButton(

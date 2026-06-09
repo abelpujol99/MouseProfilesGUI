@@ -109,8 +109,6 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     _profilesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
         PROFILE_RECYCLE_VIEW_PADDINGS, {0, PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
-        [](Button& button){button.Subscribe();},
-        [](Button& button){button.Unsubscribe();},
         []()
         {
             return DrawableFactory::CreateButton(

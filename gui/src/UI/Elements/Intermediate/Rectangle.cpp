@@ -1,11 +1,12 @@
 #include "UI/Elements/Intermediate/Rectangle.h"
 
+#include "ColorDefines.h"
 #include "Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
 #include "Strategies/DrawStrategy/Rectangle/DrawFilledRectangle.h"
 #include "UI/Structs/RectangleData.h"
 
 Rectangle::Rectangle(RectangleData&& rectangleData, bool isHidden) :
-        DrawableComponent(isHidden), _color(rectangleData.color), _rounding(rectangleData.rounding),
+        DrawableComponent(isHidden), _color(rectangleData.color), _currentColor(_color), _rounding(rectangleData.rounding),
         _thickness(rectangleData.thickness)
 {
     if (rectangleData.isFilled)
@@ -17,6 +18,16 @@ Rectangle::Rectangle(RectangleData&& rectangleData, bool isHidden) :
     _drawRectangleStrategy = std::make_unique<DrawEmptyRectangle>();
 }
 
+void Rectangle::Enable()
+{
+    _currentColor = _color;
+}
+
+void Rectangle::Disable()
+{
+    _currentColor = GRAY;
+}
+
 void Rectangle::Draw(ImDrawList* drawList)
 {
     if (IsHidden())
@@ -24,5 +35,5 @@ void Rectangle::Draw(ImDrawList* drawList)
         return;
     }
 
-    _drawRectangleStrategy->DrawRectangle(drawList, GetParentPosition(), GetParentBottomRightPosition(), _color, _rounding, _thickness);
+    _drawRectangleStrategy->DrawRectangle(drawList, GetParentPosition(), GetParentBottomRightPosition(), _currentColor, _rounding, _thickness);
 }

@@ -61,4 +61,6 @@ private:
     std::unique_ptr<RecycleView<Button, NotResizableRow>> _inputRecycleView;
 
     std::unique_ptr<Text> _outputTitle;
+
+    std::unique_ptr<Rectangle> _containerRectangle;
 };

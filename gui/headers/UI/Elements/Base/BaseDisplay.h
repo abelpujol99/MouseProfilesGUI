@@ -15,6 +15,10 @@ public:
 
     [[nodiscard]] ImVec2 GetParentSize() const override;
 
+    virtual void Enable() = 0;
+
+    virtual void Disable() = 0;
+
 protected:
 
     BaseDisplay(bool isHidden);

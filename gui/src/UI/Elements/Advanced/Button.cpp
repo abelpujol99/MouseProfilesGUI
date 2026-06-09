@@ -88,6 +88,24 @@ void Button::Unsubscribe()
     ClickableManager::GetInstance().RemoveClickable(this);
 }
 
+void Button::Enable()
+{
+    Subscribe();
+
+    _rectangle->Enable();
+
+    _text->Enable();
+}
+
+void Button::Disable()
+{
+    Unsubscribe();
+
+    _rectangle->Disable();
+
+    _text->Disable();
+}
+
 void Button::Draw(ImDrawList* drawList)
 {
     if (IsHidden())

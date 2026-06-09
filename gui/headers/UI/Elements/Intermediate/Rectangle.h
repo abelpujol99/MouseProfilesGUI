@@ -15,6 +15,10 @@ public:
 
     ~Rectangle() override = default;
 
+    void Enable() override;
+
+    void Disable() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -22,6 +26,8 @@ private:
     std::unique_ptr<IDrawRectangleStrategy> _drawRectangleStrategy;
 
     ImColor _color;
+
+    ImColor _currentColor;
 
     float _rounding;
 

@@ -38,6 +38,10 @@ public:
 
     void Unsubscribe() override;
 
+    void Enable() override;
+
+    void Disable() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:

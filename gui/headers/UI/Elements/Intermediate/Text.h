@@ -43,6 +43,10 @@ public:
 
     [[nodiscard]] ImVec2 GetTextSize() const;
 
+    void Enable() override;
+
+    void Disable() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -64,6 +68,8 @@ private:
     ImVec2 _textSize;
 
     ImColor _color;
+
+    ImColor _currentColor;
 
     ImVec2 _currentRelativePosition;
 

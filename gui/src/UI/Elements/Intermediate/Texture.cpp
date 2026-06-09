@@ -12,6 +12,16 @@ Texture::Texture(const char* fileName, bool isHidden) :
     _texture = LoadTexture(fileName);
 }
 
+void Texture::Enable()
+{
+    //TODO APPLY GRAY FILTER
+}
+
+void Texture::Disable()
+{
+    //TODO REMOVE GRAY FILTER
+}
+
 GLuint Texture::LoadTexture(const char* fileName)
 {
     int width;

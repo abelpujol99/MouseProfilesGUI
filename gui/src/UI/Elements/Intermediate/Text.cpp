@@ -1,5 +1,6 @@
 #include "UI/Elements/Intermediate/Text.h"
 
+#include "ColorDefines.h"
 #include "Factory/Font/FontFactory.h"
 #include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
@@ -8,7 +9,8 @@
 Text::Text(TextData&& textData, bool isHidden) :
         DrawableComponent(isHidden), _text(textData.text),
         _horizontalAlignment(textData.horizontalAlignment), _verticalAlignment(textData.verticalAlignment),
-        _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize), _color(textData.color)
+        _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize),
+        _color(textData.color), _currentColor(_color)
 {}
 
 void Text::SetParentState(ImVec2 *parentPositionPointer, ImVec2 *parentBottomRightPositionPointer,
@@ -151,6 +153,16 @@ ImVec2 Text::GetTextSize() const
     return _textSize;
 }
 
+void Text::Enable()
+{
+    _currentColor = _color;
+}
+
+void Text::Disable()
+{
+    _currentColor = GRAY;
+}
+
 void Text::Draw(ImDrawList* drawList)
 {
     if (IsHidden())
@@ -158,5 +170,5 @@ void Text::Draw(ImDrawList* drawList)
         return;
     }
 
-    drawList->AddText(_fontFamily, _fontSize, {_getPositionXAction(), _getPositionYAction()}, _color, _text.c_str());
+    drawList->AddText(_fontFamily, _fontSize, {_getPositionXAction(), _getPositionYAction()}, _currentColor, _text.c_str());
 }

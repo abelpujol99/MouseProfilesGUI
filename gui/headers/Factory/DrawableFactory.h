@@ -49,8 +49,7 @@ public:
 
     template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
     static std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> CreateRecycleView(uint8_t viewsPerRow,
-        ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable,
-        std::function<void(TDrawableComponent&)>&& onDisable, std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault,
+        ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows, std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault,
         RecycleViewActions&& devicesPresenterActions, bool isHidden = false);
 
     template<DerivedFromDrawableComponent TDrawableComponent>
@@ -63,12 +62,10 @@ public:
 template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 std::unique_ptr<RecycleView<TDrawableComponent, TRowCreation>> DrawableFactory::CreateRecycleView(uint8_t viewsPerRow,
     ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
-    std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
     std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, RecycleViewActions&& devicesPresenterActions, bool isHidden)
 {
     return std::make_unique<RecycleView<TDrawableComponent, TRowCreation>>(viewsPerRow, std::move(marginBetweenViews),
-        std::move(rowsSize), std::move(bufferRows), std::move(onEnable), std::move(onDisable), std::move(createDefault),
-        std::move(devicesPresenterActions), isHidden);
+        std::move(rowsSize), std::move(bufferRows), std::move(createDefault), std::move(devicesPresenterActions), isHidden);
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent>

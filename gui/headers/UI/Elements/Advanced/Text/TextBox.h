@@ -38,6 +38,10 @@ public:
 
     void Unsubscribe() override;
 
+    void Enable() override;
+
+    void Disable() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -127,6 +131,26 @@ template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 void TextBox<T, TProcessData>::Unsubscribe()
 {
     SelectableManager::GetInstance().RemoveSelectable(this);
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+void TextBox<T, TProcessData>::Enable()
+{
+    Subscribe();
+
+    _rectangle->Enable();
+
+    _text->Enable();
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+void TextBox<T, TProcessData>::Disable()
+{
+    Unsubscribe();
+
+    _rectangle->Disable();
+
+    _text->Disable();
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

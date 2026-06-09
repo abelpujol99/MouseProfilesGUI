@@ -21,7 +21,6 @@ class RecycleView : public DrawableComponent, public DrawableTransform, public I
 public:
 
     RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
-        std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
         std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, RecycleViewActions&& devicesPresenterActions,
         bool isHidden = false);
 
@@ -52,9 +51,9 @@ public:
 
     void SetIsLastItemPresent(bool isLastItemPresent);
 
-    void Enable();
+    void Enable() override;
 
-    void Disable();
+    void Disable() override;
 
     void Draw(ImDrawList* drawList) override;
 
@@ -98,10 +97,6 @@ private:
 
     std::unique_ptr<TRowCreation> _rowCreationStrategy;
 
-    std::function<void(TDrawableComponent&)> _onEnable;
-
-    std::function<void(TDrawableComponent&)> _onDisable;
-
     std::function<std::unique_ptr<TDrawableComponent>()> _createDefault;
 
     RecycleViewActions _devicesPresenterActions;
@@ -109,12 +104,12 @@ private:
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
 RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize,
-    uint8_t bufferRows, std::function<void(TDrawableComponent&)>&& onEnable, std::function<void(TDrawableComponent&)>&& onDisable,
-    std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault, RecycleViewActions&& devicesPresenterActions, bool isHidden) :
+    uint8_t bufferRows, std::function<std::unique_ptr<TDrawableComponent>()>&& createDefault,
+    RecycleViewActions&& devicesPresenterActions, bool isHidden) :
         DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews({marginBetweenViews.x / _viewsPerRow, marginBetweenViews.y}),
         _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2), _widthPerView(1 / static_cast<float>(_viewsPerRow)),
-        _rowCreationStrategy(std::make_unique<TRowCreation>()), _onEnable(std::move(onEnable)), _onDisable(std::move(onDisable)),
-        _createDefault(std::move(createDefault)), _devicesPresenterActions(std::move(devicesPresenterActions))
+        _rowCreationStrategy(std::make_unique<TRowCreation>()), _createDefault(std::move(createDefault)),
+        _devicesPresenterActions(std::move(devicesPresenterActions))
 {
     CreateRow({0, -(_rowsSize.y + _marginBetweenViews.y)});
 
@@ -135,13 +130,10 @@ void RecycleView<TDrawableComponent, TRowCreation>::SetIsHidden(bool isHidden)
 {
     DrawableComponent::SetIsHidden(isHidden);
 
-    if (isHidden)
+    for (auto&& drawableComponent : _drawableComponents)
     {
-        Disable();
-        return;
+        drawableComponent->SetIsHidden(isHidden);
     }
-
-    Enable();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
@@ -326,7 +318,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::Enable()
 
     for (auto&& drawableComponent : _drawableComponents)
     {
-        _onEnable(*drawableComponent);
+        drawableComponent->Enable();
     }
 }
 
@@ -337,7 +329,7 @@ void RecycleView<TDrawableComponent, TRowCreation>::Disable()
 
     for (auto&& drawableComponent : _drawableComponents)
     {
-        _onDisable(*drawableComponent);
+        drawableComponent->Disable();
     }
 }
 

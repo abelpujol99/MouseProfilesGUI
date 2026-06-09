@@ -11,6 +11,10 @@ public:
 
     ~Texture() override = default;
 
+    void Enable() override;
+
+    void Disable() override;
+
     void Draw(ImDrawList* drawList) override;
 
 private:

@@ -15,6 +15,8 @@
 
 ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<ProfilePresenter>())
 {
+    _containerRectangle = DrawableFactory::CreateRectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false);
+
 #pragma region Top Bar
 
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
@@ -94,7 +96,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECT_ANCHORS,
         SUB_PROFILE_RECT_PIVOT, SUB_PROFILE_RECT_RELATIVE_POSITION, SUB_PROFILE_RECT_SIZE, false)};
 
-    subProfileRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //subProfileRect->AddDrawableComponent(_containerRectangle.get());
 
     std::unique_ptr<RectDrawable> subProfileTitleRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_TITLE_RECT_ANCHORS,
         SUB_PROFILE_TITLE_RECT_PIVOT, SUB_PROFILE_TITLE_RECT_RELATIVE_POSITION, SUB_PROFILE_TITLE_RECT_SIZE, false)};
@@ -135,12 +137,10 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> subProfileListRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_LIST_RECT_ANCHORS,
         SUB_PROFILE_LIST_RECT_PIVOT, SUB_PROFILE_LIST_RECT_RELATIVE_POSITION, SUB_PROFILE_LIST_RECT_SIZE, false)};
 
-    subProfileListRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //subProfileListRect->AddDrawableComponent(_containerRectangle.get());
 
     _subProfileRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(SUB_PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
         SUB_PROFILE_RECYCLE_VIEW_PADDINGS, {0, SUB_PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, SUB_PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
-        [](Button& button){button.Subscribe();},
-        [](Button& button){button.Unsubscribe();},
         []()
         {
             return DrawableFactory::CreateButton(
@@ -176,7 +176,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(INPUT_RECT_ANCHORS, INPUT_RECT_PIVOT,
         INPUT_RECT_RELATIVE_POSITION, INPUT_RECT_SIZE, false)};
 
-    inputRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //inputRect->AddDrawableComponent(_containerRectangle.get());
 
     std::unique_ptr<RectDrawable> inputTitleRect {DrawableFactory::CreateRectDrawable(INPUT_TITLE_RECT_ANCHORS,
         INPUT_TITLE_RECT_PIVOT, INPUT_TITLE_RECT_RELATIVE_POSITION, INPUT_TITLE_RECT_SIZE, false)};
@@ -217,12 +217,10 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(INPUT_LIST_RECT_ANCHORS,
         INPUT_LIST_RECT_PIVOT, INPUT_LIST_RECT_RELATIVE_POSITION, INPUT_LIST_RECT_SIZE, false)};
 
-    inputListRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //inputListRect->AddDrawableComponent(_containerRectangle.get());
 
     _inputRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(INPUT_RECYCLE_VIEW_VIEWS_PER_ROW,
         INPUT_RECYCLE_VIEW_PADDINGS, {0, INPUT_RECYCLE_VIEW_ROW_HEIGHT}, INPUT_RECYCLE_VIEW_BUFFER_ROWS,
-        [](Button& button){button.Subscribe();},
-        [](Button& button){button.Unsubscribe();},
         []()
         {
             return DrawableFactory::CreateButton(
@@ -258,7 +256,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(OUTPUT_RECT_ANCHORS, OUTPUT_RECT_PIVOT,
         OUTPUT_RECT_RELATIVE_POSITION, OUTPUT_RECT_SIZE, false)};
 
-    outputRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //outputRect->AddDrawableComponent(_containerRectangle.get());
 
     std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(OUTPUT_TITLE_RECT_ANCHORS,
         OUTPUT_TITLE_RECT_PIVOT, OUTPUT_TITLE_RECT_RELATIVE_POSITION, OUTPUT_TITLE_RECT_SIZE, false)};
@@ -271,12 +269,12 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_RECT_ANCHORS,
         OUTPUT_TYPE_RECT_PIVOT, OUTPUT_TYPE_RECT_RELATIVE_POSITION, OUTPUT_TYPE_RECT_SIZE, false)};
 
-    outputTypeRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //outputTypeRect->AddDrawableComponent(_containerRectangle.get());
 
     std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_RECT_ANCHORS,
         OUTPUT_TYPE_DETAILS_RECT_PIVOT, OUTPUT_TYPE_DETAILS_RECT_RELATIVE_POSITION, OUTPUT_TYPE_DETAILS_RECT_SIZE, false)};
 
-    outputTypeDetailsRect->AddDrawableComponent(new Rectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false));
+    //outputTypeDetailsRect->AddDrawableComponent(_containerRectangle.get());
 
     outputRect->AddRectDrawable(std::move(outputTitleRect));
     outputRect->AddRectDrawable(std::move(outputTypeRect));

@@ -161,6 +161,20 @@ void RectDrawable::ClearDrawableComponents()
     }
 }
 
+void RectDrawable::Enable()
+{
+    EnableDrawables(_drawableComponents);
+
+    EnableDrawables(_rectDrawables);
+}
+
+void RectDrawable::Disable()
+{
+    DisableDrawables(_drawableComponents);
+
+    DisableDrawables(_rectDrawables);
+}
+
 void RectDrawable::UpdateRectDrawablesPosition()
 {
     auto itEnd {_rectDrawables.cend()};

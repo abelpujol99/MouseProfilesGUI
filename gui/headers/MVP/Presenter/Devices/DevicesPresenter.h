@@ -4,6 +4,7 @@
 
 #include "DevicesNotifications.h"
 #include "MVP/Model/ServiceModel.h"
+#include "MVP/Presenter/RecycleViewPresenter.h"
 #include "Utilities/Notification/NotificationBus.h"
 #include "Utilities/Structs/ButtonInfo.h"
 
@@ -15,6 +16,8 @@ public:
 
     ~DevicesPresenter() = default;
 
+    void Restart();
+
     void SetRecyclerViewHeight(float recyclerViewHeight);
 
     void SetViewsPerRow(uint8_t viewsPerRow);
@@ -24,8 +27,6 @@ public:
     void SetRecycleViewVisibleItemsCount(uint8_t visibleItemsCount);
 
     void SetRecyclerViewBufferRows(uint8_t bufferRows);
-
-    void OnPressReloadButton() const;
 
     void OnScroll(float scrollValue);
 
@@ -37,6 +38,8 @@ public:
 
     [[nodiscard]] bool IsLastItemPresent() const;
 
+    void OnPressReloadButton() const;
+
     void OnPressRecycleViewButton(uint8_t index) const;
 
     std::weak_ptr<std::function<void()>> SubscribeToDevicesNotifications(DevicesNotifications devicesNotification, std::function<void()>&& action);
@@ -44,29 +47,11 @@ public:
 
 private:
 
-    void CalculateMaxScroll();
-
-    void UpdateRecycleViewDataDisplay();
-
     ServiceModel& _serviceModel;
-
-    float _recyclerViewHeight {0};
-
-    uint8_t _viewsPerRow {0};
-
-    float _itemHeight {0};
-
-    uint8_t _visibleItemsCount {0};
-
-    uint8_t _bufferRows {0};
-
-    float _currentScroll {0};
-
-    float _maxScroll {0};
-
-    uint8_t _firstItemToShowIndex {0};
 
     std::vector<DeviceInfo> _devices;
 
     NotificationBus<DevicesNotifications> _devicesNotifications;
+
+    RecycleViewPresenter _recyclerViewPresenter;
 };

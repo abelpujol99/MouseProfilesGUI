@@ -27,6 +27,8 @@ public:
 
     void EraseLastChar();
 
+    void ErasePreviousChar();
+
     void SetFontFamily(ImFont* fontFamily);
 
     void SetFontSize(float fontSize);

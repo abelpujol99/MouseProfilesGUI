@@ -4,13 +4,11 @@
 
 Button::Button(std::function<void()>&& action, bool isHidden) :
         DrawableComponent(isHidden), _action(action)
-{
-    Subscribe();
-}
+{}
 
 Button::~Button() noexcept
 {
-    Unsubscribe();
+    Button::Unsubscribe();
 }
 
 void Button::SetIsHidden(bool isHidden)
@@ -20,6 +18,14 @@ void Button::SetIsHidden(bool isHidden)
     _rectangle->SetIsHidden(isHidden);
 
     _text->SetIsHidden(isHidden);
+
+    if (isHidden)
+    {
+        Unsubscribe();
+        return;
+    }
+
+    Subscribe();
 }
 
 void Button::SetRectangle(std::unique_ptr<Rectangle>&& rectangle)

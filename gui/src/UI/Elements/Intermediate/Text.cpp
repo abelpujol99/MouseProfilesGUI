@@ -50,6 +50,16 @@ void Text::EraseLastChar()
     CalculateTextSize();
 }
 
+void Text::ErasePreviousChar()
+{
+    if (_text.empty())
+    {
+        return;
+    }
+
+    CalculateTextSize();
+}
+
 void Text::SetFontFamily(ImFont* fontFamily)
 {
     _fontFamily = fontFamily;

@@ -15,6 +15,18 @@ void ApplyKey::StartProcessData()
             return;
         }
 
+        if (character == Delete)
+        {
+            _text->ErasePreviousChar();
+
+            return;
+        }
+
+        if (character == SpaceBar)
+        {
+            character = ' ';
+        }
+
         std::string string {character};
 
         _text->AddText(string);

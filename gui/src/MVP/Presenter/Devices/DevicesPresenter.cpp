@@ -20,106 +20,69 @@ DevicesPresenter::DevicesPresenter() : _serviceModel(MVPManager::GetInstance().G
     {
         _devices = std::move(devices);
 
-        CalculateMaxScroll();
+        _recyclerViewPresenter.SetListLength(_devices.size());
 
         _devicesNotifications.TriggerNotification(DevicesNotifications::DEVICES_UPDATE);
     });
 }
 
+void DevicesPresenter::Restart()
+{
+    _recyclerViewPresenter.Reset();
+}
+
 void DevicesPresenter::SetRecyclerViewHeight(float recyclerViewHeight)
 {
-    _recyclerViewHeight = recyclerViewHeight;
+    _recyclerViewPresenter.SetRecyclerViewHeight(recyclerViewHeight);
 }
 
 void DevicesPresenter::SetViewsPerRow(uint8_t viewsPerRow)
 {
-    _viewsPerRow = viewsPerRow;
+    _recyclerViewPresenter.SetViewsPerRow(viewsPerRow);
 }
 
 void DevicesPresenter::SetItemHeight(float itemHeight)
 {
-    _itemHeight = itemHeight;
+    _recyclerViewPresenter.SetItemHeight(itemHeight);
 }
 
 void DevicesPresenter::SetRecycleViewVisibleItemsCount(uint8_t visibleItemsCount)
 {
-    _visibleItemsCount = visibleItemsCount;
+    _recyclerViewPresenter.SetRecycleViewVisibleItemsCount(visibleItemsCount);
 }
 
 void DevicesPresenter::SetRecyclerViewBufferRows(uint8_t bufferRows)
 {
-    _bufferRows = bufferRows;
-}
-
-void DevicesPresenter::OnPressReloadButton() const
-{
-    _serviceModel.RefreshDevicesList();
-}
-
-void DevicesPresenter::CalculateMaxScroll()
-{
-    _maxScroll = std::ceil(static_cast<float>(_devices.size()) / static_cast<float>(_viewsPerRow)) * _itemHeight - _recyclerViewHeight;
-
-    if (_maxScroll >= 0)
-    {
-        return;
-    }
-
-    _maxScroll = 0;
+    _recyclerViewPresenter.SetRecyclerViewBufferRows(bufferRows);
 }
 
 void DevicesPresenter::OnScroll(float scrollValue)
 {
-    scrollValue = Utilities::Math::Clamp(scrollValue, -_itemHeight, _itemHeight);
-
-    float newScrollValue {_currentScroll + scrollValue};
-
-    if (newScrollValue < 0)
-    {
-        if (_currentScroll == 0)
-        {
-            return;
-        }
-
-        newScrollValue = 0;
-    }
-    else if (newScrollValue > _maxScroll)
-    {
-        if (_currentScroll == _maxScroll)
-        {
-            return;
-        }
-
-        newScrollValue = _maxScroll;
-    }
-
-    _currentScroll = newScrollValue;
-
-    UpdateRecycleViewDataDisplay();
+    _recyclerViewPresenter.OnScroll(scrollValue);
 
     _devicesNotifications.TriggerNotification(DevicesNotifications::SCROLL_UPDATE);
 }
 
-void DevicesPresenter::UpdateRecycleViewDataDisplay()
-{
-    _firstItemToShowIndex = Utilities::Math::Clamp(
-        std::ceil(_currentScroll / _itemHeight) * _viewsPerRow - _bufferRows * _viewsPerRow, 0, _devices.size() - _visibleItemsCount);
-}
-
 float DevicesPresenter::GetCurrentScroll() const
 {
-    return _currentScroll;
+    return _recyclerViewPresenter.GetCurrentScroll();
 }
 
 std::vector<ButtonInfo> DevicesPresenter::GetVisibleButtons() const
 {
+    std::vector<uint8_t> visibleItemsIndex {_recyclerViewPresenter.GetVisibleItemsIndex()};
+
+    size_t visibleItemsIndexCount {visibleItemsIndex.size()};
+
     std::vector<ButtonInfo> buttonsInfo;
 
-    buttonsInfo.reserve(_visibleItemsCount);
+    buttonsInfo.reserve(visibleItemsIndexCount);
 
-    for (int i{_firstItemToShowIndex}; i < _firstItemToShowIndex + _visibleItemsCount && i < _devices.size(); ++i)
+    for (size_t i{0}; i < visibleItemsIndexCount; ++i)
     {
-        buttonsInfo.emplace_back(_devices.at(i).name, i);
+        uint8_t index {visibleItemsIndex.at(i)};
+
+        buttonsInfo.emplace_back(_devices.at(index).name, index);
     }
 
     return buttonsInfo;
@@ -127,12 +90,17 @@ std::vector<ButtonInfo> DevicesPresenter::GetVisibleButtons() const
 
 bool DevicesPresenter::IsFirstItemPresent() const
 {
-    return _firstItemToShowIndex * _viewsPerRow == 0;
+    return _recyclerViewPresenter.IsFirstItemPresent();
 }
 
 bool DevicesPresenter::IsLastItemPresent() const
 {
-    return _devices.size() < _viewsPerRow || _firstItemToShowIndex + _visibleItemsCount == _devices.size();
+    return _recyclerViewPresenter.IsLastItemPresent();
+}
+
+void DevicesPresenter::OnPressReloadButton() const
+{
+    _serviceModel.RefreshDevicesList();
 }
 
 void DevicesPresenter::OnPressRecycleViewButton(uint8_t index) const

@@ -12,7 +12,6 @@
 #include "Utilities/Math.h"
 #include "ColorDefines.h"
 #include "RecycleViewActions.h"
-#include "UI/Structs/RectangleData.h"
 
 #define SCROLL_MULTIPLIER 10
 
@@ -27,6 +26,8 @@ public:
         bool isHidden = false);
 
     ~RecycleView() noexcept override;
+
+    void SetIsHidden(bool isHidden) override;
 
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
         bool* isParentHiddenPointer) override;
@@ -115,8 +116,6 @@ RecycleView<TDrawableComponent, TRowCreation>::RecycleView(uint8_t viewsPerRow, 
         _rowCreationStrategy(std::make_unique<TRowCreation>()), _onEnable(std::move(onEnable)), _onDisable(std::move(onDisable)),
         _createDefault(std::move(createDefault)), _devicesPresenterActions(std::move(devicesPresenterActions))
 {
-    Enable();
-
     CreateRow({0, -(_rowsSize.y + _marginBetweenViews.y)});
 
     for (uint8_t i {1}; i < _bufferRows; ++i)
@@ -129,6 +128,20 @@ template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCrea
 RecycleView<TDrawableComponent, TRowCreation>::~RecycleView() noexcept
 {
     Disable();
+}
+
+template <DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>
+void RecycleView<TDrawableComponent, TRowCreation>::SetIsHidden(bool isHidden)
+{
+    DrawableComponent::SetIsHidden(isHidden);
+
+    if (isHidden)
+    {
+        Disable();
+        return;
+    }
+
+    Enable();
 }
 
 template<DerivedFromDrawableComponent TDrawableComponent, DerivedFromBaseRowCreationStrategy TRowCreation>

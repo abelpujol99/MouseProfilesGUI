@@ -19,36 +19,41 @@ DeviceProfilesPresenter::DeviceProfilesPresenter() : _serviceModel(MVPManager::G
 
         _deviceProfiles.emplace_back("+", false, std::vector<SubProfile>{});
 
-        CalculateMaxScroll();
+        _recyclerViewPresenter.SetListLength(_deviceProfiles.size());
 
         _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::CURRENT_PROFILE_UPDATE);
         _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::PROFILES_UPDATE);
     });
 }
 
+void DeviceProfilesPresenter::Restart()
+{
+    _recyclerViewPresenter.Reset();
+}
+
 void DeviceProfilesPresenter::SetRecyclerViewHeight(float recyclerViewHeight)
 {
-    _recyclerViewHeight = recyclerViewHeight;
+    _recyclerViewPresenter.SetRecyclerViewHeight(recyclerViewHeight);
 }
 
 void DeviceProfilesPresenter::SetViewsPerRow(uint8_t viewsPerRow)
 {
-    _viewsPerRow = viewsPerRow;
+    _recyclerViewPresenter.SetViewsPerRow(viewsPerRow);
 }
 
 void DeviceProfilesPresenter::SetItemHeight(float itemHeight)
 {
-    _itemHeight = itemHeight;
+    _recyclerViewPresenter.SetItemHeight(itemHeight);
 }
 
 void DeviceProfilesPresenter::SetRecycleViewVisibleItemsCount(uint8_t visibleItemsCount)
 {
-    _visibleItemsCount = visibleItemsCount;
+    _recyclerViewPresenter.SetRecycleViewVisibleItemsCount(visibleItemsCount);
 }
 
 void DeviceProfilesPresenter::SetRecyclerViewBufferRows(uint8_t bufferRows)
 {
-    _bufferRows = bufferRows;
+    _recyclerViewPresenter.SetRecyclerViewBufferRows(bufferRows);
 }
 
 void DeviceProfilesPresenter::SetDeviceName(std::string deviceName)
@@ -61,83 +66,23 @@ void DeviceProfilesPresenter::SetDeviceName(std::string deviceName)
     _deviceName = std::move(deviceName);
 }
 
-void DeviceProfilesPresenter::OnPressBackButton()
-{
-    DrawManager::GetInstance().EnableDevicesView();
-}
-
-void DeviceProfilesPresenter::OnPressEditButton()
-{
-    DrawManager::GetInstance().EnableProfileView(_deviceName, *_currentDeviceProfile);
-}
-
-void DeviceProfilesPresenter::OnPressUnloadButton()
-{
-    _currentDeviceProfile = {nullptr};
-
-    _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::CURRENT_PROFILE_UPDATE);
-}
-
-void DeviceProfilesPresenter::CalculateMaxScroll()
-{
-    _maxScroll = std::ceil(static_cast<float>(_deviceProfiles.size()) / static_cast<float>(_viewsPerRow)) * _itemHeight - _recyclerViewHeight;
-
-    if (_maxScroll >= 0)
-    {
-        return;
-    }
-
-    _maxScroll = 0;
-}
-
 void DeviceProfilesPresenter::OnScroll(float scrollValue)
 {
-    scrollValue = Utilities::Math::Clamp(scrollValue, -_itemHeight, _itemHeight);
-
-    float newScrollValue {_currentScroll + scrollValue};
-
-    if (newScrollValue < 0)
-    {
-        if (_currentScroll == 0)
-        {
-            return;
-        }
-
-        newScrollValue = 0;
-    }
-    else if (newScrollValue > _maxScroll)
-    {
-        if (_currentScroll == _maxScroll)
-        {
-            return;
-        }
-
-        newScrollValue = _maxScroll;
-    }
-
-    _currentScroll = newScrollValue;
-
-    UpdateRecycleViewDataDisplay();
+    _recyclerViewPresenter.OnScroll(scrollValue);
 
     _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::SCROLL_UPDATE);
 }
 
-void DeviceProfilesPresenter::UpdateRecycleViewDataDisplay()
-{
-    _firstItemToShowIndex = Utilities::Math::Clamp(
-        std::ceil(_currentScroll / _itemHeight) * _viewsPerRow - _bufferRows * _viewsPerRow, 0, _deviceProfiles.size() - _visibleItemsCount);
-}
-
 float DeviceProfilesPresenter::GetCurrentScroll() const
 {
-    return _currentScroll;
+    return _recyclerViewPresenter.GetCurrentScroll();
 }
 
 std::string DeviceProfilesPresenter::GetActiveProfileName() const
 {
-    if (_currentDeviceProfile != nullptr)
+    if (_currentDeviceProfileIndex != -1)
     {
-        return _currentDeviceProfile->name;
+        return _serviceModel.RetrieveProfile(_currentDeviceProfileIndex).name;
     }
 
     return "";
@@ -145,17 +90,19 @@ std::string DeviceProfilesPresenter::GetActiveProfileName() const
 
 std::vector<ButtonInfo> DeviceProfilesPresenter::GetVisibleButtons() const
 {
+    std::vector<uint8_t> visibleItemsIndex {_recyclerViewPresenter.GetVisibleItemsIndex()};
+
+    size_t visibleItemsIndexCount {visibleItemsIndex.size()};
+
     std::vector<ButtonInfo> buttonsInfo;
 
-    buttonsInfo.reserve(_visibleItemsCount);
+    buttonsInfo.reserve(visibleItemsIndexCount);
 
-    for (int i{_firstItemToShowIndex}; i < _firstItemToShowIndex + _visibleItemsCount && i < _deviceProfiles.size(); ++i)
+    for (size_t i{0}; i < visibleItemsIndexCount; ++i)
     {
-        std::string string = "";
+        uint8_t index {visibleItemsIndex.at(i)};
 
-        string += std::to_string(i);
-
-        buttonsInfo.emplace_back(_deviceProfiles.at(i).name, i);
+        buttonsInfo.emplace_back(_deviceProfiles.at(index).name, index);
     }
 
     return buttonsInfo;
@@ -163,15 +110,30 @@ std::vector<ButtonInfo> DeviceProfilesPresenter::GetVisibleButtons() const
 
 bool DeviceProfilesPresenter::IsFirstItemPresent() const
 {
-    return _firstItemToShowIndex * _viewsPerRow == 0;
+    return _recyclerViewPresenter.IsFirstItemPresent();
 }
 
 bool DeviceProfilesPresenter::IsLastItemPresent() const
 {
-    return _deviceProfiles.size() < _viewsPerRow || _firstItemToShowIndex + _visibleItemsCount == _deviceProfiles.size();
+    return _recyclerViewPresenter.IsLastItemPresent();
 }
 
-#include <iostream>
+void DeviceProfilesPresenter::OnPressBackButton()
+{
+    DrawManager::GetInstance().EnableDevicesView();
+}
+
+void DeviceProfilesPresenter::OnPressEditButton()
+{
+    DrawManager::GetInstance().EnableProfileView(_deviceName, _currentDeviceProfileIndex);
+}
+
+void DeviceProfilesPresenter::OnPressUnloadButton()
+{
+    _currentDeviceProfileIndex = {-1};
+
+    _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::CURRENT_PROFILE_UPDATE);
+}
 
 void DeviceProfilesPresenter::OnPressRecycleViewButton(uint8_t index)
 {
@@ -181,50 +143,11 @@ void DeviceProfilesPresenter::OnPressRecycleViewButton(uint8_t index)
         return;
     }
 
-    Profile profile {_deviceProfiles.at(index)};
-
-    std::cout << "Profile Name: " << profile.name << std::endl;
-
-    std::cout << "Is Current Profile: "<< profile.isCurrentProfile << std::endl;
-
-    for (size_t i{0}; i < profile.subProfiles.size(); ++i)
-    {
-        SubProfile subProfile {profile.subProfiles.at(i)};
-
-        for (size_t j{0}; j < subProfile.codesRemaps.size(); ++j)
-        {
-            CodeRemap codeRemap {subProfile.codesRemaps.at(j)};
-
-            std::cout << "Code Remap Code: "<< codeRemap.code << std::endl;
-
-            std::cout << "Command Type: "<< static_cast<int>(codeRemap.commandType) << std::endl;
-
-            for (size_t k{0}; k < codeRemap.emitsData.size(); ++k)
-            {
-                EmitData emitData {codeRemap.emitsData.at(k)};
-
-                std::cout << "Input Device: "<< static_cast<int>(emitData.GetInputDevice()) << std::endl;
-
-                InputEvent inputEvent {emitData.GetInputEvent()};
-
-                std::cout << "Input Code: "<< inputEvent.GetCode() << std::endl;
-
-                std::cout << "Input Type: "<< inputEvent.GetType() << std::endl;
-
-                std::cout << "Input Value: "<< inputEvent.GetValue() << std::endl;
-            }
-
-            std::cout << "SubProfile Index: " << static_cast<int>(codeRemap.subProfileIndex) << std::endl;
-        }
-    }
-
-    DrawManager::GetInstance().EnableProfileView(_deviceName, _deviceProfiles.at(index));
+    DrawManager::GetInstance().EnableProfileView(_deviceName, index);
 }
 
 void DeviceProfilesPresenter::AddProfile()
 {
-    std::cout << "Add Profile" << std::endl;
-
     Profile& lastProfile {_deviceProfiles.back()};
 
     lastProfile = Profile{};
@@ -236,6 +159,8 @@ void DeviceProfilesPresenter::AddProfile()
     lastProfile.name = std::move(profileName);
 
     _deviceProfiles.emplace_back("+", false, std::vector<SubProfile>{});
+
+    _recyclerViewPresenter.SetListLength(_deviceProfiles.size());
 
     _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::PROFILES_UPDATE);
 }

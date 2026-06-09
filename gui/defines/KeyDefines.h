@@ -6,3 +6,5 @@
 #define CHAR_Z 122
 #define CHAR_PLUS 43
 #define Backspace 8
+#define SpaceBar 32
+#define Delete 127

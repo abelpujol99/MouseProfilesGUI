@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Observer/ObserverSingleValue.h"
 #include "Serialization/DeviceProfiles.h"
 #include "Strategies/ReadDevicesStrategy/IReadDevicesStrategy.h"
 #include "Utilities/Event/SingleEventBus.h"
@@ -21,12 +22,14 @@ public:
     std::weak_ptr<std::function<void(DeviceProfiles)>> SubscribeToDeviceProfiles(std::function<void(DeviceProfiles)>&& action);
     void UnsubscribeFromDeviceProfiles(std::weak_ptr<std::function<void(DeviceProfiles)>>&& action);
 
+    Profile RetrieveProfile(uint8_t profileIndex);
+
 private:
 
     std::unique_ptr<IReadDevicesStrategy> _readDevices;
 
     SingleEventBus<std::vector<DeviceInfo>> _devices;
 
-    SingleEventBus<DeviceProfiles> _deviceProfiles;
+    ObserverSingleValue<DeviceProfiles> _deviceProfiles;
 
 };

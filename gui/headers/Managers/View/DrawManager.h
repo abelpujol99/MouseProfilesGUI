@@ -21,7 +21,7 @@ public:
 
     void EnableDeviceProfilesView(std::string deviceName);
 
-    void EnableProfileView(std::string deviceName, Profile profile);
+    void EnableProfileView(std::string deviceName, uint8_t profileIndex);
 
     void DrawElements(ImDrawList* drawList);
 

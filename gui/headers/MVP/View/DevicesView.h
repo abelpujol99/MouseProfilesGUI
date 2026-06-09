@@ -2,7 +2,6 @@
 #include "MVP/View/BaseView.h"
 #include "MVP/Presenter/Devices/DevicesPresenter.h"
 
-#include "Strategies/ReadDevicesStrategy/IReadDevicesStrategy.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
 #include "Strategies/RecycleViewStrategy/NotResizableRow.h"

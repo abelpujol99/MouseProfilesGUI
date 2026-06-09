@@ -14,6 +14,9 @@
 
 DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DevicesPresenter>())
 {
+
+#pragma region Top Bar
+
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
         TOP_BAR_RECT_PIVOT, TOP_BAR_RECT_RELATIVE_POSITION,  TOP_BAR_RECT_SIZE, false)};
 
@@ -40,11 +43,15 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     reloadButtonRect->AddDrawableComponent(_reloadButton.get());
     topBarRect->AddRectDrawable(std::move(reloadButtonRect));
 
+#pragma endregion
+
+#pragma region Devices Recycle View
+
     std::unique_ptr<RectDrawable> devicesRecycleViewRect {DrawableFactory::CreateRectDrawable(DEVICES_RECYCLE_VIEW_RECT_ANCHORS,
         DEVICES_RECYCLE_VIEW_RECT_PIVOT, DEVICES_RECYCLE_VIEW_RECT_RELATIVE_POSITION, DEVICES_RECYCLE_VIEW_RECT_SIZE, false)};
 
     _devicesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
-        DEVICES_RECYCLE_VIEW_MARGINS, {0, DEVICES_RECYCLE_VIEW_ROW_HEIGHT}, DEVICES_RECYCLE_VIEW_BUFFER_ROWS,
+        DEVICES_RECYCLE_VIEW_PADDINGS, {0, DEVICES_RECYCLE_VIEW_ROW_HEIGHT}, DEVICES_RECYCLE_VIEW_BUFFER_ROWS,
         [](Button& button){button.Subscribe();},
         [](Button& button){button.Unsubscribe();},
         []()
@@ -73,10 +80,12 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     devicesRecycleViewRect->AddDrawableComponent(_devicesRecycleView.get());
 
+#pragma endregion
+
     AddRectDrawable(std::move(topBarRect));
     AddRectDrawable(std::move(devicesRecycleViewRect));
 
-    _presenter->SetItemHeight(DEVICES_RECYCLE_VIEW_ROW_HEIGHT + DEVICES_RECYCLE_VIEW_VERTICAL_MARGIN * 2);
+    _presenter->SetItemHeight(DEVICES_RECYCLE_VIEW_ROW_HEIGHT + DEVICES_RECYCLE_VIEW_VERTICAL_PADDING * 2);
     _presenter->SetViewsPerRow(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW);
     _presenter->SetRecyclerViewBufferRows(DEVICES_RECYCLE_VIEW_BUFFER_ROWS);
 
@@ -93,6 +102,8 @@ void DevicesView::Enable()
     _reloadButton->Subscribe();
 
     _devicesRecycleView->Enable();
+
+    _presenter->Restart();
 }
 
 void DevicesView::Disable()

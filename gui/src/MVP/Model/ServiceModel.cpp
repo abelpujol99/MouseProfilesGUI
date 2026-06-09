@@ -60,3 +60,8 @@ void ServiceModel::UnsubscribeFromDeviceProfiles(std::weak_ptr<std::function<voi
 {
     _deviceProfiles.Unsubscribe(std::move(action));
 }
+
+Profile ServiceModel::RetrieveProfile(uint8_t profileIndex)
+{
+    return _deviceProfiles.GetValue().profiles.at(profileIndex);
+}

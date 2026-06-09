@@ -59,21 +59,10 @@ void ClickableManager::Update()
 
 void ClickableManager::AddClickable(IClickable* clickable)
 {
-    _clickables.push_back(clickable);
+    _clickables.emplace(clickable);
 }
 
 void ClickableManager::RemoveClickable(IClickable* clickable)
 {
-    auto itEnd {_clickables.cend()};
-
-    for (auto it {_clickables.begin()}; it != itEnd; ++it)
-    {
-        if (*it != clickable)
-        {
-            continue;
-        }
-
-        _clickables.erase(it);
-        return;
-    }
+    _clickables.erase(clickable);
 }

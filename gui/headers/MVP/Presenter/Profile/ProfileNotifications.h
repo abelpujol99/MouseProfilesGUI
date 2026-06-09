@@ -2,8 +2,11 @@
 
 enum class ProfileNotifications
 {
-    DEVICES_UPDATE,
-    SCROLL_UPDATE,
+    TITLE_UPDATE,
+    SUB_PROFILE_SCROLL_UPDATE,
+    INPUT_SCROLL_UPDATE,
+    CODE_REMAPS_UPDATE,
+    DETAILS_UPDATE,
     COUNT
 };
 

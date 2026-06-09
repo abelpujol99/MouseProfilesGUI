@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <memory>
+#include <set>
 
 class IClickable;
 
@@ -33,5 +34,5 @@ private:
 
     bool _hasLeftMouseButtonReleased;
 
-    std::vector<IClickable*> _clickables;
+    std::set<IClickable*> _clickables;
 };

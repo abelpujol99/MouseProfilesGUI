@@ -99,13 +99,7 @@ TValue ObserverMap<TKey, TValue>::GetValue(TKey key) const
 template <typename TKey, typename TValue>
 void ObserverMap<TKey, TValue>::SetValue(TKey key, TValue data)
 {
-	TValue previousData {_data.at(key)};
 	_data.at(key) = _actions.at(key)(data);
-
-	if (previousData == _data.at(key))
-	{
-		return;
-	}
 
 	TEventListConstIterator itEnd {_events.at(key).cend()};
 

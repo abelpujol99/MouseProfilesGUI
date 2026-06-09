@@ -78,13 +78,7 @@ T ObserverSingleValue<T>::GetValue() const
 template <typename T>
 void ObserverSingleValue<T>::SetValue(T data)
 {
-	T previousData {_data};
 	_data = _action(data);
-
-	if (previousData == _data)
-	{
-		return;
-	}
 
 	TEventListConstIterator itEnd{_events.cend()};
 

@@ -42,9 +42,11 @@ void DrawManager::EnableDeviceProfilesView(std::string deviceName)
     _currentView->Enable();
 }
 
-void DrawManager::EnableProfileView(std::string deviceName, Profile profile)
+void DrawManager::EnableProfileView(std::string deviceName, uint8_t profileIndex)
 {
     _currentView->Disable();
+    _profileView->SetDeviceName(std::move(deviceName));
+    _profileView->SetProfileIndex(profileIndex);
     _currentView = _profileView.get();
     _currentView->Enable();
 }

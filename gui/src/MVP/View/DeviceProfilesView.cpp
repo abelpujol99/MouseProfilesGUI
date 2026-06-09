@@ -12,6 +12,7 @@
 
 DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DeviceProfilesPresenter>())
 {
+#pragma region Top Bar
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
         TOP_BAR_RECT_PIVOT,TOP_BAR_RECT_RELATIVE_POSITION, TOP_BAR_RECT_SIZE, false)};
 
@@ -37,6 +38,10 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     backButtonRect->AddDrawableComponent(_backButton.get());
     topBarRect->AddRectDrawable(std::move(backButtonRect));
+
+#pragma endregion
+
+#pragma region Current Profile
 
     std::unique_ptr<RectDrawable> currentProfileRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_RECT_ANCHORS,
         CURRENT_PROFILE_RECT_PIVOT, CURRENT_PROFILE_RECT_RELATIVE_POSITION, CURRENT_PROFILE_RECT_SIZE, false)};
@@ -93,13 +98,17 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
     currentProfileRect->AddRectDrawable(std::move(currentProfileNameRect));
     currentProfileRect->AddRectDrawable(std::move(currentProfileButtonsRect));
 
+#pragma endregion
+
+#pragma region Profile Recycle View
+
     std::unique_ptr<RectDrawable> profileRecycleViewRect {DrawableFactory::CreateRectDrawable(PROFILE_RECYCLE_VIEW_RECT_ANCHORS_SHRANK,
         PROFILE_RECYCLE_VIEW_RECT_PIVOT, PROFILE_RECYCLE_VIEW_RECT_RELATIVE_POSITION, PROFILE_RECYCLE_VIEW_RECT_SIZE, false)};
 
     _profileRecycleViewRect = profileRecycleViewRect.get();
 
     _profilesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
-        PROFILE_RECYCLE_VIEW_MARGINS, {0, PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
+        PROFILE_RECYCLE_VIEW_PADDINGS, {0, PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
         [](Button& button){button.Subscribe();},
         [](Button& button){button.Unsubscribe();},
         []()
@@ -127,11 +136,13 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     profileRecycleViewRect->AddDrawableComponent(_profilesRecycleView.get());
 
+#pragma endregion
+
     AddRectDrawable(std::move(topBarRect));
     AddRectDrawable(std::move(currentProfileRect));
     AddRectDrawable(std::move(profileRecycleViewRect));
 
-    _presenter->SetItemHeight(PROFILE_RECYCLE_VIEW_ROW_HEIGHT + PROFILE_RECYCLE_VIEW_VERTICAL_MARGIN * 2);
+    _presenter->SetItemHeight(PROFILE_RECYCLE_VIEW_ROW_HEIGHT + PROFILE_RECYCLE_VIEW_VERTICAL_PADDING * 2);
     _presenter->SetViewsPerRow(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW);
     _presenter->SetRecyclerViewBufferRows(PROFILE_RECYCLE_VIEW_BUFFER_ROWS);
 
@@ -158,6 +169,8 @@ void DeviceProfilesView::Enable()
     _unloadCurrentProfileButton->Subscribe();
 
     _profilesRecycleView->Enable();
+
+    _presenter->Restart();
 }
 
 void DeviceProfilesView::Disable()

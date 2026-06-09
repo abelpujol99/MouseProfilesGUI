@@ -62,9 +62,7 @@ char ImGuiFactory::GetLastCharTyped()
     {
         ImWchar character {io.InputQueueCharacters[i]};
 
-        if ((character < CHAR_0 || character > CHAR_9) &&
-            (character < CHAR_A || character > CHAR_Z) &&
-            character != CHAR_PLUS)
+        if (character < SpaceBar)
         {
             continue;
         }
@@ -75,6 +73,11 @@ char ImGuiFactory::GetLastCharTyped()
     if (ImGui::IsKeyPressed(ImGuiKey_Backspace))
     {
         return Backspace;
+    }
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+    {
+        return Delete;
     }
 
     return 0;

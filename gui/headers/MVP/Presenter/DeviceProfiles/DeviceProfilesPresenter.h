@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "MVP/Model/ServiceModel.h"
+#include "MVP/Presenter/RecycleViewPresenter.h"
 #include "MVP/Presenter/DeviceProfiles/DeviceProfilesNotifications.h"
 #include "Utilities/Notification/NotificationBus.h"
 #include "Utilities/Structs/ButtonInfo.h"
@@ -13,6 +14,8 @@ public:
     DeviceProfilesPresenter();
 
     ~DeviceProfilesPresenter() = default;
+
+    void Restart();
 
     void SetDeviceName(std::string deviceName);
 
@@ -26,12 +29,6 @@ public:
 
     void SetRecyclerViewBufferRows(uint8_t bufferRows);
 
-    void OnPressBackButton();
-
-    void OnPressEditButton();
-
-    void OnPressUnloadButton();
-
     void OnScroll(float scrollValue);
 
     [[nodiscard]] float GetCurrentScroll() const;
@@ -44,6 +41,12 @@ public:
 
     [[nodiscard]] bool IsLastItemPresent() const;
 
+    void OnPressBackButton();
+
+    void OnPressEditButton();
+
+    void OnPressUnloadButton();
+
     void OnPressRecycleViewButton(uint8_t index);
 
     void AddProfile();
@@ -53,34 +56,15 @@ public:
 
 private:
 
-    void CalculateMaxScroll();
-
-    void UpdateRecycleViewDataDisplay();
-
     ServiceModel& _serviceModel;
 
     std::string _deviceName;
 
-    float _recyclerViewHeight {0};
-
-    uint8_t _viewsPerRow {0};
-
-    float _itemHeight {0};
-
-    uint8_t _visibleItemsCount {0};
-
-    uint8_t _bufferRows {0};
-
-    float _currentScroll {0};
-
-    float _maxScroll {0};
-
-    uint8_t _firstItemToShowIndex {0};
-
-    Profile* _currentDeviceProfile {nullptr};
+    int _currentDeviceProfileIndex;
 
     std::vector<Profile> _deviceProfiles;
 
     NotificationBus<DeviceProfilesNotifications> _deviceProfilesNotifications;
 
+    RecycleViewPresenter _recyclerViewPresenter;
 };

@@ -1,6 +1,8 @@
 #include "MVP/View/DevicesView.h"
 
+#include "AnchorsDefines.h"
 #include "ColorDefines.h"
+#include "PivotDefines.h"
 #include "RectangleDefines.h"
 #include "TextDefines.h"
 #include "Themes/DevicesViewThemeDefines.h"
@@ -53,7 +55,7 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> devicesRecycleViewRect {DrawableFactory::CreateRectDrawable(DEVICES_RECYCLE_VIEW_RECT_ANCHORS,
         DEVICES_RECYCLE_VIEW_RECT_PIVOT, DEVICES_RECYCLE_VIEW_RECT_RELATIVE_POSITION, DEVICES_RECYCLE_VIEW_RECT_SIZE, false)};
 
-    _devicesRecycleView = DrawableFactory::CreateRecycleView<Button>(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
+    _devicesRecycleView = DrawableFactory::CreateRecycleView(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
         DEVICES_RECYCLE_VIEW_PADDINGS, {0, DEVICES_RECYCLE_VIEW_ROW_HEIGHT}, DEVICES_RECYCLE_VIEW_BUFFER_ROWS,
         [&](RectDrawable* view)
         {

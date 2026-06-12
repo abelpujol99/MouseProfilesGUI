@@ -1,7 +1,10 @@
 #include "MVP/View/DeviceProfilesView.h"
 
+#include "AnchorsDefines.h"
+#include "PivotDefines.h"
 #include "RectangleDefines.h"
 #include "TextDefines.h"
+#include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFamilyTypes.h"
 #include "Managers/View/DrawManager.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
@@ -112,7 +115,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     _profileRecycleViewRect = profileRecycleViewRect.get();
 
-    _profilesRecycleView = DrawableFactory::CreateRecycleView<Button>(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
+    _profilesRecycleView = DrawableFactory::CreateRecycleView(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
         PROFILE_RECYCLE_VIEW_PADDINGS, {0, PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
         [&](RectDrawable* view)
         {

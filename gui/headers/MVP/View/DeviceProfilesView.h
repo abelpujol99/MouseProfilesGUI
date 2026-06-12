@@ -44,7 +44,7 @@ private:
 
     RectDrawable* _profileRecycleViewRect;
 
-    std::unique_ptr<RecycleView<Button>> _profilesRecycleView;
+    std::unique_ptr<RecycleView> _profilesRecycleView;
 
     std::unique_ptr<Button> _templateProfileButton;
 

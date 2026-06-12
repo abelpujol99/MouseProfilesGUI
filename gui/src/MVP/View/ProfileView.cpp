@@ -2,7 +2,9 @@
 
 #include <utility>
 
+#include "AnchorsDefines.h"
 #include "ColorDefines.h"
+#include "PivotDefines.h"
 #include "RectangleDefines.h"
 #include "TextDefines.h"
 #include "Factory/DrawableFactory.h"
@@ -139,7 +141,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(subProfileListRectangleContainer));
 
-    _subProfileRecycleView = DrawableFactory::CreateRecycleView<RectDrawable>(SUB_PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
+    _subProfileRecycleView = DrawableFactory::CreateRecycleView(SUB_PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
         SUB_PROFILE_RECYCLE_VIEW_PADDINGS, {0, SUB_PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, SUB_PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
         [&](RectDrawable* view)
         {
@@ -253,7 +255,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(inputListRectangleContainer));
 
-    _inputRecycleView = DrawableFactory::CreateRecycleView<RectDrawable>(INPUT_RECYCLE_VIEW_VIEWS_PER_ROW,
+    _inputRecycleView = DrawableFactory::CreateRecycleView(INPUT_RECYCLE_VIEW_VIEWS_PER_ROW,
         INPUT_RECYCLE_VIEW_PADDINGS, {0, INPUT_RECYCLE_VIEW_ROW_HEIGHT}, INPUT_RECYCLE_VIEW_BUFFER_ROWS,
         [&](RectDrawable* view)
         {

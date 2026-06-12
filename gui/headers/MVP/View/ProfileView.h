@@ -46,7 +46,7 @@ private:
 
     std::unique_ptr<Text> _subProfileTitle;
 
-    std::unique_ptr<RecycleView<RectDrawable>> _subProfileRecycleView;
+    std::unique_ptr<RecycleView> _subProfileRecycleView;
 
     std::unique_ptr<Text> _inputTitle;
 
@@ -54,7 +54,7 @@ private:
 
     std::unique_ptr<Button> _inputDeleteButton;
 
-    std::unique_ptr<RecycleView<RectDrawable>> _inputRecycleView;
+    std::unique_ptr<RecycleView> _inputRecycleView;
 
     std::unique_ptr<Text> _outputTitle;
 

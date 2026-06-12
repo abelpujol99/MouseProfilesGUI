@@ -29,7 +29,7 @@ private:
 
     std::unique_ptr<Button> _reloadButton;
 
-    std::unique_ptr<RecycleView<Button>> _devicesRecycleView;
+    std::unique_ptr<RecycleView> _devicesRecycleView;
 
     std::unique_ptr<Button> _templateDeviceButton;
 

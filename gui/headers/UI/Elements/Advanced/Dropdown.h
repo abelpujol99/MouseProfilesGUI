@@ -1,24 +1,25 @@
 #pragma once
 #include <memory>
 
+#include "Button.h"
 #include "RecycleView/RecycleView.h"
 #include "UI/Elements/Base/DrawableComponent.h"
 #include "UI/Elements/Base/RectDrawable.h"
-#include "UI/Structs/RectangleData.h"
 
-#include "Utilities/Concepts/DerivedFromDrawableComponent.h"
-
-template<DerivedFromDrawableComponent TDrawableComponent>
 class Dropdown : public DrawableComponent, public DrawableTransform
 {
 public:
 
     Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<RectDrawable>&& recycleViewContainer,
-        std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>>&& recycleView, bool isHidden);
+        std::unique_ptr<RecycleView>&& recycleView, bool isHidden);
 
     ~Dropdown() override = default;
 
-    void AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent);
+    //TODO ADD DRAWABLE
+
+    void Enable() override;
+
+    void Disable() override;
 
     void Draw(ImDrawList* drawList) override;
 
@@ -30,6 +31,7 @@ private:
 
     void OnParentSizeUpdated() override;
 
+private:
     std::unique_ptr<Rectangle> _rectangle;
 
     std::unique_ptr<Button> _button;
@@ -38,68 +40,6 @@ private:
 
     std::unique_ptr<RectDrawable> _recycleViewContainer;
 
-    std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>> _recycleView;
+    std::unique_ptr<RecycleView> _recycleView;
 
 };
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-Dropdown<TDrawableComponent>::Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<RectDrawable>&& recycleViewContainer,
-    std::unique_ptr<RecycleView<TDrawableComponent, NotResizableRow>>&& recycleView, bool isHidden) :
-        DrawableComponent(isHidden), _button(std::move(button)), _recycleViewContainer(std::move(recycleViewContainer)),
-        _recycleView(std::move(recycleView))
-{
-    _button->SetAction([&]() {
-        _recycleViewContainer->SetIsHidden(false);
-    });
-
-    _recycleViewContainer->AddDrawableComponent(_recycleView.get());
-
-    _button->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
-    _recycleViewContainer->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
-
-    _rectangle = DrawableFactory::CreateRectangle(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false}, false);
-    _recycleViewContainer->AddDrawableComponent(_rectangle.get());
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-void Dropdown<TDrawableComponent>::OnParentPositionUpdated()
-{
-    *_position = GetParentPosition();
-
-    _recycleViewContainer->UpdateAttributes();
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-void Dropdown<TDrawableComponent>::OnParentBottomRightPositionUpdated()
-{
-    *_bottomRightPosition = GetParentBottomRightPosition();
-
-    _recycleViewContainer->UpdateAttributes();
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-void Dropdown<TDrawableComponent>::OnParentSizeUpdated()
-{
-    *_size = GetParentSize();
-
-    _recycleViewContainer->UpdateAttributes();
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-void Dropdown<TDrawableComponent>::AddDrawableComponent(std::unique_ptr<TDrawableComponent>&& drawableComponent)
-{
-    _recycleView->AddDrawableComponent(std::move(drawableComponent));
-}
-
-template<DerivedFromDrawableComponent TDrawableComponent>
-void Dropdown<TDrawableComponent>::Draw(ImDrawList *drawList)
-{
-    if (IsHidden())
-    {
-        return;
-    }
-
-    _recycleViewContainer->Draw(drawList);
-
-    _button->Draw(drawList);
-}

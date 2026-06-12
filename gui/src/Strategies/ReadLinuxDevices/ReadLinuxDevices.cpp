@@ -4,7 +4,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/input.h>
-#include <sys/ioctl.h>
 #include <iostream>
 
 std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()

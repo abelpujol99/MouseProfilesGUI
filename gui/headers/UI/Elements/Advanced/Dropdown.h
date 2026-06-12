@@ -1,10 +1,8 @@
 #pragma once
 #include <memory>
 
-#include "Button.h"
-#include "RecycleView/RecycleView.h"
-#include "UI/Elements/Base/DrawableComponent.h"
-#include "UI/Elements/Base/RectDrawable.h"
+#include "UI/Elements/Advanced/Button.h"
+#include "UI/Elements/Advanced/RecycleView/RecycleView.h"
 
 class Dropdown : public DrawableComponent, public DrawableTransform
 {

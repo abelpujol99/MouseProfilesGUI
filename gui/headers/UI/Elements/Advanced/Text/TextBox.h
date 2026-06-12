@@ -6,8 +6,6 @@
 #include "UI/Elements/Intermediate/Text.h"
 #include "Managers/Gestures/SelectableManager.h"
 
-#include "KeyUsings.h"
-
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 class TextBox : public DrawableComponent, public ISelectable
 {
@@ -60,9 +58,7 @@ private:
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 TextBox<T, TProcessData>::TextBox(bool isHidden) :
         DrawableComponent(isHidden), _processDataStrategy(std::make_unique<TProcessData>())
-{
-    Subscribe();
-}
+{}
 
 template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 TextBox<T, TProcessData>::TextBox(const TextBox& other) :
@@ -70,13 +66,12 @@ TextBox<T, TProcessData>::TextBox(const TextBox& other) :
     _rectangle(other._rectangle->Clone()),
     _processDataStrategy(std::make_unique<TProcessData>()),
     _text(other._text->Clone())
-{
-}
+{}
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
 TextBox<T, TProcessData>::~TextBox() noexcept
 {
-    Unsubscribe();
+    TextBox<T, TProcessData>::Unsubscribe();
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

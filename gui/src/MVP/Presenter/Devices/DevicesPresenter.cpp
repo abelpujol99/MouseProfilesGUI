@@ -1,11 +1,7 @@
 #include "MVP/Presenter/Devices/DevicesPresenter.h"
 
-#include <cmath>
-#include <utility>
-
 #include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"
-#include "Utilities/Math.h"
 
 DevicesPresenter::DevicesPresenter() : _serviceModel(MVPManager::GetInstance().GetServiceModel())
 {

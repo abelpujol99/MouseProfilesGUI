@@ -1,12 +1,8 @@
 #pragma once
 #include "UI/Elements/Base/DrawableComponent.h"
 
-#include <memory>
-
 #include "Strategies/DrawStrategy/Rectangle/IDrawRectangleStrategy.h"
 #include "UI/Structs/RectangleData.h"
-
-struct RectangleData;
 
 class Rectangle : public DrawableComponent
 {

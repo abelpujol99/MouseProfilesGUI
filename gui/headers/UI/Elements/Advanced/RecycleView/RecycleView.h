@@ -1,18 +1,9 @@
 #pragma once
-#include "Utilities/Concepts/DerivedFromBaseDrawable.h"
 
-#include <vector>
-#include <memory>
 #include <map>
-#include <cmath>
 
-#include "Managers/Gestures/ScrollableManager.h"
 #include "UI/Helpers/IScrollable.h"
-#include "Utilities/Math.h"
-#include "ColorDefines.h"
-#include "RecycleViewActions.h"
-#include "UI/Elements/Base/DrawableComponent.h"
-#include "UI/Elements/Base/DrawableTransform.h"
+#include "UI/Elements/Advanced/RecycleView/RecycleViewActions.h"
 #include "UI/Elements/Base/RectDrawable.h"
 
 #define SCROLL_MULTIPLIER 10

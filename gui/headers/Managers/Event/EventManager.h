@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Observer/ObserverMap.h"
 #include "Observer/ObserverSingleValue.h"
-#include "EventType.h"
 #include "Utilities/Structs/DeviceInfo.h"
 
 class EventManager

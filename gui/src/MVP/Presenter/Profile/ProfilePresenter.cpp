@@ -1,7 +1,5 @@
 #include "MVP/Presenter/Profile/ProfilePresenter.h"
 
-#include <utility>
-
 #include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"
 

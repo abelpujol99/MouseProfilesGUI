@@ -1,7 +1,6 @@
 #pragma once
 
 #include "MVP/Model/ServiceModel.h"
-#include "Observer/ObserverSingleValue.h"
 
 class MVPManager
 {

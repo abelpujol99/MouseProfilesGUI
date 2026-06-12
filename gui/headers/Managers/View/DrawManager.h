@@ -1,7 +1,7 @@
 #pragma once
 
-#include "MVP/View/DeviceProfilesView.h"
 #include "MVP/View/DevicesView.h"
+#include "MVP/View/DeviceProfilesView.h"
 #include "MVP/View/ProfileView.h"
 
 class DrawManager

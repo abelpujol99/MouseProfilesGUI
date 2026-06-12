@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include "imgui.h"
+#include <string>
 
 enum class FontFamilyTypes;
 enum class TextHorizontalAlignments;

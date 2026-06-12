@@ -1,17 +1,14 @@
 #include "MVP/View/ProfileView.h"
 
-#include <utility>
-
 #include "AnchorsDefines.h"
-#include "ColorDefines.h"
 #include "PivotDefines.h"
-#include "RectangleDefines.h"
+#include "ColorDefines.h"
 #include "TextDefines.h"
-#include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFamilyTypes.h"
+#include "RectangleDefines.h"
+#include "Factory/DrawableFactory.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
 #include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
-#include "UI/Structs/RectangleData.h"
 #include "UI/Structs/TextData.h"
 #include "Themes/ProfileViewThemeDefines.h"
 

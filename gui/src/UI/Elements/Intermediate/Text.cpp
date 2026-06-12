@@ -1,7 +1,6 @@
 #include "UI/Elements/Intermediate/Text.h"
 
 #include "ColorDefines.h"
-#include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFactory.h"
 #include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"

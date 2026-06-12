@@ -1,17 +1,13 @@
 #include "Managers/View/WindowManager.h"
 
-#include <utility>
-
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
-
 #include "GLFW/glfw3.h"
 
 #include "Managers/Input/InputManager.h"
 #include "Managers/Input/TypeManager.h"
 #include "Managers/Gestures/ClickableManager.h"
-#include "Managers/Gestures/SelectableManager.h"
 #include "Managers/Gestures/ScrollableManager.h"
 #include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"

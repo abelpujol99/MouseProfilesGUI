@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 
 #include "MVP/Model/ServiceModel.h"
 #include "MVP/Presenter/RecycleViewPresenter.h"

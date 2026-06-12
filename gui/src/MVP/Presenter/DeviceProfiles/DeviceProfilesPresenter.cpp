@@ -2,7 +2,6 @@
 
 #include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"
-#include "MVP/Presenter/DeviceProfiles/DeviceProfilesNotifications.h"
 
 DeviceProfilesPresenter::DeviceProfilesPresenter() : _serviceModel(MVPManager::GetInstance().GetServiceModel())
 {

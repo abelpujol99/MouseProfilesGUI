@@ -1,6 +1,7 @@
 #pragma once
 #include "UI/Elements/Base/DrawableComponent.h"
 
+#include <memory>
 #include <string>
 #include <functional>
 

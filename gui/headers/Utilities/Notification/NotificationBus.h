@@ -3,7 +3,6 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include <set>
 
 template<typename T>
 class NotificationBus

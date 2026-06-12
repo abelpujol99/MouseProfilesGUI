@@ -1,8 +1,12 @@
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
 
+#include <cmath>
+
 #include "AnchorsDefines.h"
 #include "PivotDefines.h"
 #include "Factory/DrawableFactory.h"
+#include "Managers/Gestures/ScrollableManager.h"
+#include "Utilities/Math.h"
 
 RecycleView::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec2&& rowsSize, uint8_t bufferRows,
     std::function<void(RectDrawable*)>&& addDefault, std::function<void()> removeLastView,
@@ -21,7 +25,7 @@ RecycleView::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec
 
 RecycleView::~RecycleView() noexcept
 {
-    Disable();
+    RecycleView::Disable();
 }
 
 void RecycleView::SetIsHidden(bool isHidden)

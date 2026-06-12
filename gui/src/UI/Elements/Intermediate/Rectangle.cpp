@@ -1,10 +1,8 @@
 #include "UI/Elements/Intermediate/Rectangle.h"
 
 #include "ColorDefines.h"
-#include "Factory/DrawableFactory.h"
 #include "Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
 #include "Strategies/DrawStrategy/Rectangle/DrawFilledRectangle.h"
-#include "UI/Structs/RectangleData.h"
 
 Rectangle::Rectangle(RectangleData&& rectangleData, bool isHidden) :
         DrawableComponent(isHidden), _color(rectangleData.color), _currentColor(_color), _rounding(rectangleData.rounding),

@@ -1,7 +1,5 @@
 #include "UI/Elements/Base/BaseDrawable.h"
 
-#include "UI/Elements/Base/DrawableTransform.h"
-
 BaseDrawable::BaseDrawable(bool isHidden): BaseDisplay(isHidden)
 {}
 

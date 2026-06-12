@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ProfileNotifications.h"
+#include "MVP/Presenter/Profile/ProfileNotifications.h"
 #include "MVP/Model/ServiceModel.h"
 #include "MVP/Presenter/RecycleViewPresenter.h"
 #include "Utilities/Notification/NotificationBus.h"

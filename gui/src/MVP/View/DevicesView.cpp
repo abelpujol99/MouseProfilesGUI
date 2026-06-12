@@ -1,18 +1,16 @@
 #include "MVP/View/DevicesView.h"
 
 #include "AnchorsDefines.h"
-#include "ColorDefines.h"
 #include "PivotDefines.h"
+#include "ColorDefines.h"
 #include "RectangleDefines.h"
 #include "TextDefines.h"
-#include "Themes/DevicesViewThemeDefines.h"
-#include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFamilyTypes.h"
-#include "Managers/View/DrawManager.h"
+#include "Factory/DrawableFactory.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
 #include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
-#include "UI/Structs/RectangleData.h"
 #include "UI/Structs/TextData.h"
+#include "Themes/DevicesViewThemeDefines.h"
 
 DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DevicesPresenter>())
 {

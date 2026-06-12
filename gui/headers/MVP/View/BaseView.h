@@ -4,7 +4,7 @@
 
 #include "UI/Elements/Base/RectDrawable.h"
 
-#include "Managers/View/WindowManager.h"
+#include "Utilities/Structs/WindowSize.h"
 
 class BaseView : public BaseDisplay, public DrawableTransform
 {

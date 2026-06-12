@@ -1,7 +1,7 @@
 #include "UI/Elements/Advanced/RecycleView/RecycleViewActions.h"
 
 RecycleViewActions::RecycleViewActions(std::function<void(uint8_t)>&& onUpdateRowsCount,
-                                       std::function<void(float)>&& onUpdateSize, std::function<void(float)>&& onScroll) :
+    std::function<void(float)>&& onUpdateSize, std::function<void(float)>&& onScroll) :
         _onUpdateRowsCount(std::move(onUpdateRowsCount)), _onUpdateSize(std::move(onUpdateSize)), _onScroll(std::move(onScroll))
 {}
 

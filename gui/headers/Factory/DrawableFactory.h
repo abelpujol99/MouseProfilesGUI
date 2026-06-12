@@ -3,12 +3,12 @@
 #include <functional>
 #include <memory>
 
-#include "UI/Elements/Advanced/RecycleView/RecycleView.h"
-#include "UI/Elements/Advanced/Dropdown.h"
-#include "UI/Elements/Advanced/RecycleView/RecycleViewActions.h"
+#include "UI/Elements/Intermediate/Texture.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/Text/TextBox.h"
-#include "UI/Elements/Intermediate/Texture.h"
+#include "UI/Elements/Advanced/RecycleView/RecycleView.h"
+#include "UI/Elements/Advanced/RecycleView/RecycleViewActions.h"
+#include "UI/Elements/Advanced/Dropdown.h"
 #include "Strategies/TextStrategy/ApplyKey.h"
 #include "Strategies/TextStrategy/DisplayKey.h"
 

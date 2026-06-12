@@ -5,8 +5,6 @@ class DrawableComponent : public BaseDrawable
 {
 public:
 
-    DrawableComponent(bool isHidden);
-
     ~DrawableComponent() override = default;
 
     virtual void OnParentPositionUpdated() {};
@@ -14,4 +12,9 @@ public:
     virtual void OnParentBottomRightPositionUpdated() {};
 
     virtual void OnParentSizeUpdated() {};
+
+protected:
+
+    DrawableComponent(bool isHidden);
+
 };

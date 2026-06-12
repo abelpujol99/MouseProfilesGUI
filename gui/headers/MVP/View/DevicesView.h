@@ -4,7 +4,6 @@
 
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
-#include "Strategies/RecycleViewStrategy/NotResizableRow.h"
 
 class DevicesView : public BaseView
 {
@@ -30,6 +29,10 @@ private:
 
     std::unique_ptr<Button> _reloadButton;
 
-    std::unique_ptr<RecycleView<Button, NotResizableRow>> _devicesRecycleView;
+    std::unique_ptr<RecycleView<Button>> _devicesRecycleView;
+
+    std::unique_ptr<Button> _templateDeviceButton;
+
+    std::vector<std::unique_ptr<Button>> _devicesButtons;
 
 };

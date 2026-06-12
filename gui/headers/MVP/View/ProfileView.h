@@ -46,11 +46,7 @@ private:
 
     std::unique_ptr<Text> _subProfileTitle;
 
-    std::unique_ptr<Button> _subProfileAddButton;
-
-    std::unique_ptr<Button> _subProfileDeleteButton;
-
-    std::unique_ptr<RecycleView<Button, NotResizableRow>> _subProfileRecycleView;
+    std::unique_ptr<RecycleView<RectDrawable>> _subProfileRecycleView;
 
     std::unique_ptr<Text> _inputTitle;
 
@@ -58,9 +54,27 @@ private:
 
     std::unique_ptr<Button> _inputDeleteButton;
 
-    std::unique_ptr<RecycleView<Button, NotResizableRow>> _inputRecycleView;
+    std::unique_ptr<RecycleView<RectDrawable>> _inputRecycleView;
 
     std::unique_ptr<Text> _outputTitle;
 
-    std::unique_ptr<Rectangle> _containerRectangle;
+    std::unique_ptr<Rectangle> _templateContainerRectangle;
+
+    std::unique_ptr<Button> _templateSubProfileEditButton;
+
+    std::unique_ptr<Button> _templateSubProfileDeleteButton;
+
+    std::unique_ptr<Button> _templateInputEditButton;
+
+    std::unique_ptr<Button> _templateInputDeleteButton;
+
+    std::vector<std::unique_ptr<Rectangle>> _containerRectangles{};
+
+    std::vector<std::unique_ptr<Button>> _subProfileEditButtons{};
+
+    std::vector<std::unique_ptr<Button>> _subProfileDeleteButtons{};
+
+    std::vector<std::unique_ptr<Button>> _inputEditButtons{};
+
+    std::vector<std::unique_ptr<Button>> _inputDeleteButtons{};
 };

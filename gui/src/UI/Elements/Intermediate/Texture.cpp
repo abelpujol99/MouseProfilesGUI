@@ -6,11 +6,18 @@
 
 #include <filesystem>
 
+#include "Factory/DrawableFactory.h"
+
 Texture::Texture(const char* fileName, bool isHidden) :
         DrawableComponent(isHidden)
 {
     _texture = LoadTexture(fileName);
 }
+
+Texture::Texture(const Texture& other) :
+    DrawableComponent(true),
+    _texture(other._texture)
+{}
 
 void Texture::Enable()
 {
@@ -20,6 +27,11 @@ void Texture::Enable()
 void Texture::Disable()
 {
     //TODO REMOVE GRAY FILTER
+}
+
+std::unique_ptr<Texture> Texture::Clone() const
+{
+    return std::make_unique<Texture>(*this);
 }
 
 GLuint Texture::LoadTexture(const char* fileName)

@@ -41,6 +41,8 @@ public:
 
     void RemoveRectDrawable(RectDrawable* rectDrawable);
 
+    void ClearRectDrawables();
+
     void AddDrawableComponent(DrawableComponent* drawableComponent);
 
     void RemoveDrawableComponent(DrawableComponent* drawableComponent);

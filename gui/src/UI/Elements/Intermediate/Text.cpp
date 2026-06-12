@@ -1,6 +1,7 @@
 #include "UI/Elements/Intermediate/Text.h"
 
 #include "ColorDefines.h"
+#include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFactory.h"
 #include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
 #include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
@@ -11,6 +12,17 @@ Text::Text(TextData&& textData, bool isHidden) :
         _horizontalAlignment(textData.horizontalAlignment), _verticalAlignment(textData.verticalAlignment),
         _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize),
         _color(textData.color), _currentColor(_color)
+{}
+
+Text::Text(const Text& other) :
+    DrawableComponent(true),
+    _text(other._text),
+    _horizontalAlignment(other._horizontalAlignment),
+    _verticalAlignment(other._verticalAlignment),
+    _fontFamily(other._fontFamily),
+    _fontSize(other._fontSize),
+    _color(other._color),
+    _currentColor(other._currentColor)
 {}
 
 void Text::SetParentState(ImVec2 *parentPositionPointer, ImVec2 *parentBottomRightPositionPointer,
@@ -161,6 +173,11 @@ void Text::Enable()
 void Text::Disable()
 {
     _currentColor = GRAY;
+}
+
+std::unique_ptr<Text> Text::Clone() const
+{
+    return std::make_unique<Text>(*this);
 }
 
 void Text::Draw(ImDrawList* drawList)

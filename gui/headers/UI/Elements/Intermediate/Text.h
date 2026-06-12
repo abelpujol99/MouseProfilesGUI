@@ -14,6 +14,8 @@ public:
 
     Text(TextData&& textData, bool isHidden = false);
 
+    Text(const Text& other);
+
     ~Text() override = default;
 
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
@@ -47,6 +49,8 @@ public:
 
     void Disable() override;
 
+    [[nodiscard]] std::unique_ptr<Text> Clone() const;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -70,8 +74,6 @@ private:
     ImColor _color;
 
     ImColor _currentColor;
-
-    ImVec2 _currentRelativePosition;
 
     std::function<float()> _getPositionXAction;
 

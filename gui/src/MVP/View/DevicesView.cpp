@@ -14,6 +14,9 @@
 
 DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DevicesPresenter>())
 {
+    _templateDeviceButton = DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        SUB_TITLE_SIZE, WHITE}, [&](){}, false);
 
 #pragma region Top Bar
 
@@ -50,15 +53,19 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> devicesRecycleViewRect {DrawableFactory::CreateRectDrawable(DEVICES_RECYCLE_VIEW_RECT_ANCHORS,
         DEVICES_RECYCLE_VIEW_RECT_PIVOT, DEVICES_RECYCLE_VIEW_RECT_RELATIVE_POSITION, DEVICES_RECYCLE_VIEW_RECT_SIZE, false)};
 
-    _devicesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
+    _devicesRecycleView = DrawableFactory::CreateRecycleView<Button>(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
         DEVICES_RECYCLE_VIEW_PADDINGS, {0, DEVICES_RECYCLE_VIEW_ROW_HEIGHT}, DEVICES_RECYCLE_VIEW_BUFFER_ROWS,
-        []()
+        [&](RectDrawable* view)
         {
-            return DrawableFactory::CreateButton(
-                RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
-                TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-                SUB_TITLE_SIZE, WHITE},
-                [&](){}, true);
+            std::unique_ptr<Button> deviceViewButton {_templateDeviceButton->Clone()};
+
+            view->AddDrawableComponent(deviceViewButton.get());
+
+            _devicesButtons.push_back(std::move(deviceViewButton));
+        },
+        [&]()
+        {
+            _devicesButtons.pop_back();
         },
         {
             [&](uint8_t items)
@@ -128,15 +135,13 @@ void DevicesView::OnDevicesRead()
 {
     std::vector<ButtonInfo> buttonsInfo {_presenter->GetVisibleButtons()};
 
-    std::vector<Button*> buttons {_devicesRecycleView->GetDrawableComponents()};
-
     size_t i{0};
 
     for (; i < buttonsInfo.size(); ++i)
     {
         ButtonInfo& buttonInfo {buttonsInfo.at(i)};
 
-        Button& button {(*buttons.at(buttonInfo.index % buttonsInfo.size()))};
+        Button& button {(*_devicesButtons.at(buttonInfo.index % buttonsInfo.size()))};
 
         button.SetText(std::move(buttonInfo.text));
 
@@ -152,6 +157,6 @@ void DevicesView::OnDevicesRead()
 
     for (; i < buttonsInfo.size(); ++i)
     {
-        buttons.at(i)->SetIsHidden(true);
+        _devicesButtons.at(i)->SetIsHidden(true);
     }
 }

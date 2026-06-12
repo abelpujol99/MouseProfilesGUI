@@ -9,11 +9,15 @@ public:
 
     Texture(const char* fileName, bool isHidden = false);
 
+    Texture(const Texture& other);
+
     ~Texture() override = default;
 
     void Enable() override;
 
     void Disable() override;
+
+    [[nodiscard]] std::unique_ptr<Texture> Clone() const;
 
     void Draw(ImDrawList* drawList) override;
 

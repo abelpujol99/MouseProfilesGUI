@@ -11,6 +11,8 @@ public:
 
     Button(std::function<void()>&& action, bool isHidden);
 
+    Button(const Button& other);
+
     ~Button() noexcept override;
 
     void SetIsHidden(bool isHidden) override;
@@ -41,6 +43,8 @@ public:
     void Enable() override;
 
     void Disable() override;
+
+    [[nodiscard]] std::unique_ptr<Button> Clone() const;
 
     void Draw(ImDrawList* drawList) override;
 

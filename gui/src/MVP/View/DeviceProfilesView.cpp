@@ -12,6 +12,11 @@
 
 DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DeviceProfilesPresenter>())
 {
+    _templateProfileButton = DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        SUB_TITLE_SIZE, WHITE}, [&](){}, false);
+
+
 #pragma region Top Bar
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
         TOP_BAR_RECT_PIVOT,TOP_BAR_RECT_RELATIVE_POSITION, TOP_BAR_RECT_SIZE, false)};
@@ -107,15 +112,19 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     _profileRecycleViewRect = profileRecycleViewRect.get();
 
-    _profilesRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
+    _profilesRecycleView = DrawableFactory::CreateRecycleView<Button>(PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
         PROFILE_RECYCLE_VIEW_PADDINGS, {0, PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
-        []()
+        [&](RectDrawable* view)
         {
-            return DrawableFactory::CreateButton(
-                RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
-                TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-                SUB_TITLE_SIZE, WHITE},
-                [&](){}, true);
+            std::unique_ptr<Button> profileButton {_templateProfileButton->Clone()};
+
+            view->AddDrawableComponent(profileButton.get());
+
+            _profilesButtons.push_back(std::move(profileButton));
+        },
+        [&]()
+        {
+            _profilesButtons.pop_back();
         },
         {
             [&](uint8_t items)
@@ -218,15 +227,13 @@ void DeviceProfilesView::OnProfilesRead()
 {
     std::vector<ButtonInfo> buttonsInfo {_presenter->GetVisibleButtons()};
 
-    std::vector<Button*> buttons {_profilesRecycleView->GetDrawableComponents()};
-
     size_t i{0};
 
     for (; i < buttonsInfo.size(); ++i)
     {
         ButtonInfo& buttonInfo {buttonsInfo.at(i)};
 
-        Button& button {(*buttons.at(buttonInfo.index % buttonsInfo.size()))};
+        Button& button {(*_profilesButtons.at(buttonInfo.index % buttonsInfo.size()))};
 
         button.SetText(std::move(buttonInfo.text));
 
@@ -242,6 +249,6 @@ void DeviceProfilesView::OnProfilesRead()
 
     for (; i < buttonsInfo.size(); ++i)
     {
-        buttons.at(i)->SetIsHidden(true);
+        _profilesButtons.at(i)->SetIsHidden(true);
     }
 }

@@ -15,6 +15,8 @@ public:
 
     TextBox(bool isHidden = false);
 
+    TextBox(const TextBox& other);
+
     ~TextBox() noexcept override;
 
     void SetRectangle(std::unique_ptr<Rectangle> rectangle);
@@ -42,6 +44,8 @@ public:
 
     void Disable() override;
 
+    [[nodiscard]] std::unique_ptr<TextBox<T, TProcessData>> Clone() const;
+
     void Draw(ImDrawList* drawList) override;
 
 private:
@@ -58,6 +62,15 @@ TextBox<T, TProcessData>::TextBox(bool isHidden) :
         DrawableComponent(isHidden), _processDataStrategy(std::make_unique<TProcessData>())
 {
     Subscribe();
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+TextBox<T, TProcessData>::TextBox(const TextBox& other) :
+    DrawableComponent(other.IsHidden()),
+    _rectangle(other._rectangle->Clone()),
+    _processDataStrategy(std::make_unique<TProcessData>()),
+    _text(other._text->Clone())
+{
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
@@ -151,6 +164,12 @@ void TextBox<T, TProcessData>::Disable()
     _rectangle->Disable();
 
     _text->Disable();
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+std::unique_ptr<TextBox<T, TProcessData>> TextBox<T, TProcessData>::Clone() const
+{
+    return std::make_unique<TextBox<T, TProcessData>>(*this);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

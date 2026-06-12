@@ -6,6 +6,13 @@ Button::Button(std::function<void()>&& action, bool isHidden) :
         DrawableComponent(isHidden), _action(action)
 {}
 
+Button::Button(const Button& other) :
+    DrawableComponent(true),
+    _rectangle(other._rectangle->Clone()),
+    _text(other._text->Clone()),
+    _action(other._action)
+{}
+
 Button::~Button() noexcept
 {
     Button::Unsubscribe();
@@ -104,6 +111,11 @@ void Button::Disable()
     _rectangle->Disable();
 
     _text->Disable();
+}
+
+std::unique_ptr<Button> Button::Clone() const
+{
+    return std::make_unique<Button>(*this);
 }
 
 void Button::Draw(ImDrawList* drawList)

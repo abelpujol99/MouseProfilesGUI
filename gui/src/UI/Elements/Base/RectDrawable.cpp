@@ -137,6 +137,18 @@ void RectDrawable::RemoveRectDrawable(RectDrawable* rectDrawable)
     }
 }
 
+void RectDrawable::ClearRectDrawables()
+{
+    auto itEnd {_rectDrawables.cend()};
+
+    for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
+    {
+        (*it)->ClearRectDrawables();
+    }
+
+    _rectDrawables.clear();
+}
+
 void RectDrawable::AddDrawableComponent(DrawableComponent* drawableComponent)
 {
     drawableComponent->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());

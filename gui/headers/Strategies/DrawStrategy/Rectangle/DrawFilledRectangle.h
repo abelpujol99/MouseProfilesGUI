@@ -1,4 +1,5 @@
 #pragma once
+
 #include "IDrawRectangleStrategy.h"
 
 class DrawFilledRectangle : public IDrawRectangleStrategy

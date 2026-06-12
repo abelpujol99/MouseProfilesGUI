@@ -157,7 +157,7 @@ float ProfilePresenter::GetInputCurrentScroll() const
 
 std::vector<ButtonInfo> ProfilePresenter::GetInputVisibleButtons() const
 {
-    std::vector<uint8_t> visibleItemsIndex {_subProfileRecycleViewPresenter.GetVisibleItemsIndex()};
+    std::vector<uint8_t> visibleItemsIndex {_inputRecycleViewPresenter.GetVisibleItemsIndex()};
 
     size_t visibleItemsIndexCount {visibleItemsIndex.size()};
 

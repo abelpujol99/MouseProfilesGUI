@@ -15,7 +15,23 @@
 
 ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<ProfilePresenter>())
 {
-    _containerRectangle = DrawableFactory::CreateRectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false);
+    _templateContainerRectangle = DrawableFactory::CreateRectangle(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false}, false);
+
+    _templateSubProfileEditButton = DrawableFactory::CreateButton(RectangleData{BLUE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, RED}, []() {}, false);
+
+    _templateSubProfileDeleteButton = DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, RED}, []() {}, false);
+
+    _templateInputEditButton = DrawableFactory::CreateButton(RectangleData{BLUE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, RED}, []() {}, false);
+
+    _templateInputDeleteButton = DrawableFactory::CreateButton(RectangleData{RED, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, RED}, []() {}, false);
 
 #pragma region Top Bar
 
@@ -96,7 +112,13 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECT_ANCHORS,
         SUB_PROFILE_RECT_PIVOT, SUB_PROFILE_RECT_RELATIVE_POSITION, SUB_PROFILE_RECT_SIZE, false)};
 
-    //subProfileRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> subProfileRectangleContainer {_templateContainerRectangle->Clone()};
+
+    subProfileRect->AddDrawableComponent(subProfileRectangleContainer.get());
+
+    subProfileRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(subProfileRectangleContainer));
 
     std::unique_ptr<RectDrawable> subProfileTitleRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_TITLE_RECT_ANCHORS,
         SUB_PROFILE_TITLE_RECT_PIVOT, SUB_PROFILE_TITLE_RECT_RELATIVE_POSITION, SUB_PROFILE_TITLE_RECT_SIZE, false)};
@@ -106,47 +128,48 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     subProfileTitleRect->AddDrawableComponent(_subProfileTitle.get());
 
-    std::unique_ptr<RectDrawable> subProfileButtonsRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_BUTTONS_RECT_ANCHORS,
-        SUB_PROFILE_BUTTONS_RECT_PIVOT, SUB_PROFILE_BUTTONS_RECT_RELATIVE_POSITION, SUB_PROFILE_BUTTONS_RECT_SIZE, false)};
-
-    std::unique_ptr<RectDrawable> subProfileAddButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.05, 0}, {0.45, 0}},
-        SUB_PROFILE_ADD_BUTTON_RECT_PIVOT, SUB_PROFILE_ADD_BUTTON_RECT_RELATIVE_POSITION, SUB_PROFILE_ADD_BUTTON_RECT_SIZE, false)};
-
-    _subProfileAddButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
-        TextData{"Add", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
-        [&]() {
-            _presenter->OnPressSubProfileAddButton();
-        }, false);
-
-    subProfileAddButtonRect->AddDrawableComponent(_subProfileAddButton.get());
-
-    std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_DELETE_BUTTON_RECT_ANCHORS,
-        SUB_PROFILE_DELETE_BUTTON_RECT_PIVOT, SUB_PROFILE_DELETE_BUTTON_RECT_RELATIVE_POSITION, SUB_PROFILE_DELETE_BUTTON_RECT_SIZE, false)};
-
-    _subProfileDeleteButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
-        TextData{"Delete", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
-        [&]() {
-            _presenter->OnPressSubProfileDeleteButton();
-        }, false);
-
-    subProfileDeleteButtonRect->AddDrawableComponent(_subProfileDeleteButton.get());
-
-    subProfileButtonsRect->AddRectDrawable(std::move(subProfileAddButtonRect));
-    subProfileButtonsRect->AddRectDrawable(std::move(subProfileDeleteButtonRect));
-
     std::unique_ptr<RectDrawable> subProfileListRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_LIST_RECT_ANCHORS,
         SUB_PROFILE_LIST_RECT_PIVOT, SUB_PROFILE_LIST_RECT_RELATIVE_POSITION, SUB_PROFILE_LIST_RECT_SIZE, false)};
 
-    //subProfileListRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> subProfileListRectangleContainer {_templateContainerRectangle->Clone()};
 
-    _subProfileRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(SUB_PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
+    subProfileListRect->AddDrawableComponent(subProfileListRectangleContainer.get());
+
+    subProfileListRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(subProfileListRectangleContainer));
+
+    _subProfileRecycleView = DrawableFactory::CreateRecycleView<RectDrawable>(SUB_PROFILE_RECYCLE_VIEW_VIEWS_PER_ROW,
         SUB_PROFILE_RECYCLE_VIEW_PADDINGS, {0, SUB_PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, SUB_PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
-        []()
+        [&](RectDrawable* view)
         {
-            return DrawableFactory::CreateButton(
-                RectangleData{PURPLE, NO_ROUNDING, THIN_BORDER, false},
-                TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-                TITLE_SIZE, RED}, []() {}, true);
+            std::unique_ptr<RectDrawable> subProfileEditButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_ANCHORS,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_RELATIVE_POSITION,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_SIZE, false)};
+
+            std::unique_ptr<Button> subProfileEditButton {_templateSubProfileEditButton->Clone()};
+
+            subProfileEditButtonRect->AddDrawableComponent(subProfileEditButton.get());
+
+            _subProfileEditButtons.push_back(std::move(subProfileEditButton));
+
+            std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_ANCHORS,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_RELATIVE_POSITION,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_SIZE, false)};
+
+            std::unique_ptr<Button> subProfileDeleteButton {_templateSubProfileDeleteButton->Clone()};
+
+            subProfileDeleteButtonRect->AddDrawableComponent(subProfileDeleteButton.get());
+
+            _subProfileDeleteButtons.push_back(std::move(subProfileDeleteButton));
+
+            view->AddRectDrawable(std::move(subProfileEditButtonRect));
+            view->AddRectDrawable(std::move(subProfileDeleteButtonRect));
+        },
+        [&]()
+        {
+            _subProfileEditButtons.pop_back();
+            _subProfileDeleteButtons.pop_back();
         },
         {
             [&](uint8_t items)
@@ -166,7 +189,6 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     subProfileListRect->AddDrawableComponent(_subProfileRecycleView.get());
 
     subProfileRect->AddRectDrawable(std::move(subProfileTitleRect));
-    subProfileRect->AddRectDrawable(std::move(subProfileButtonsRect));
     subProfileRect->AddRectDrawable(std::move(subProfileListRect));
 
 #pragma endregion
@@ -176,7 +198,13 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(INPUT_RECT_ANCHORS, INPUT_RECT_PIVOT,
         INPUT_RECT_RELATIVE_POSITION, INPUT_RECT_SIZE, false)};
 
-    //inputRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> inputRectangleContainer {_templateContainerRectangle->Clone()};
+
+    inputRect->AddDrawableComponent(inputRectangleContainer.get());
+
+    inputRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(inputRectangleContainer));
 
     std::unique_ptr<RectDrawable> inputTitleRect {DrawableFactory::CreateRectDrawable(INPUT_TITLE_RECT_ANCHORS,
         INPUT_TITLE_RECT_PIVOT, INPUT_TITLE_RECT_RELATIVE_POSITION, INPUT_TITLE_RECT_SIZE, false)};
@@ -217,16 +245,45 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(INPUT_LIST_RECT_ANCHORS,
         INPUT_LIST_RECT_PIVOT, INPUT_LIST_RECT_RELATIVE_POSITION, INPUT_LIST_RECT_SIZE, false)};
 
-    //inputListRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> inputListRectangleContainer {_templateContainerRectangle->Clone()};
 
-    _inputRecycleView = DrawableFactory::CreateRecycleView<Button, NotResizableRow>(INPUT_RECYCLE_VIEW_VIEWS_PER_ROW,
+    inputListRect->AddDrawableComponent(inputListRectangleContainer.get());
+
+    inputListRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(inputListRectangleContainer));
+
+    _inputRecycleView = DrawableFactory::CreateRecycleView<RectDrawable>(INPUT_RECYCLE_VIEW_VIEWS_PER_ROW,
         INPUT_RECYCLE_VIEW_PADDINGS, {0, INPUT_RECYCLE_VIEW_ROW_HEIGHT}, INPUT_RECYCLE_VIEW_BUFFER_ROWS,
-        []()
+        [&](RectDrawable* view)
         {
-            return DrawableFactory::CreateButton(
-                RectangleData{PURPLE, NO_ROUNDING, THIN_BORDER, false},
-                TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-                TITLE_SIZE, RED}, []() {}, true);
+            std::unique_ptr<RectDrawable> subProfileEditButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_ANCHORS,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_RELATIVE_POSITION,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_SIZE, false)};
+
+            std::unique_ptr<Button> subProfileEditButton {_templateInputEditButton->Clone()};
+
+            subProfileEditButtonRect->AddDrawableComponent(subProfileEditButton.get());
+
+            _inputEditButtons.push_back(std::move(subProfileEditButton));
+
+            std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_ANCHORS,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_RELATIVE_POSITION,
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_SIZE, false)};
+
+            std::unique_ptr<Button> subProfileDeleteButton {_templateInputDeleteButton->Clone()};
+
+            subProfileDeleteButtonRect->AddDrawableComponent(subProfileDeleteButton.get());
+
+            _inputDeleteButtons.push_back(std::move(subProfileDeleteButton));
+
+            view->AddRectDrawable(std::move(subProfileEditButtonRect));
+            view->AddRectDrawable(std::move(subProfileDeleteButtonRect));
+        },
+        [&]()
+        {
+            _inputEditButtons.pop_back();
+            _inputDeleteButtons.pop_back();
         },
         {
             [&](uint8_t items)
@@ -256,7 +313,13 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(OUTPUT_RECT_ANCHORS, OUTPUT_RECT_PIVOT,
         OUTPUT_RECT_RELATIVE_POSITION, OUTPUT_RECT_SIZE, false)};
 
-    //outputRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> outputRectangleContainer {_templateContainerRectangle->Clone()};
+
+    outputRect->AddDrawableComponent(outputRectangleContainer.get());
+
+    outputRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(outputRectangleContainer));
 
     std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(OUTPUT_TITLE_RECT_ANCHORS,
         OUTPUT_TITLE_RECT_PIVOT, OUTPUT_TITLE_RECT_RELATIVE_POSITION, OUTPUT_TITLE_RECT_SIZE, false)};
@@ -269,12 +332,24 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_RECT_ANCHORS,
         OUTPUT_TYPE_RECT_PIVOT, OUTPUT_TYPE_RECT_RELATIVE_POSITION, OUTPUT_TYPE_RECT_SIZE, false)};
 
-    //outputTypeRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> outputTypeRectangleContainer {_templateContainerRectangle->Clone()};
+
+    outputTypeRect->AddDrawableComponent(outputTypeRectangleContainer.get());
+
+    outputTypeRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(outputTypeRectangleContainer));
 
     std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_RECT_ANCHORS,
         OUTPUT_TYPE_DETAILS_RECT_PIVOT, OUTPUT_TYPE_DETAILS_RECT_RELATIVE_POSITION, OUTPUT_TYPE_DETAILS_RECT_SIZE, false)};
 
-    //outputTypeDetailsRect->AddDrawableComponent(_containerRectangle.get());
+    std::unique_ptr<Rectangle> outputTypeDetailsRectangleContainer {_templateContainerRectangle->Clone()};
+
+    outputTypeDetailsRect->AddDrawableComponent(outputTypeDetailsRectangleContainer.get());
+
+    outputTypeDetailsRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(outputTypeDetailsRectangleContainer));
 
     outputRect->AddRectDrawable(std::move(outputTitleRect));
     outputRect->AddRectDrawable(std::move(outputTypeRect));
@@ -324,10 +399,6 @@ void ProfileView::Enable()
 
     _profileLinkButton->Subscribe();
 
-    _subProfileAddButton->Subscribe();
-
-    _subProfileDeleteButton->Subscribe();
-
     _subProfileRecycleView->Enable();
 
     _inputRecordButton->Subscribe();
@@ -351,10 +422,6 @@ void ProfileView::Disable()
 
     _profileLinkButton->Unsubscribe();
 
-    _subProfileAddButton->Unsubscribe();
-
-    _subProfileDeleteButton->Unsubscribe();
-
     _subProfileRecycleView->Disable();
 
     _inputRecordButton->Unsubscribe();
@@ -373,15 +440,13 @@ void ProfileView::OnSubProfileScrollUpdate()
 {
     std::vector<ButtonInfo> buttonsInfo {_presenter->GetSubProfileVisibleButtons()};
 
-    std::vector<Button*> buttons {_subProfileRecycleView->GetDrawableComponents()};
-
     size_t i{0};
 
     for (; i < buttonsInfo.size(); ++i)
     {
         ButtonInfo& buttonInfo {buttonsInfo.at(i)};
 
-        Button& button {(*buttons.at(buttonInfo.index % buttonsInfo.size()))};
+        Button& button {(*_subProfileEditButtons.at(buttonInfo.index % buttonsInfo.size()))};
 
         button.SetText(std::move(buttonInfo.text));
 
@@ -393,11 +458,14 @@ void ProfileView::OnSubProfileScrollUpdate()
         });
 
         button.SetIsHidden(false);
+
+        _subProfileDeleteButtons.at(i)->SetIsHidden(false);
     }
 
     for (; i < buttonsInfo.size(); ++i)
     {
-        buttons.at(i)->SetIsHidden(true);
+        _subProfileEditButtons.at(i)->SetIsHidden(true);
+        _subProfileDeleteButtons.at(i)->SetIsHidden(true);
     }
 }
 
@@ -405,15 +473,13 @@ void ProfileView::OnInputScrollUpdate()
 {
     std::vector<ButtonInfo> buttonsInfo {_presenter->GetInputVisibleButtons()};
 
-    std::vector<Button*> buttons {_inputRecycleView->GetDrawableComponents()};
-
     size_t i{0};
 
     for (; i < buttonsInfo.size(); ++i)
     {
         ButtonInfo& buttonInfo {buttonsInfo.at(i)};
 
-        Button& button {(*buttons.at(buttonInfo.index % buttonsInfo.size()))};
+        Button& button {(*_inputEditButtons.at(buttonInfo.index % buttonsInfo.size()))};
 
         button.SetText(std::move(buttonInfo.text));
 
@@ -425,11 +491,14 @@ void ProfileView::OnInputScrollUpdate()
         });
 
         button.SetIsHidden(false);
+
+        _inputDeleteButtons.at(i)->SetIsHidden(false);
     }
 
     for (; i < buttonsInfo.size(); ++i)
     {
-        buttons.at(i)->SetIsHidden(true);
+        _inputEditButtons.at(i)->SetIsHidden(true);
+        _inputDeleteButtons.at(i)->SetIsHidden(true);
     }
 
 }

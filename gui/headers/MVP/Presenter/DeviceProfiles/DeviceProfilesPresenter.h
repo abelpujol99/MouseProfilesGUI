@@ -14,9 +14,9 @@ public:
 
     ~DeviceProfilesPresenter() = default;
 
-    void Restart();
-
     void SetDeviceName(std::string deviceName);
+
+    void Restart();
 
     void SetRecyclerViewHeight(float recyclerViewHeight);
 
@@ -48,7 +48,7 @@ public:
 
     void OnPressRecycleViewButton(uint8_t index);
 
-    void AddProfile();
+    void AddProfile() const;
 
     std::weak_ptr<std::function<void()>> SubscribeToDeviceProfilesNotifications(DeviceProfilesNotifications devicesNotification, std::function<void()>&& action);
     void UnsubscribeToDeviceProfilesNotifications(DeviceProfilesNotifications devicesNotification, std::weak_ptr<std::function<void()>>&& action);

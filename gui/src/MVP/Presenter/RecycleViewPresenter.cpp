@@ -115,5 +115,5 @@ bool RecycleViewPresenter::IsFirstItemPresent() const
 
 bool RecycleViewPresenter::IsLastItemPresent() const
 {
-    return _listLength < _viewsPerRow || _firstItemToShowIndex + _visibleItemsCount == _listLength;
+    return _listLength < _visibleItemsCount || _firstItemToShowIndex + _visibleItemsCount == _listLength;
 }

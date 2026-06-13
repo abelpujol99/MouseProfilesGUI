@@ -26,11 +26,11 @@ public:
 
 private:
 
-    void OnTitleUpdate();
+    void OnTitleUpdate() const;
 
-    void OnSubProfileScrollUpdate();
+    void OnSubProfileScrollUpdate() const;
 
-    void OnInputScrollUpdate();
+    void OnInputScrollUpdate() const;
 
     std::unique_ptr<ProfilePresenter> _presenter;
 

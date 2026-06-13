@@ -24,7 +24,7 @@ public:
 
     void SetAction(TAction action);
 
-    void SetValue(T data);
+    void SendValue(T data);
 
     std::weak_ptr<TEventHandler> Subscribe(TEventHandler action);
     void Unsubscribe(const std::weak_ptr<TEventHandler>& weakAction);
@@ -57,7 +57,7 @@ void SingleEventBus<T>::SetAction(TAction action)
 }
 
 template <typename T>
-void SingleEventBus<T>::SetValue(T data)
+void SingleEventBus<T>::SendValue(T data)
 {
     T value {_action(data)};
 

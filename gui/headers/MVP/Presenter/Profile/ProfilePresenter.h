@@ -12,13 +12,15 @@ public:
 
     ProfilePresenter();
 
-    void Restart();
-
     void SetDeviceName(std::string deviceName);
 
     void SetProfileIndex(uint8_t profileIndex);
 
+    void Restart();
+
     [[nodiscard]] std::string GetTitle() const;
+
+#pragma region SubProfile List
 
     void SetSubProfileRecyclerViewHeight(float recyclerViewHeight);
 
@@ -40,6 +42,16 @@ public:
 
     [[nodiscard]] bool IsSubProfileLastItemPresent() const;
 
+    void OnPressSubProfileRecycleViewButton(uint8_t index);
+
+    void OnPressSubProfileDeleteButton(uint8_t index);
+
+    void AddSubProfile() const;
+
+#pragma endregion
+
+#pragma region Input List
+
     void SetInputRecyclerViewHeight(float recyclerViewHeight);
 
     void SetInputViewsPerRow(uint8_t viewsPerRow);
@@ -60,6 +72,14 @@ public:
 
     [[nodiscard]] bool IsInputLastItemPresent() const;
 
+    void OnPressInputRecycleViewButton(uint8_t index);
+
+    void OnPressInputDeleteButton(uint8_t index);
+
+    void AddCodeRemap() const;
+
+#pragma endregion
+
     void OnPressBackButton();
 
     void OnPressLoadUnloadButton();
@@ -68,15 +88,7 @@ public:
 
     void OnPressSubProfileAddButton();
 
-    void OnPressSubProfileDeleteButton();
-
     void OnPressInputRecordButton();
-
-    void OnPressInputDeleteButton();
-
-    void OnPressSubProfileRecycleViewButton(uint8_t index);
-
-    void OnPressInputRecycleViewButton(uint8_t index);
 
     std::weak_ptr<std::function<void()>> SubscribeToProfileNotifications(ProfileNotifications profileNotification, std::function<void()>&& action);
     void UnsubscribeToProfileNotifications(ProfileNotifications profileNotification, std::weak_ptr<std::function<void()>>&& action);
@@ -89,11 +101,15 @@ private:
 
     uint8_t _profileIndex;
 
+    uint8_t _currentSubProfileIndex;
+
+    uint8_t _currentCodeRemapIndex;
+
     Profile _profile;
 
-    SubProfile* _currentSubProfile;
+    SubProfile _subProfile;
 
-    CodeRemap* _currentCodeRemap;
+    CodeRemap _codeRemap;
 
     NotificationBus<ProfileNotifications> _profileNotifications;
 

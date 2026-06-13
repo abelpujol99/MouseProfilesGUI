@@ -233,7 +233,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     _inputDeleteButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false},
         TextData{"Delete", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
         [&]() {
-            _presenter->OnPressInputDeleteButton();
+            //_presenter->OnPressInputDeleteButton();
         }, false);
 
     inputDeleteButtonRect->AddDrawableComponent(_inputDeleteButton.get());
@@ -423,19 +423,31 @@ void ProfileView::Disable()
 
     _subProfileRecycleView->Disable();
 
+    for (size_t i{0}; i < _subProfileEditButtons.size(); ++i)
+    {
+        _subProfileEditButtons.at(i)->SetIsHidden(true);
+        _subProfileDeleteButtons.at(i)->SetIsHidden(true);
+    }
+
     _inputRecordButton->Unsubscribe();
 
     _inputDeleteButton->Unsubscribe();
 
     _inputRecycleView->Disable();
+
+    for (size_t i{0}; i < _inputEditButtons.size(); ++i)
+    {
+        _inputEditButtons.at(i)->SetIsHidden(true);
+        _inputDeleteButtons.at(i)->SetIsHidden(true);
+    }
 }
 
-void ProfileView::OnTitleUpdate()
+void ProfileView::OnTitleUpdate() const
 {
     _title->SetText(_presenter->GetTitle());
 }
 
-void ProfileView::OnSubProfileScrollUpdate()
+void ProfileView::OnSubProfileScrollUpdate() const
 {
     std::vector<ButtonInfo> buttonsInfo {_presenter->GetSubProfileVisibleButtons()};
 
@@ -445,30 +457,39 @@ void ProfileView::OnSubProfileScrollUpdate()
     {
         ButtonInfo& buttonInfo {buttonsInfo.at(i)};
 
-        Button& button {(*_subProfileEditButtons.at(buttonInfo.index % buttonsInfo.size()))};
+        uint8_t buttonInfoIndex {buttonInfo.index};
 
-        button.SetText(std::move(buttonInfo.text));
+        size_t buttonIndex {buttonInfoIndex % buttonsInfo.size()};
 
-        uint8_t index {buttonInfo.index};
+        Button& editButton {*_subProfileEditButtons.at(buttonIndex)};
 
-        button.SetAction([&, index]()
+        editButton.SetText(std::move(buttonInfo.text));
+
+        editButton.SetAction([&, buttonInfoIndex]()
         {
-            _presenter->OnPressSubProfileRecycleViewButton(index);
+            _presenter->OnPressSubProfileRecycleViewButton(buttonInfoIndex);
         });
 
-        button.SetIsHidden(false);
+        editButton.SetIsHidden(false);
+
+        Button& deleteButton {*_subProfileDeleteButtons.at(buttonIndex)};
+
+        deleteButton.SetAction([&, buttonInfoIndex]()
+        {
+            _presenter->OnPressSubProfileDeleteButton(buttonInfoIndex);
+        });
 
         _subProfileDeleteButtons.at(i)->SetIsHidden(false);
     }
 
-    for (; i < buttonsInfo.size(); ++i)
+    for (; i < _subProfileEditButtons.size(); ++i)
     {
         _subProfileEditButtons.at(i)->SetIsHidden(true);
         _subProfileDeleteButtons.at(i)->SetIsHidden(true);
     }
 }
 
-void ProfileView::OnInputScrollUpdate()
+void ProfileView::OnInputScrollUpdate() const
 {
     std::vector<ButtonInfo> buttonsInfo {_presenter->GetInputVisibleButtons()};
 
@@ -478,26 +499,34 @@ void ProfileView::OnInputScrollUpdate()
     {
         ButtonInfo& buttonInfo {buttonsInfo.at(i)};
 
-        Button& button {(*_inputEditButtons.at(buttonInfo.index % buttonsInfo.size()))};
+        uint8_t buttonInfoIndex {buttonInfo.index};
 
-        button.SetText(std::move(buttonInfo.text));
+        size_t buttonIndex {buttonInfoIndex % buttonsInfo.size()};
 
-        uint8_t index {buttonInfo.index};
+        Button& editButton {*_inputEditButtons.at(buttonIndex)};
 
-        button.SetAction([&, index]()
+        editButton.SetText(std::move(buttonInfo.text));
+
+        editButton.SetAction([&, buttonInfoIndex]()
         {
-            _presenter->OnPressInputRecycleViewButton(index);
+            _presenter->OnPressInputRecycleViewButton(buttonInfoIndex);
         });
 
-        button.SetIsHidden(false);
+        editButton.SetIsHidden(false);
 
-        _inputDeleteButtons.at(i)->SetIsHidden(false);
+        Button& deleteButton {*_inputDeleteButtons.at(buttonIndex)};
+
+        deleteButton.SetAction([&, buttonInfoIndex]()
+        {
+            _presenter->OnPressInputDeleteButton(buttonInfoIndex);
+        });
+
+        deleteButton.SetIsHidden(false);
     }
 
-    for (; i < buttonsInfo.size(); ++i)
+    for (; i < _inputEditButtons.size(); ++i)
     {
         _inputEditButtons.at(i)->SetIsHidden(true);
         _inputDeleteButtons.at(i)->SetIsHidden(true);
     }
-
 }

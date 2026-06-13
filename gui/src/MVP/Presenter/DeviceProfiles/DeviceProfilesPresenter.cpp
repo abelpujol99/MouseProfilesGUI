@@ -25,6 +25,18 @@ DeviceProfilesPresenter::DeviceProfilesPresenter() : _serviceModel(MVPManager::G
     });
 }
 
+void DeviceProfilesPresenter::SetDeviceName(std::string deviceName)
+{
+    if (_deviceName == deviceName)
+    {
+        return;
+    }
+
+    _serviceModel.RetrieveDeviceProfiles(deviceName);
+
+    _deviceName = std::move(deviceName);
+}
+
 void DeviceProfilesPresenter::Restart()
 {
     _recyclerViewPresenter.Reset();
@@ -55,16 +67,6 @@ void DeviceProfilesPresenter::SetRecyclerViewBufferRows(uint8_t bufferRows)
     _recyclerViewPresenter.SetRecyclerViewBufferRows(bufferRows);
 }
 
-void DeviceProfilesPresenter::SetDeviceName(std::string deviceName)
-{
-    if (_deviceName != deviceName)
-    {
-        _serviceModel.RetrieveDeviceProfiles(deviceName);
-    }
-
-    _deviceName = std::move(deviceName);
-}
-
 void DeviceProfilesPresenter::OnScroll(float scrollValue)
 {
     _recyclerViewPresenter.OnScroll(scrollValue);
@@ -81,7 +83,7 @@ std::string DeviceProfilesPresenter::GetActiveProfileName() const
 {
     if (_currentDeviceProfileIndex != -1)
     {
-        return _serviceModel.RetrieveProfile(_currentDeviceProfileIndex).name;
+        return _deviceProfiles.at(_currentDeviceProfileIndex).name;
     }
 
     return "";
@@ -145,23 +147,15 @@ void DeviceProfilesPresenter::OnPressRecycleViewButton(uint8_t index)
     DrawManager::GetInstance().EnableProfileView(_deviceName, index);
 }
 
-void DeviceProfilesPresenter::AddProfile()
+void DeviceProfilesPresenter::AddProfile() const
 {
-    Profile& lastProfile {_deviceProfiles.back()};
-
-    lastProfile = Profile{};
-
     std::string profileName {"Profile "};
 
     profileName += std::to_string(_deviceProfiles.size());
 
-    lastProfile.name = std::move(profileName);
+    Profile profile {profileName, false, std::vector<SubProfile>{}};
 
-    _deviceProfiles.emplace_back("+", false, std::vector<SubProfile>{});
-
-    _recyclerViewPresenter.SetListLength(_deviceProfiles.size());
-
-    _deviceProfilesNotifications.TriggerNotification(DeviceProfilesNotifications::PROFILES_UPDATE);
+    _serviceModel.AddProfile(std::move(profile));
 }
 
 std::weak_ptr<std::function<void()>> DeviceProfilesPresenter::SubscribeToDeviceProfilesNotifications(

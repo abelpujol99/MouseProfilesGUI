@@ -11,21 +11,40 @@ ProfilePresenter::ProfilePresenter() : _serviceModel(MVPManager::GetInstance().G
     {
         _profileNotifications.AddEntry(i);
     }
-}
 
-void ProfilePresenter::Restart()
-{
-    _subProfileRecycleViewPresenter.Reset();
+    _serviceModel.SubscribeToProfile([&](Profile profile)
+    {
+        _profile = profile;
 
-    _inputRecycleViewPresenter.Reset();
+        _profile.subProfiles.emplace_back();
 
-    _profile = _serviceModel.RetrieveProfile(_profileIndex);
+        _subProfileRecycleViewPresenter.SetListLength(_profile.subProfiles.size());
 
-    _profile.subProfiles.emplace_back(std::vector<CodeRemap>{});
+        _profileNotifications.TriggerNotification(ProfileNotifications::SUB_PROFILE_SCROLL_UPDATE);
+    });
 
-    _subProfileRecycleViewPresenter.SetListLength(_profile.subProfiles.size());
+    _serviceModel.SubscribeToProfileName([&](std::string profileName)
+    {
+        _profile.name = profileName;
 
-    _profileNotifications.TriggerNotification(ProfileNotifications::SUB_PROFILE_SCROLL_UPDATE);
+        _profileNotifications.TriggerNotification(ProfileNotifications::TITLE_UPDATE);
+    });
+
+    _serviceModel.SubscribeToSubProfile([&](SubProfile subProfile)
+    {
+        _subProfile = subProfile;
+
+        _subProfile.codesRemaps.emplace_back();
+
+        _inputRecycleViewPresenter.SetListLength(_subProfile.codesRemaps.size());
+
+        _profileNotifications.TriggerNotification(ProfileNotifications::INPUT_SCROLL_UPDATE);
+    });
+
+    _serviceModel.SubscribeToCodeRemap([&](CodeRemap codeRemap)
+    {
+        _codeRemap = codeRemap;
+    });
 }
 
 void ProfilePresenter::SetDeviceName(std::string deviceName)
@@ -37,12 +56,19 @@ void ProfilePresenter::SetProfileIndex(uint8_t profileIndex)
 {
     _profileIndex = profileIndex;
 
-    _profileNotifications.TriggerNotification(ProfileNotifications::TITLE_UPDATE);
+    _serviceModel.RefreshProfile(profileIndex);
+}
+
+void ProfilePresenter::Restart()
+{
+    _subProfileRecycleViewPresenter.Reset();
+
+    _inputRecycleViewPresenter.Reset();
 }
 
 std::string ProfilePresenter::GetTitle() const
 {
-    return {_deviceName + " - " + _serviceModel.RetrieveProfile(_profileIndex).name};
+    return {_deviceName + " - " + _profile.name};
 }
 
 void ProfilePresenter::SetSubProfileRecyclerViewHeight(float recyclerViewHeight)
@@ -90,9 +116,24 @@ std::vector<ButtonInfo> ProfilePresenter::GetSubProfileVisibleButtons() const
 
     std::vector<ButtonInfo> buttonsInfo;
 
+    if (visibleItemsIndexCount == 1)
+    {
+        buttonsInfo.emplace_back("+", 0);
+        return buttonsInfo;
+    }
+
     buttonsInfo.reserve(visibleItemsIndexCount);
 
-    for (size_t i{0}; i < visibleItemsIndexCount; ++i)
+    bool isLastElementPresent {_subProfileRecycleViewPresenter.IsLastItemPresent()};
+
+    if (isLastElementPresent)
+    {
+        visibleItemsIndexCount--;
+    }
+
+    size_t i{0};
+
+    for (; i < visibleItemsIndexCount; ++i)
     {
         uint8_t index {visibleItemsIndex.at(i)};
 
@@ -101,6 +142,11 @@ std::vector<ButtonInfo> ProfilePresenter::GetSubProfileVisibleButtons() const
         subProfileName += std::to_string(index);
 
         buttonsInfo.emplace_back(subProfileName, index);
+    }
+
+    if (isLastElementPresent)
+    {
+        buttonsInfo.emplace_back("+", i);
     }
 
     return buttonsInfo;
@@ -114,6 +160,31 @@ bool ProfilePresenter::IsSubProfileFirstItemPresent() const
 bool ProfilePresenter::IsSubProfileLastItemPresent() const
 {
     return _subProfileRecycleViewPresenter.IsLastItemPresent();
+}
+
+void ProfilePresenter::OnPressSubProfileRecycleViewButton(uint8_t index)
+{
+    if (index == _profile.subProfiles.size() - 1)
+    {
+        AddSubProfile();
+        return;
+    }
+
+    _currentSubProfileIndex = index;
+
+    _serviceModel.RefreshSubProfile(_profileIndex, _currentSubProfileIndex);
+}
+
+void ProfilePresenter::OnPressSubProfileDeleteButton(uint8_t index)
+{
+    //TODO
+}
+
+void ProfilePresenter::AddSubProfile() const
+{
+    SubProfile subProfile {};
+
+    _serviceModel.AddSubProfile(_profileIndex, std::move(subProfile));
 }
 
 void ProfilePresenter::SetInputRecyclerViewHeight(float recyclerViewHeight)
@@ -161,17 +232,48 @@ std::vector<ButtonInfo> ProfilePresenter::GetInputVisibleButtons() const
 
     std::vector<ButtonInfo> buttonsInfo;
 
+    if (visibleItemsIndexCount == 1)
+    {
+        buttonsInfo.emplace_back("+", 0);
+        return buttonsInfo;
+    }
+
     buttonsInfo.reserve(visibleItemsIndexCount);
 
-    for (size_t i{0}; i < visibleItemsIndexCount; ++i)
+    bool isLastItemPresent {_inputRecycleViewPresenter.IsLastItemPresent()};
+
+    if (isLastItemPresent)
+    {
+        visibleItemsIndexCount--;
+    }
+
+    size_t i{0};
+
+    for (; i < visibleItemsIndexCount; ++i)
     {
         uint8_t index {visibleItemsIndex.at(i)};
 
-        std::string keyName {"Key "};
+        std::string keyName;
 
-        keyName += std::to_string(_currentSubProfile->codesRemaps.at(index).code);
+        const Code& code {_subProfile.codesRemaps.at(index).code};
+
+        if (code == 0)
+        {
+            keyName = "Unset";
+        }
+        else
+        {
+            keyName = "Key ";
+
+            keyName += std::to_string(_subProfile.codesRemaps.at(index).code);
+        }
 
         buttonsInfo.emplace_back(keyName, index);
+    }
+
+    if (isLastItemPresent)
+    {
+        buttonsInfo.emplace_back("+", i);
     }
 
     return buttonsInfo;
@@ -185,6 +287,31 @@ bool ProfilePresenter::IsInputFirstItemPresent() const
 bool ProfilePresenter::IsInputLastItemPresent() const
 {
     return _inputRecycleViewPresenter.IsLastItemPresent();
+}
+
+void ProfilePresenter::OnPressInputRecycleViewButton(uint8_t index)
+{
+    if (index == _subProfile.codesRemaps.size() - 1)
+    {
+        AddCodeRemap();
+        return;
+    }
+
+    _currentCodeRemapIndex = index;
+
+    _profileNotifications.TriggerNotification(ProfileNotifications::DETAILS_UPDATE);
+}
+
+void ProfilePresenter::OnPressInputDeleteButton(uint8_t index)
+{
+    //TODO
+}
+
+void ProfilePresenter::AddCodeRemap() const
+{
+    CodeRemap codeRemap {};
+
+    _serviceModel.AddCodeRemap(_profileIndex, _currentSubProfileIndex, std::move(codeRemap));
 }
 
 void ProfilePresenter::OnPressBackButton()
@@ -204,32 +331,8 @@ void ProfilePresenter::OnPressSubProfileAddButton()
 {
 }
 
-void ProfilePresenter::OnPressSubProfileDeleteButton()
-{
-}
-
 void ProfilePresenter::OnPressInputRecordButton()
 {
-}
-
-void ProfilePresenter::OnPressInputDeleteButton()
-{
-}
-
-void ProfilePresenter::OnPressSubProfileRecycleViewButton(uint8_t index)
-{
-    _currentSubProfile = &_profile.subProfiles.at(index);
-
-    _inputRecycleViewPresenter.SetListLength(_currentSubProfile->codesRemaps.size());
-
-    _profileNotifications.TriggerNotification(ProfileNotifications::INPUT_SCROLL_UPDATE);
-}
-
-void ProfilePresenter::OnPressInputRecycleViewButton(uint8_t index)
-{
-    _currentCodeRemap = &_currentSubProfile->codesRemaps.at(index);
-
-    _profileNotifications.TriggerNotification(ProfileNotifications::DETAILS_UPDATE);
 }
 
 std::weak_ptr<std::function<void()>> ProfilePresenter::SubscribeToProfileNotifications(

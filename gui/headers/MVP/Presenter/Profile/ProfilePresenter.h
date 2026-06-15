@@ -90,6 +90,14 @@ public:
 
     void OnPressInputRecordButton();
 
+    void OnPressEmitInputEventButton();
+
+    void OnPressMacroButton();
+
+    void OnPressSwitchToSubProfileButton();
+
+    void OnPressShutdownApplicationButton();
+
     std::weak_ptr<std::function<void()>> SubscribeToProfileNotifications(ProfileNotifications profileNotification, std::function<void()>&& action);
     void UnsubscribeToProfileNotifications(ProfileNotifications profileNotification, std::weak_ptr<std::function<void()>>&& action);
 

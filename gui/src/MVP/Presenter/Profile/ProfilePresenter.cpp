@@ -335,6 +335,24 @@ void ProfilePresenter::OnPressInputRecordButton()
 {
 }
 
+void ProfilePresenter::OnPressEmitInputEventButton()
+{
+
+}
+
+void ProfilePresenter::OnPressMacroButton()
+{
+
+}
+
+void ProfilePresenter::OnPressSwitchToSubProfileButton()
+{
+}
+
+void ProfilePresenter::OnPressShutdownApplicationButton()
+{
+}
+
 std::weak_ptr<std::function<void()>> ProfilePresenter::SubscribeToProfileNotifications(
     ProfileNotifications profileNotification, std::function<void()>&& action)
 {

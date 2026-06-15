@@ -333,7 +333,63 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     std::unique_ptr<Rectangle> outputTypeRectangleContainer {_templateContainerRectangle->Clone()};
 
+    std::unique_ptr<RectDrawable> emitInputEventCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_ANCHORS,
+        OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
+        OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_SIZE, false)};
+
+    _emitInputEventCommandButton = DrawableFactory::CreateButton(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"Emit Input Event", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        SUB_TITLE_SIZE, WHITE}, [&]()
+    {
+        _presenter->OnPressEmitInputEventButton();
+    }, false);
+
+    emitInputEventCommandButtonRect->AddDrawableComponent(_emitInputEventCommandButton.get());
+
+    std::unique_ptr<RectDrawable> macroCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_MACRO_COMMAND_BUTTON_RECT_ANCHORS,
+        OUTPUT_MACRO_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_MACRO_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
+        OUTPUT_MACRO_COMMAND_BUTTON_RECT_SIZE, false)};
+
+    _macroCommandButton = DrawableFactory::CreateButton(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"Macro", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        SUB_TITLE_SIZE, WHITE}, [&]()
+    {
+        _presenter->OnPressMacroButton();
+    }, false);
+
+    macroCommandButtonRect->AddDrawableComponent(_macroCommandButton.get());
+
+    std::unique_ptr<RectDrawable> switchToSubProfileCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_ANCHORS,
+        OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
+        OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_SIZE, false)};
+
+    _switchToSubProfileCommandButton = DrawableFactory::CreateButton(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"Switch to SubProfile", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        SUB_TITLE_SIZE, WHITE}, [&]()
+    {
+        _presenter->OnPressSwitchToSubProfileButton();
+    }, false);
+
+    switchToSubProfileCommandButtonRect->AddDrawableComponent(_switchToSubProfileCommandButton.get());
+
+    std::unique_ptr<RectDrawable> shutdownApplicationCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_ANCHORS,
+        OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
+        OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_SIZE, false)};
+
+    _shutdownApplicationCommandButton = DrawableFactory::CreateButton(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"Shutdown Application", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        SUB_TITLE_SIZE, WHITE}, [&]()
+    {
+        _presenter->OnPressShutdownApplicationButton();
+    }, false);
+
+    shutdownApplicationCommandButtonRect->AddDrawableComponent(_shutdownApplicationCommandButton.get());
+
     outputTypeRect->AddDrawableComponent(outputTypeRectangleContainer.get());
+    outputTypeRect->AddRectDrawable(std::move(emitInputEventCommandButtonRect));
+    outputTypeRect->AddRectDrawable(std::move(macroCommandButtonRect));
+    outputTypeRect->AddRectDrawable(std::move(switchToSubProfileCommandButtonRect));
+    outputTypeRect->AddRectDrawable(std::move(shutdownApplicationCommandButtonRect));
 
     outputTypeRectangleContainer->SetIsHidden(false);
 

@@ -58,6 +58,14 @@ private:
 
     std::unique_ptr<Text> _outputTitle;
 
+    std::unique_ptr<Button> _emitInputEventCommandButton;
+
+    std::unique_ptr<Button> _macroCommandButton;
+
+    std::unique_ptr<Button> _switchToSubProfileCommandButton;
+
+    std::unique_ptr<Button> _shutdownApplicationCommandButton;
+
     std::unique_ptr<Rectangle> _templateContainerRectangle;
 
     std::unique_ptr<Button> _templateSubProfileEditButton;

@@ -19,7 +19,7 @@ public:
 
     static ApplicationManager& GetInstance();
 
-    void Start() const;
+    static void Start();
 
     std::weak_ptr<std::function<void()>> SubscribeToApplicationNotification(ApplicationNotifications applicationNotification, std::function<void()>&& action);
     void UnsubscribeToApplicationNotification(ApplicationNotifications applicationNotification, std::weak_ptr<std::function<void()>>&& action);

@@ -2,7 +2,7 @@
 
 int main()
 {
-    ApplicationManager::GetInstance().Start();
+    ApplicationManager::Start();
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #include "Managers/Application/ApplicationManager.h"
 
 #include "TimeUsings.h"
-#include "../../../headers/Managers/GLFWManager.h"
+#include "Managers/View/WindowManager.h"
 
 #define WINDOW_WIDTH 1500
 #define WINDOW_HEIGHT 700
@@ -18,9 +18,9 @@ ApplicationManager& ApplicationManager::GetInstance()
     return *_applicationManagerInstance;
 }
 
-void ApplicationManager::Start() const
+void ApplicationManager::Start()
 {
-    GLFWManager& windowManager {GLFWManager::GetInstance()};
+    WindowManager& windowManager {WindowManager::GetInstance()};
 
     windowManager.SetInitialSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     windowManager.Start();

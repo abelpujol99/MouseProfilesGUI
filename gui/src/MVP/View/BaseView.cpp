@@ -1,11 +1,11 @@
 #include "MVP/View/BaseView.h"
 
-#include "../../../headers/Managers/GLFWManager.h"
+#include "Managers/View/WindowManager.h"
 
 BaseView::BaseView(bool isHidden) :
         BaseDisplay(isHidden)
 {
-    _onSizeChangeWeakAction = GLFWManager::GetInstance().SubscribeToSizeObserver([&](WindowSize size) {
+    _onSizeChangeWeakAction = WindowManager::GetInstance().SubscribeToSizeObserver([&](WindowSize size) {
 
         if (static_cast<int>(_size->x) == size.width && static_cast<int>(_size->y) == size.height) {
             return;

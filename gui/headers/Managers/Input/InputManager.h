@@ -1,5 +1,8 @@
 #pragma once
 
+#include <mutex>
+#include <thread>
+
 #include "imgui.h"
 
 #include "Managers/Input/MouseButton/BaseMouseButtonState.h"
@@ -43,9 +46,11 @@ public:
 
 private:
 
+    InputManager();
+
     void ChangeState(MouseButtons mouseButton, std::unique_ptr<BaseMouseButtonState>&& mouseButtonState);
 
-    InputManager();
+    void ReadInputLoop();
 
     static InputManager* _inputManagerInstance;
 
@@ -59,4 +64,10 @@ private:
     ObserverSingleValue<Duration> _mouseButtonsTimePressed[ImGuiMouseButton_COUNT];
 
     ObserverSingleValue<float> _mouseScrollObserver;
+
+    std::mutex _mutex;
+
+    std::thread _inputThread;
+
+    std::function<void()> _inputReaderAction;
 };

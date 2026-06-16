@@ -58,6 +58,11 @@ VirtualDeviceManager::VirtualDeviceManager()
     CreateVirtualDevice(MOUSE, mouseCapableInputs, usetup);
 }
 
+VirtualDeviceManager::~VirtualDeviceManager() noexcept
+{
+    DestroyVirtualFiles();
+}
+
 VirtualDeviceManager& VirtualDeviceManager::GetInstance()
 {
     if (!_virtualDeviceManagerInstance)

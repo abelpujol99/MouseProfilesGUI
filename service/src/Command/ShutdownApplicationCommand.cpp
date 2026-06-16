@@ -1,7 +1,7 @@
 #include "Command/ShutdownApplicationCommand.h"
 
 #include <iostream>
-#include "Managers/MVPManager.h"
+#include "Managers/ApplicationManager.h"
 
 void ShutdownApplicationCommand::Execute()
 {

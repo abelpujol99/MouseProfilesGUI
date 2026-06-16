@@ -1,13 +1,13 @@
-#include "Managers/MVPManager.h"
+#include "Managers/ApplicationManager.h"
 
 #include "Managers/ThreadsManager.h"
 #include "Managers/ProfileManager.h"
 #include "Managers/SerializationManager.h"
 #include "Managers/VirtualDeviceManager.h"
 
-std::unique_ptr<MVPManager> MVPManager::_applicationManagerInstance = nullptr;
+std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInstance = nullptr;
 
-MVPManager::MVPManager()
+ApplicationManager::ApplicationManager()
 {
     _devices = SerializationManager::GetInstance().DeserializeDevicesProfiles();
 
@@ -22,17 +22,17 @@ MVPManager::MVPManager()
     _scrollWheelModeHidrawPath = "/sys/class/hidraw/hidraw0/device/scroll_mode";
 }
 
-MVPManager& MVPManager::GetInstance()
+ApplicationManager& ApplicationManager::GetInstance()
 {
     if (!_applicationManagerInstance)
     {
-        _applicationManagerInstance.reset(new MVPManager());
+        _applicationManagerInstance.reset(new ApplicationManager());
     }
 
     return *_applicationManagerInstance;
 }
 
-void MVPManager::Start()
+void ApplicationManager::Start()
 {
 #ifdef NDEBUG
     ProfileManager::GetInstance().OnChangeApplicationFocus();
@@ -46,44 +46,44 @@ void MVPManager::Start()
     //SerializationManager::GetInstance().SerializeDevices(_devices);
 }
 
-std::string MVPManager::GetPathToSwitchScrollMode() const
+std::string ApplicationManager::GetPathToSwitchScrollMode() const
 {
     return _scrollWheelModeHidrawPath;
 }
 
-std::weak_ptr<std::function<void(bool)>> MVPManager::SubscribeToShouldRunObserver(
+std::weak_ptr<std::function<void(bool)>> ApplicationManager::SubscribeToShouldRunObserver(
     std::function<void(bool)> action) const
 {
     return _shouldRunObserver->Subscribe(std::move(action));
 }
 
-void MVPManager::UnsubscribeToShouldRunObserver(std::weak_ptr<std::function<void(bool)>> action) const
+void ApplicationManager::UnsubscribeToShouldRunObserver(std::weak_ptr<std::function<void(bool)>> action) const
 {
     _shouldRunObserver->Unsubscribe(std::move(action));
 }
 
-void MVPManager::SwitchShouldRun() const
+void ApplicationManager::SwitchShouldRun() const
 {
     _shouldRunObserver->SetValue(false);
 }
 
-bool MVPManager::ShouldRun() const
+bool ApplicationManager::ShouldRun() const
 {
     return _shouldRunObserver->GetValue();
 }
 
-std::weak_ptr<std::function<void(bool)>> MVPManager::SubscribeToShouldGUIRunObserver(
+std::weak_ptr<std::function<void(bool)>> ApplicationManager::SubscribeToShouldGUIRunObserver(
     std::function<void(bool)> action) const
 {
     return _shouldGUIRunObserver->Subscribe(std::move(action));
 }
 
-void MVPManager::UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::function<void(bool)>> action) const
+void ApplicationManager::UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::function<void(bool)>> action) const
 {
     _shouldGUIRunObserver->Unsubscribe(std::move(action));
 }
 
-void MVPManager::SetEditingDeviceProfiles(std::string deviceName)
+void ApplicationManager::SetEditingDeviceProfiles(std::string deviceName)
 {
     if (!_devices.devicesProfiles.contains(deviceName))
     {
@@ -93,7 +93,7 @@ void MVPManager::SetEditingDeviceProfiles(std::string deviceName)
     _editingDeviceProfiles = &_devices.devicesProfiles.at(deviceName);
 }
 
-std::string MVPManager::CreateProfile()
+std::string ApplicationManager::CreateProfile()
 {
     std::string profileName {"Profile "};
     profileName += std::to_string(_editingDeviceProfiles->profiles.size() + 1);
@@ -107,22 +107,22 @@ std::string MVPManager::CreateProfile()
     return profileName;
 }
 
-void MVPManager::DeleteProfile(std::string profileName)
+void ApplicationManager::DeleteProfile(std::string profileName)
 {
     _editingDeviceProfiles->profiles.erase(profileName);
 }
 
-void MVPManager::SetEditingProfile(std::string profileName)
+void ApplicationManager::SetEditingProfile(std::string profileName)
 {
     _editingProfile = &_editingDeviceProfiles->profiles.at(profileName);
 }
 
-void MVPManager::CreateSubProfile()
+void ApplicationManager::CreateSubProfile()
 {
     _editingProfile->subProfiles.emplace_back();
 }
 
-void MVPManager::DeleteSubProfile(uint8_t index)
+void ApplicationManager::DeleteSubProfile(uint8_t index)
 {
     uint8_t count{0};
 
@@ -140,22 +140,22 @@ void MVPManager::DeleteSubProfile(uint8_t index)
     }
 }
 
-void MVPManager::SetEditingSubProfile(uint8_t index)
+void ApplicationManager::SetEditingSubProfile(uint8_t index)
 {
     _editingSubProfile = &_editingProfile->subProfiles.at(index);
 }
 
-void MVPManager::CreateCodeRemap(Code code, CodeRemap codeRemap)
+void ApplicationManager::CreateCodeRemap(Code code, CodeRemap codeRemap)
 {
     _editingSubProfile->codesRemaps.emplace(code, codeRemap);
 }
 
-void MVPManager::DeleteCodeRemap(Code code)
+void ApplicationManager::DeleteCodeRemap(Code code)
 {
     _editingSubProfile->codesRemaps.erase(code);
 }
 
-std::unordered_map<std::string, Profile> MVPManager::GetDeviceProfiles(std::string deviceName)
+std::unordered_map<std::string, Profile> ApplicationManager::GetDeviceProfiles(std::string deviceName)
 {
     if (_devices.devicesProfiles.contains(deviceName))
     {
@@ -165,7 +165,7 @@ std::unordered_map<std::string, Profile> MVPManager::GetDeviceProfiles(std::stri
     return {};
 }
 
-void MVPManager::StartGUI()
+void ApplicationManager::StartGUI()
 {
     /*WindowManager& windowManager {WindowManager::GetInstance()};
 
@@ -174,12 +174,12 @@ void MVPManager::StartGUI()
     windowManager.Update();*/
 }
 
-void MVPManager::TurnOnGUI() const
+void ApplicationManager::TurnOnGUI() const
 {
     _shouldGUIRunObserver->SetValue(true);
 }
 
-void MVPManager::TurnOffGUI() const
+void ApplicationManager::TurnOffGUI() const
 {
     _shouldGUIRunObserver->SetValue(false);
     SerializationManager::GetInstance().SerializeDevices(_devices);

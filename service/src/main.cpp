@@ -1,4 +1,4 @@
-#include "Managers/MVPManager.h"
+#include "Managers/ApplicationManager.h"
 
 int main()
 {

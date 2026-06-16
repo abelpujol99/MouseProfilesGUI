@@ -1,15 +1,8 @@
-#include "Managers/View/WindowManager.h"
-
-#define WIDTH 1500
-#define HEIGHT 700
+#include "Managers/Application/ApplicationManager.h"
 
 int main()
 {
-    WindowManager& windowManager {WindowManager::GetInstance()};
-
-    windowManager.SetInitialSize(WIDTH, HEIGHT);
-    windowManager.Start();
-    windowManager.Update();
+    ApplicationManager::GetInstance().Start();
 
     return 0;
 }

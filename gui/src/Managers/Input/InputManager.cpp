@@ -121,3 +121,8 @@ void InputManager::ChangeState(MouseButtons mouseButton, std::unique_ptr<BaseMou
 {
     _mouseButtonState[static_cast<int>(mouseButton)] = std::move(mouseButtonState);
 }
+
+void InputManager::ReadInputLoop()
+{
+    //TODO
+}

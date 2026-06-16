@@ -1,6 +1,6 @@
 #include "Managers/ThreadsManager.h"
 
-#include "Managers/MVPManager.h"
+#include "Managers/ApplicationManager.h"
 #include "TimeUsings.h"
 #include "TimeDefines.h"
 

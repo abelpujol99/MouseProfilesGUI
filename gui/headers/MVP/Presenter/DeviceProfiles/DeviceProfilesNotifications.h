@@ -8,8 +8,7 @@ enum class DeviceProfilesNotifications
     COUNT
 };
 
-inline DeviceProfilesNotifications& operator++(DeviceProfilesNotifications& deviceProfilesNotifications
-    )
+inline DeviceProfilesNotifications& operator++(DeviceProfilesNotifications& deviceProfilesNotifications)
 {
     deviceProfilesNotifications = static_cast<DeviceProfilesNotifications>(static_cast<char>(deviceProfilesNotifications) + 1);
 

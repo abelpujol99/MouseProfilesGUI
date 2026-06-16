@@ -3,7 +3,7 @@
 #include "MVP/Presenter/Devices/DevicesNotifications.h"
 #include "MVP/Model/ServiceModel.h"
 #include "MVP/Presenter/RecycleViewPresenter.h"
-#include "Utilities/Notification/NotificationBus.h"
+#include "Notification/NotificationBus.h"
 #include "Utilities/Structs/ButtonInfo.h"
 
 class DevicesPresenter

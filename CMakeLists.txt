@@ -115,12 +115,16 @@ add_executable(${GUI_PROJECT_NAME} ${GUI_CODE_FILES})
 #Resources
 CopyResourcesToBuild(${GUI_PROJECT_NAME} ${GUI_SOURCE_DIR})
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBEVDEV REQUIRED libevdev)
+
 #Includes
 set(GUI_INCLUDES
         ${gui_target_dir}/defines
         ${gui_target_dir}/headers
         ${gui_target_dir}/usings
-        ${gui_target_dir}/libraries)
+        ${gui_target_dir}/libraries
+        ${LIBEVDEV_INCLUDE_DIRS})
 
 IncludeDirectoriesToTarget(${GUI_PROJECT_NAME} PRIVATE GUI_INCLUDES)
 
@@ -130,6 +134,8 @@ set(GUI_LIBRARIES
         pthread
         imgui
         glfw
+        wayland-client
+        ${LIBEVDEV_LIBRARIES}
         glad
         stb
         shared)

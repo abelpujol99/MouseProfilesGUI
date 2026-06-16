@@ -1,43 +1,22 @@
 #include "Managers/Gestures/ScrollableManager.h"
 
-#include "Factory/ImGuiFactory.h"
-#include "Managers/Input/InputManager.h"
 #include "UI/Helpers/IScrollable.h"
 #include "Utilities/UI/Boundaries.h"
 
-ScrollableManager* ScrollableManager::_scrollableManagerInstance {nullptr};
-
-ScrollableManager::ScrollableManager()
-{
-    _onMouseScrollWeakAction = InputManager::GetInstance().SubscribeToMouseScroll([&](float scrollValue) {
-            _mouseScroll = scrollValue;
-        });
-}
-
-ScrollableManager::~ScrollableManager() noexcept
-{
-    delete _scrollableManagerInstance;
-}
+std::unique_ptr<ScrollableManager> ScrollableManager::_scrollableManagerInstance {nullptr};
 
 ScrollableManager& ScrollableManager::GetInstance()
 {
     if (_scrollableManagerInstance == nullptr)
     {
-        _scrollableManagerInstance = new ScrollableManager();
+        _scrollableManagerInstance.reset(new ScrollableManager());
     }
 
     return *_scrollableManagerInstance;
 }
 
-void ScrollableManager::Update()
+void ScrollableManager::OnScroll(const float& scrollValue, const ImVec2& mousePosition) const
 {
-    if (_mouseScroll == 0.f)
-    {
-        return;
-    }
-
-    ImVec2 mousePosition {ImGuiFactory::GetMousePosition()};
-
     for (auto scrollable : _scrollables)
     {
         if (!scrollable->CanBeScrolled() ||
@@ -47,12 +26,10 @@ void ScrollableManager::Update()
             continue;
         }
 
-        scrollable->Scroll(_mouseScroll);
+        scrollable->Scroll(scrollValue);
 
         return;
     }
-
-    _mouseScroll = 0.f;
 }
 
 void ScrollableManager::AddScrollable(IScrollable* scrollable)

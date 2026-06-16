@@ -5,41 +5,16 @@
 
 #include "Factory/ImGuiFactory.h"
 #include "Managers/GLFWManager.h"
-#include "Managers/Input/MouseButton/MouseButtons.h"
-#include "Managers/Input/MouseButton/ReleasedState.h"
-#include "Managers/Input/MouseButton/ClickedState.h"
+#include "Managers/Application/ApplicationManager.h"
+#include "Managers/Gestures/ClickableManager.h"
+#include "Managers/Gestures/ScrollableManager.h"
+#include "Managers/Gestures/SelectableManager.h"
+#include "Utilities/Math.h"
 
-InputManager* InputManager::_inputManagerInstance {nullptr};
+std::unique_ptr<InputManager> InputManager::_inputManagerInstance {nullptr};
 
 InputManager::InputManager()
 {
-    MouseButtons mouseMaxButtons {MouseButtons::COUNT};
-
-    for (MouseButtons i{MouseButtons::LEFT}; i != mouseMaxButtons; ++i)
-    {
-        _mouseButtonState[static_cast<int>(i)] = std::make_unique<ReleasedState>(i);
-
-        _mouseClickInputObserverMap.AddEntry(i, [&](bool clicked) {
-
-            if (clicked)
-            {
-                _mousePressedTimePoint[static_cast<int>(i)] = SystemClock::now();
-            }
-
-            return clicked;
-        });
-
-        _mouseReleaseInputObserverMap.AddEntry(i, [&](bool released) {
-
-            if (released)
-            {
-                _mouseButtonsTimePressed->SetValue(SystemClock::now() - _mousePressedTimePoint[static_cast<int>(i)]);
-            }
-
-            return released;
-        });
-    }
-
     _mouseButtonsTimePressed->SetAction([&](Duration timePressed) {
 
         return timePressed;
@@ -49,15 +24,13 @@ InputManager::InputManager()
 InputManager::~InputManager() noexcept
 {
     GLFWManager::CleanseInput(_waylandSettings);
-
-    delete _inputManagerInstance;
 }
 
 InputManager& InputManager::GetInstance()
 {
     if (_inputManagerInstance == nullptr)
     {
-        _inputManagerInstance = new InputManager();
+        _inputManagerInstance.reset(new InputManager());
     }
 
     return *_inputManagerInstance;
@@ -68,69 +41,9 @@ void InputManager::Start()
     _waylandSettings = GLFWManager::GetWaylandSettings(&_registryListener);
 }
 
-void InputManager::Update()
+ImVec2 InputManager::GetMousePosition() const
 {
-    MouseButtons mouseMaxButtons {MouseButtons::COUNT};
-
-    for (MouseButtons i{MouseButtons::LEFT}; i != mouseMaxButtons; ++i)
-    {
-        _mouseButtonState[static_cast<int>(i)]->CheckState();
-    }
-
-    _mouseScrollObserver.SetValue(ImGuiFactory::GetMouseScroll());
-}
-
-void InputManager::OnPressButton(MouseButtons mouseButton)
-{
-    ChangeState(mouseButton, std::make_unique<ClickedState>(mouseButton));
-
-    _mouseClickInputObserverMap.SetValue(mouseButton, true);
-    _mouseReleaseInputObserverMap.SetValue(mouseButton, false);
-}
-
-void InputManager::OnReleaseButton(MouseButtons mouseButton)
-{
-    ChangeState(mouseButton, std::make_unique<ReleasedState>(mouseButton));
-
-    _mouseClickInputObserverMap.SetValue(mouseButton, false);
-    _mouseReleaseInputObserverMap.SetValue(mouseButton, true);
-}
-
-std::weak_ptr<std::function<void(bool)>> InputManager::SubscribeToMouseButtonClickEvent(MouseButtons mouseButton,
-    std::function<void(bool)>&& action)
-{
-    return _mouseClickInputObserverMap.Subscribe(mouseButton, std::move(action));
-}
-
-std::weak_ptr<std::function<void(bool)>> InputManager::SubscribeToMouseButtonReleaseEvent(MouseButtons mouseButton,
-    std::function<void(bool)>&& action)
-{
-    return _mouseReleaseInputObserverMap.Subscribe(mouseButton, std::move(action));
-}
-
-void InputManager::UnsubscribeToMouseButtonClickEvent(MouseButtons mouseButton, std::weak_ptr<std::function<void(bool)>>&& weakAction)
-{
-    _mouseClickInputObserverMap.Unsubscribe(mouseButton, std::move(weakAction));
-}
-
-void InputManager::UnsubscribeToMouseButtonReleaseEvent(MouseButtons mouseButton, std::weak_ptr<std::function<void(bool)>>&& weakAction)
-{
-    _mouseReleaseInputObserverMap.Unsubscribe(mouseButton, std::move(weakAction));
-}
-
-std::weak_ptr<std::function<void(float)>> InputManager::SubscribeToMouseScroll(std::function<void(float)>&& action)
-{
-    return _mouseScrollObserver.Subscribe(action);
-}
-
-void InputManager::UnsubscribeToMouseScroll(std::weak_ptr<std::function<void(float)>>&& weakAction)
-{
-    _mouseScrollObserver.Unsubscribe(weakAction);
-}
-
-void InputManager::ChangeState(MouseButtons mouseButton, std::unique_ptr<BaseMouseButtonState>&& mouseButtonState)
-{
-    _mouseButtonState[static_cast<int>(mouseButton)] = std::move(mouseButtonState);
+    return _mousePosition;
 }
 
 #pragma region Listeners
@@ -146,6 +59,8 @@ void InputManager::KeyboardKeymap(void* data, wl_keyboard* waylandKeyboard, uint
 void InputManager::KeyboardKey(void* data, wl_keyboard* waylandKeyboard, uint32_t serial, uint32_t time, uint32_t key,
     uint32_t state)
 {
+    InputManager* inputManager {static_cast<InputManager*>(data)};
+
     const char* name {libevdev_event_code_get_name(EV_KEY, key)};
     printf("[keyboard] %s | %d\n", name, state);
 }
@@ -169,33 +84,59 @@ void InputManager::KeyboardRepeatInfo(void* data, wl_keyboard* waylandKeyboard, 
 void InputManager::PointerEnter(void* data, wl_pointer* waylandPointer, uint32_t, wl_surface* waylandSurface,
     wl_fixed_t pointerXPosition, wl_fixed_t pointerYPosition)
 {
-    printf("[pointer] enter surface at %.2f, %.2f\n",
-           wl_fixed_to_double(pointerXPosition), wl_fixed_to_double(pointerYPosition));
+    ApplicationManager::GetInstance().OnGainFocus();
 }
 
 void InputManager::PointerLeave(void* data, wl_pointer* waylandPointer, uint32_t serial, wl_surface* waylandSurface)
 {
-    printf("[pointer] leave surface\n");
+    ApplicationManager::GetInstance().OnLoseFocus();
 }
 
 void InputManager::PointerMotion(void* data, wl_pointer* waylandPointer, uint32_t time, wl_fixed_t pointerXPosition,
     wl_fixed_t pointerYPosition)
 {
-    printf("[pointer] motion t=%u pos=%.2f,%.2f\n",
-           time, wl_fixed_to_double(pointerXPosition), wl_fixed_to_double(pointerYPosition));
+    InputManager* inputManager {static_cast<InputManager*>(data)};
+
+    inputManager->_mousePosition = {static_cast<float>(wl_fixed_to_double(pointerXPosition)), static_cast<float>(wl_fixed_to_double(pointerYPosition))};
 }
 
 void InputManager::PointerButton(void* data, wl_pointer* waylandPointer, uint32_t serial, uint32_t time, uint32_t button,
     uint32_t state)
 {
+    InputManager* inputManager {static_cast<InputManager*>(data)};
+
     const char* name {libevdev_event_code_get_name(EV_KEY, button)};
     printf("[pointer] %s | %d\n", name, state);
+
+    if (state == 1)
+    {
+        inputManager->_mousePressedTimePoint[button] = SystemClock::now();
+        return;
+    }
+
+    inputManager->_mouseButtonsTimePressed->SendValue(SystemClock::now() - inputManager->_mousePressedTimePoint[button]);
+
+    ClickableManager::GetInstance().OnClick(inputManager->_mousePosition);
+    SelectableManager::GetInstance().OnSelect(inputManager->_mousePosition);
 }
 
 void InputManager::PointerAxis(void* data, wl_pointer* waylandPointer, uint32_t time, uint32_t axis, wl_fixed_t value)
 {
+    InputManager* inputManager {static_cast<InputManager*>(data)};
+
+    float valueClamped {Utilities::Math::Clamp(wl_fixed_from_double(value), -1, 1)};
+
     const char* name {libevdev_event_code_get_name(EV_REL, axis)};
     printf("[pointer] %s | %d\n", name, value);
+
+    if (axis == 0) //VerticalScroll
+    {
+        ScrollableManager::GetInstance().OnScroll(valueClamped, inputManager->_mousePosition);
+    }
+    else //HorizontalScroll
+    {
+        //inputManager->_mouseScrollObserver.SetValue(valueFixed);
+    }
 }
 
 #pragma endregion
@@ -215,8 +156,9 @@ void InputManager::SeatCapabilities(void* data, wl_seat* waylandSeat, uint32_t c
     if (has_kb && !settings->keyboard)
     {
         settings->keyboard = wl_seat_get_keyboard(waylandSeat);
-        wl_keyboard_add_listener(settings->keyboard, &GetInstance()._keyboardListener, nullptr);
-    } else if (!has_kb && settings->keyboard)
+        wl_keyboard_add_listener(settings->keyboard, &GetInstance()._keyboardListener, &GetInstance());
+    }
+    else if (!has_kb && settings->keyboard)
     {
         wl_keyboard_destroy(settings->keyboard);
         settings->keyboard = nullptr;
@@ -226,8 +168,9 @@ void InputManager::SeatCapabilities(void* data, wl_seat* waylandSeat, uint32_t c
     if (has_ptr && !settings->pointer)
     {
         settings->pointer = wl_seat_get_pointer(waylandSeat);
-        wl_pointer_add_listener(settings->pointer, &GetInstance()._pointerListener, nullptr);
-    } else if (!has_ptr && settings->pointer)
+        wl_pointer_add_listener(settings->pointer, &GetInstance()._pointerListener, &GetInstance());
+    }
+    else if (!has_ptr && settings->pointer)
     {
         wl_pointer_destroy(settings->pointer);
         settings->pointer = nullptr;

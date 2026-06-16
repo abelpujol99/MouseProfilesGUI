@@ -2,8 +2,6 @@
 
 #include "imgui.h"
 
-enum class MouseButtons : char;
-
 class ImGuiFactory
 {
 public:
@@ -11,13 +9,6 @@ public:
     ~ImGuiFactory() = default;
 
 #pragma region Mouse
-
-    [[nodiscard]] static const int GetMouseMaxButtons();
-
-    [[nodiscard]] static const bool IsMouseButtonPressed(MouseButtons mouseButton);
-    [[nodiscard]] static const bool IsMouseButtonReleased(MouseButtons mouseButton);
-
-    [[nodiscard]] static ImVec2 GetMousePosition();
 
     [[nodiscard]] static float GetMouseScroll();
 
@@ -37,6 +28,6 @@ private:
 
     ImGuiFactory() = default;
 
-    [[nodiscard]] static ImGuiIO& GetIO();
+    static ImGuiIO& GetIO();
 
 };

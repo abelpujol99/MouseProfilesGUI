@@ -89,20 +89,13 @@ void GLFWManager::CleanseWindow(GLFWwindow* window)
     ImGui::DestroyContext();
     glfwDestroyWindow(window);
     glfwTerminate();
+
+    window = nullptr;
 }
 
 void GLFWManager::CleanseInput(const WaylandSettings& waylandSettings) noexcept
 {
-    if (waylandSettings.keyboard)
-    {
-        wl_keyboard_destroy(waylandSettings.keyboard);
-    }
-    if (waylandSettings.pointer)
-    {
-        wl_pointer_destroy(waylandSettings.pointer);
-    }
-    if (waylandSettings.seat)
-    {
-        wl_seat_destroy(waylandSettings.seat);
-    }
+    wl_keyboard_destroy(waylandSettings.keyboard);
+    wl_pointer_destroy(waylandSettings.pointer);
+    wl_seat_destroy(waylandSettings.seat);
 }

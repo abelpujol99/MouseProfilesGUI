@@ -2,13 +2,11 @@
 
 #include "imgui.h"
 
-#include "Managers/Input/MouseButton/BaseMouseButtonState.h"
-#include "Observer/ObserverMap.h"
 #include "Observer/ObserverSingleValue.h"
 #include "TimeUsings.h"
 #include "Utilities/WaylandSettings.h"
-
-enum class MouseButtons : char;
+#include "Utilities/Event/MapEventBus.h"
+#include "Utilities/Event/SingleEventBus.h"
 
 class InputManager
 {
@@ -25,30 +23,11 @@ public:
 
     void Start();
 
-    void Update();
-
-    void OnPressButton(MouseButtons mouseButton);
-    void OnReleaseButton(MouseButtons mouseButton);
-
-    [[nodiscard]] std::weak_ptr<std::function<void(bool)>> SubscribeToMouseButtonClickEvent(MouseButtons mouseButton,
-        std::function<void(bool)>&& action);
-
-    void UnsubscribeToMouseButtonClickEvent(MouseButtons mouseButton, std::weak_ptr<std::function<void(bool)>>&& weakAction);
-
-    [[nodiscard]] std::weak_ptr<std::function<void(bool)>> SubscribeToMouseButtonReleaseEvent(MouseButtons mouseButton,
-        std::function<void(bool)>&& action);
-
-    void UnsubscribeToMouseButtonReleaseEvent(MouseButtons mouseButton, std::weak_ptr<std::function<void(bool)>>&& weakAction);
-
-    [[nodiscard]] std::weak_ptr<std::function<void(float)>> SubscribeToMouseScroll(std::function<void(float)>&& action);
-
-    void UnsubscribeToMouseScroll(std::weak_ptr<std::function<void(float)>>&& weakAction);
+    [[nodiscard]] ImVec2 GetMousePosition() const;
 
 private:
 
     InputManager();
-
-    void ChangeState(MouseButtons mouseButton, std::unique_ptr<BaseMouseButtonState>&& mouseButtonState);
 
 #pragma region Listeners
 
@@ -111,18 +90,13 @@ private:
 
 #pragma endregion
 
-    static InputManager* _inputManagerInstance;
-
-    std::unique_ptr<BaseMouseButtonState> _mouseButtonState[ImGuiMouseButton_COUNT];
-
-    ObserverMap<MouseButtons, bool> _mouseClickInputObserverMap;
-    ObserverMap<MouseButtons, bool> _mouseReleaseInputObserverMap;
+    static std::unique_ptr<InputManager> _inputManagerInstance;
 
     TimePoint _mousePressedTimePoint[ImGuiMouseButton_COUNT];
 
-    ObserverSingleValue<Duration> _mouseButtonsTimePressed[ImGuiMouseButton_COUNT];
+    SingleEventBus<Duration> _mouseButtonsTimePressed[ImGuiMouseButton_COUNT];
 
-    ObserverSingleValue<float> _mouseScrollObserver;
+    ImVec2 _mousePosition;
 
     WaylandSettings _waylandSettings;
 

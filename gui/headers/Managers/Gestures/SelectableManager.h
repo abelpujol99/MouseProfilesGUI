@@ -3,6 +3,8 @@
 #include <memory>
 #include <functional>
 
+#include "imgui.h"
+
 class ISelectable;
 
 class SelectableManager
@@ -10,7 +12,7 @@ class SelectableManager
 
 public:
 
-    ~SelectableManager() noexcept;
+    ~SelectableManager() = default;
 
     SelectableManager(const SelectableManager& other) = delete;
     SelectableManager& operator=(const SelectableManager& other) = delete;
@@ -19,7 +21,7 @@ public:
 
     static SelectableManager& GetInstance();
 
-    void Update();
+    void OnSelect(const ImVec2& mousePosition);
 
     void AddSelectable(ISelectable* selectable);
 
@@ -27,13 +29,9 @@ public:
 
 private:
 
-    SelectableManager();
+    SelectableManager() = default;
 
-    static SelectableManager* _selectableManagerInstance;
-
-    std::weak_ptr<std::function<void(bool)>> _onLeftMouseButtonReleasedWeakAction;
-
-    bool _hasLeftMouseButtonReleased;
+    static std::unique_ptr<SelectableManager> _selectableManagerInstance;
 
     std::vector<ISelectable*> _selectables;
 

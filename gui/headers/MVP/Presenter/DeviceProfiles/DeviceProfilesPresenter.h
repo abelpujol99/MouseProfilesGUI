@@ -59,7 +59,7 @@ private:
 
     std::string _deviceName;
 
-    int _currentDeviceProfileIndex;
+    int _currentDeviceProfileIndex {-1};
 
     std::vector<Profile> _deviceProfiles;
 

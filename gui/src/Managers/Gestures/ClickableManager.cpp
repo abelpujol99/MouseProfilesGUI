@@ -1,47 +1,22 @@
 #include "Managers/Gestures/ClickableManager.h"
 
-#include "Factory/ImGuiFactory.h"
-#include "Managers/Input/InputManager.h"
-#include "Managers/Input/MouseButton/MouseButtons.h"
 #include "Utilities/UI/Boundaries.h"
 #include "UI/Helpers/IClickable.h"
 
-ClickableManager* ClickableManager::_clickableManagerInstance {nullptr};
-
-ClickableManager::ClickableManager()
-{
-    _onLeftMouseButtonReleasedWeakAction = InputManager::GetInstance().SubscribeToMouseButtonReleaseEvent(MouseButtons::LEFT,
-            [&](bool value) {
-                _hasLeftMouseButtonReleased = value;
-        });
-}
-
-ClickableManager::~ClickableManager() noexcept
-{
-    delete _clickableManagerInstance;
-}
+std::unique_ptr<ClickableManager> ClickableManager::_clickableManagerInstance {nullptr};
 
 ClickableManager& ClickableManager::GetInstance()
 {
     if (_clickableManagerInstance == nullptr)
     {
-        _clickableManagerInstance = new ClickableManager();
+        _clickableManagerInstance.reset(new ClickableManager());
     }
 
     return *_clickableManagerInstance;
 }
 
-void ClickableManager::Update()
+void ClickableManager::OnClick(const ImVec2& mousePosition) const
 {
-    if (!_hasLeftMouseButtonReleased)
-    {
-        return;
-    }
-
-    _hasLeftMouseButtonReleased = false;
-
-    ImVec2 mousePosition {ImGuiFactory::GetMousePosition()};
-
     for (auto clickable : _clickables)
     {
         if (!clickable->CanBeClicked() ||

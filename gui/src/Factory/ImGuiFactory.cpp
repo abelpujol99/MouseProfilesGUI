@@ -1,6 +1,5 @@
 #include "Factory/ImGuiFactory.h"
 
-#include "Managers/Input/MouseButton/MouseButtons.h"
 #include "KeyDefines.h"
 
 ImGuiIO& ImGuiFactory::GetIO()
@@ -9,26 +8,6 @@ ImGuiIO& ImGuiFactory::GetIO()
 }
 
 #pragma region Mouse
-
-const int ImGuiFactory::GetMouseMaxButtons()
-{
-    return static_cast<int>(MouseButtons::COUNT);
-}
-
-const bool ImGuiFactory::IsMouseButtonPressed(MouseButtons mouseButton)
-{
-    return GetIO().MouseDown[static_cast<int>(mouseButton)];
-}
-
-const bool ImGuiFactory::IsMouseButtonReleased(MouseButtons mouseButton)
-{
-    return GetIO().MouseReleased[static_cast<int>(mouseButton)];
-}
-
-ImVec2 ImGuiFactory::GetMousePosition()
-{
-    return GetIO().MousePos;
-}
 
 float ImGuiFactory::GetMouseScroll()
 {

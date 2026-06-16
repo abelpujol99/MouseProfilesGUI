@@ -24,10 +24,8 @@ public:
 
     void Update();
 
-    std::weak_ptr<std::function<void(WindowSize)>> SubscribeToSizeObserver(std::function<void(WindowSize)> action);
-    void UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(WindowSize)>> weakAction);
-
-    void Cleanse() const;
+    std::weak_ptr<std::function<void(WindowSize)>> SubscribeToSizeObserver(std::function<void(WindowSize)>&& action);
+    void UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(WindowSize)>>&& weakAction);
 
 private:
 

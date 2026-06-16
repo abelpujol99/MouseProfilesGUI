@@ -3,6 +3,7 @@
 enum class ApplicationNotifications
 {
     SHUTDOWN,
+    GAIN_FOCUS,
     LOSE_FOCUS,
     COUNT
 };

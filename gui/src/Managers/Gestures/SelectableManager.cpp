@@ -1,47 +1,22 @@
 #include "Managers/Gestures/SelectableManager.h"
 
-#include "Factory/ImGuiFactory.h"
-#include "Managers/Input/InputManager.h"
-#include "Managers/Input/MouseButton/MouseButtons.h"
 #include "UI/Helpers/ISelectable.h"
 #include "Utilities/UI/Boundaries.h"
 
-SelectableManager* SelectableManager::_selectableManagerInstance {nullptr};
-
-SelectableManager::SelectableManager() : _currentSelection(nullptr)
-{
-    _onLeftMouseButtonReleasedWeakAction = InputManager::GetInstance().SubscribeToMouseButtonReleaseEvent(MouseButtons::LEFT,
-        [&](bool value) {
-            _hasLeftMouseButtonReleased = value;
-    });
-}
-
-SelectableManager::~SelectableManager() noexcept
-{
-    delete _selectableManagerInstance;
-}
+std::unique_ptr<SelectableManager> SelectableManager::_selectableManagerInstance {nullptr};
 
 SelectableManager& SelectableManager::GetInstance()
 {
     if (_selectableManagerInstance == nullptr)
     {
-        _selectableManagerInstance = new SelectableManager();
+        _selectableManagerInstance.reset(new SelectableManager());
     }
 
     return *_selectableManagerInstance;
 }
 
-void SelectableManager::Update()
+void SelectableManager::OnSelect(const ImVec2& mousePosition)
 {
-    if (!_hasLeftMouseButtonReleased)
-    {
-        return;
-    }
-
-    _hasLeftMouseButtonReleased = false;
-
-    ImVec2 mousePosition {ImGuiFactory::GetMousePosition()};
-
     for (auto selectable : _selectables)
     {
         if (!selectable->CanBeSelected() ||

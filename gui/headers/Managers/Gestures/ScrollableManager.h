@@ -2,13 +2,15 @@
 #include <functional>
 #include <memory>
 
+#include "imgui.h"
+
 class IScrollable;
 
 class ScrollableManager
 {
 public:
 
-    ~ScrollableManager() noexcept;
+    ~ScrollableManager() = default;
 
     ScrollableManager(const ScrollableManager& other) = delete;
     ScrollableManager& operator=(const ScrollableManager& other) = delete;
@@ -17,7 +19,7 @@ public:
 
     static ScrollableManager& GetInstance();
 
-    void Update();
+    void OnScroll(const float& scrollValue, const ImVec2& mousePosition) const;
 
     void AddScrollable(IScrollable* scrollable);
 
@@ -25,13 +27,9 @@ public:
 
 private:
 
-    ScrollableManager();
+    ScrollableManager() = default;
 
-    static ScrollableManager* _scrollableManagerInstance;
-
-    std::weak_ptr<std::function<void(float)>> _onMouseScrollWeakAction;
-
-    float _mouseScroll;
+    static std::unique_ptr<ScrollableManager> _scrollableManagerInstance;
 
     std::vector<IScrollable*> _scrollables;
 };

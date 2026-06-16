@@ -1,6 +1,5 @@
 #include "Managers/View/WindowManager.h"
 
-#include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "imgui.h"
 #include "GLFW/glfw3.h"
@@ -8,8 +7,6 @@
 
 #include "Managers/Input/InputManager.h"
 #include "Managers/Input/TypeManager.h"
-#include "Managers/Gestures/ClickableManager.h"
-#include "Managers/Gestures/ScrollableManager.h"
 #include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"
 
@@ -40,19 +37,11 @@ void WindowManager::Start()
 
 void WindowManager::Update()
 {
-    InputManager& inputManager {InputManager::GetInstance()};
-
-    inputManager.Start();
+    InputManager::GetInstance().Start();
 
     TypeManager& typeManager {TypeManager::GetInstance()};
 
-    ClickableManager& clickableManager {ClickableManager::GetInstance()};
-
-    SelectableManager& selectableManager {SelectableManager::GetInstance()};
-
-    ScrollableManager& scrollableManager {ScrollableManager::GetInstance()};
-
-    MVPManager& mvpManager {MVPManager::GetInstance()};
+    MVPManager::GetInstance();
 
     DrawManager& drawManager {DrawManager::GetInstance()};
 
@@ -60,24 +49,14 @@ void WindowManager::Update()
     {
         GLFWManager::PrepareWindow();
 
-        ImDrawList* drawList {ImGui::GetBackgroundDrawList()};
-
-        inputManager.Update();
-
         typeManager.Update();
 
-        clickableManager.Update();
-
-        selectableManager.Update();
-
-        scrollableManager.Update();
-
-        drawManager.DrawElements(drawList);
+        drawManager.DrawElements(ImGui::GetBackgroundDrawList());
 
         RenderWindow();
     }
 
-    Cleanse();
+    GLFWManager::CleanseWindow(_window);
 }
 
 void WindowManager::RenderWindow()
@@ -98,22 +77,12 @@ void WindowManager::RenderWindow()
     _sizeObserver.SetValue({displayWidth, displayHeight});
 }
 
-std::weak_ptr<std::function<void(WindowSize)>> WindowManager::SubscribeToSizeObserver(
-    std::function<void(WindowSize)> action)
+std::weak_ptr<std::function<void(WindowSize)>> WindowManager::SubscribeToSizeObserver(std::function<void(WindowSize)>&& action)
 {
     return _sizeObserver.Subscribe(std::move(action));
 }
 
-void WindowManager::UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(WindowSize)>> weakAction)
+void WindowManager::UnsubscribeToSizeObserver(std::weak_ptr<std::function<void(WindowSize)>>&& weakAction)
 {
-    _sizeObserver.Unsubscribe(weakAction);
-}
-
-void WindowManager::Cleanse() const
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    glfwDestroyWindow(_window);
-    glfwTerminate();
+    _sizeObserver.Unsubscribe(std::move(weakAction));
 }

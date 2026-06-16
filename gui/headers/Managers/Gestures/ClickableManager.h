@@ -3,13 +3,15 @@
 #include <memory>
 #include <set>
 
+#include "imgui.h"
+
 class IClickable;
 
 class ClickableManager
 {
 public:
 
-    ~ClickableManager() noexcept;
+    ~ClickableManager() = default;
 
     ClickableManager(const ClickableManager& other) = delete;
     ClickableManager& operator=(const ClickableManager& other) = delete;
@@ -18,7 +20,7 @@ public:
 
     static ClickableManager& GetInstance();
 
-    void Update();
+    void OnClick(const ImVec2& mousePosition) const;
 
     void AddClickable(IClickable* clickable);
 
@@ -26,13 +28,9 @@ public:
 
 private:
 
-    ClickableManager();
+    ClickableManager() = default;
 
-    static ClickableManager* _clickableManagerInstance;
-
-    std::weak_ptr<std::function<void(bool)>> _onLeftMouseButtonReleasedWeakAction;
-
-    bool _hasLeftMouseButtonReleased;
+    static std::unique_ptr<ClickableManager> _clickableManagerInstance;
 
     std::set<IClickable*> _clickables;
 };

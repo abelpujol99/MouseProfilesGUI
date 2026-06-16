@@ -21,12 +21,16 @@ public:
 
     static void Start();
 
+    void OnGainFocus();
+
+    void OnLoseFocus();
+
     std::weak_ptr<std::function<void()>> SubscribeToApplicationNotification(ApplicationNotifications applicationNotification, std::function<void()>&& action);
     void UnsubscribeToApplicationNotification(ApplicationNotifications applicationNotification, std::weak_ptr<std::function<void()>>&& action);
 
 private:
 
-    ApplicationManager() = default;
+    ApplicationManager();
 
     static std::unique_ptr<ApplicationManager> _applicationManagerInstance;
 

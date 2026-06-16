@@ -8,6 +8,16 @@
 
 std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInstance {nullptr};
 
+ApplicationManager::ApplicationManager()
+{
+    ApplicationNotifications applicationNotificationsCount {ApplicationNotifications::COUNT};
+
+    for (ApplicationNotifications i{ApplicationNotifications::SHUTDOWN}; i != applicationNotificationsCount; ++i)
+    {
+        _applicationNotification.AddEntry(i);
+    }
+}
+
 ApplicationManager& ApplicationManager::GetInstance()
 {
     if (_applicationManagerInstance == nullptr)
@@ -25,6 +35,16 @@ void ApplicationManager::Start()
     windowManager.SetInitialSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     windowManager.Start();
     windowManager.Update();
+}
+
+void ApplicationManager::OnGainFocus()
+{
+    _applicationNotification.TriggerNotification(ApplicationNotifications::GAIN_FOCUS);
+}
+
+void ApplicationManager::OnLoseFocus()
+{
+    _applicationNotification.TriggerNotification(ApplicationNotifications::LOSE_FOCUS);
 }
 
 std::weak_ptr<std::function<void()>> ApplicationManager::SubscribeToApplicationNotification(

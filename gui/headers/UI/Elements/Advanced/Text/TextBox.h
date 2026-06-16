@@ -21,6 +21,8 @@ public:
 
     void SetText(std::unique_ptr<Text> text);
 
+    void SetIsHidden(bool isHidden) override;
+
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
         bool* isParentHiddenPointer) override;
 
@@ -48,9 +50,9 @@ public:
 
 private:
 
-    std::unique_ptr<Rectangle> _rectangle;
-
     std::unique_ptr<TProcessData> _processDataStrategy;
+
+    std::unique_ptr<Rectangle> _rectangle;
 
     std::unique_ptr<Text> _text;
 };
@@ -86,6 +88,18 @@ void TextBox<T, TProcessData>::SetText(std::unique_ptr<Text> text)
     _text = std::move(text);
 
     _processDataStrategy->SetText(_text.get());
+}
+
+template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+void TextBox<T, TProcessData>::SetIsHidden(bool isHidden)
+{
+    DrawableComponent::SetIsHidden(isHidden);
+
+    isHidden ? Disable() : Enable();
+
+    _rectangle->SetIsHidden(isHidden);
+
+    _text->SetIsHidden(isHidden);
 }
 
 template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>

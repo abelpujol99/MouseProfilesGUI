@@ -26,13 +26,7 @@ void Button::SetIsHidden(bool isHidden)
 
     _text->SetIsHidden(isHidden);
 
-    if (isHidden)
-    {
-        Unsubscribe();
-        return;
-    }
-
-    Subscribe();
+    isHidden ? Disable() : Enable();
 }
 
 void Button::SetRectangle(std::unique_ptr<Rectangle>&& rectangle)
@@ -45,7 +39,7 @@ void Button::SetTextComponent(std::unique_ptr<Text>&& text)
     _text = std::move(text);
 }
 
-void Button::SetText(std::string&& text)
+void Button::SetText(std::string&& text) const
 {
     _text->SetText(text);
 }

@@ -80,6 +80,32 @@ public:
 
 #pragma endregion
 
+#pragma region
+
+    void SetSwitchToSubProfileRecyclerViewHeight(float recyclerViewHeight);
+
+    void SetSwitchToSubProfileViewsPerRow(uint8_t viewsPerRow);
+
+    void SetSwitchToSubProfileItemHeight(float itemHeight);
+
+    void SetSwitchToSubProfileRecycleViewVisibleItemsCount(uint8_t visibleItemsCount);
+
+    void SetSwitchToSubProfileRecyclerViewBufferRows(uint8_t bufferRows);
+
+    void OnSwitchToSubProfileScroll(float scrollValue);
+
+    [[nodiscard]] float GetSwitchToSubProfileCurrentScroll() const;
+
+    [[nodiscard]] std::vector<ButtonInfo> GetSwitchToSubProfileVisibleButtons() const;
+
+    [[nodiscard]] bool IsSwitchToSubProfileFirstItemPresent() const;
+
+    [[nodiscard]] bool IsSwitchToSubProfileLastItemPresent() const;
+
+    void OnPressSwitchToSubProfileRecycleViewButton(uint8_t index);
+
+#pragma endregion
+
     void OnPressBackButton();
 
     void OnPressLoadUnloadButton();
@@ -124,4 +150,6 @@ private:
     RecycleViewPresenter _subProfileRecycleViewPresenter;
 
     RecycleViewPresenter _inputRecycleViewPresenter;
+
+    RecycleViewPresenter _switchToSubProfileRecycleViewPresenter;
 };

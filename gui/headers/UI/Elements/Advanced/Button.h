@@ -21,7 +21,7 @@ public:
 
     void SetTextComponent(std::unique_ptr<Text>&& text);
 
-    void SetText(std::string&& text);
+    void SetText(std::string&& text) const;
 
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
         bool* isParentHiddenPointer) override;

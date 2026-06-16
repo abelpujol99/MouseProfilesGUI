@@ -32,6 +32,10 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
         TITLE_SIZE, RED}, []() {}, false);
 
+    _templateSwitchToSubProfileButton = DrawableFactory::CreateButton(RectangleData{WHITE, NO_ROUNDING, THIN_BORDER, false},
+        TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, WHITE}, []() {}, false);
+
 #pragma region Top Bar
 
     std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
@@ -333,6 +337,12 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     std::unique_ptr<Rectangle> outputTypeRectangleContainer {_templateContainerRectangle->Clone()};
 
+    outputTypeRect->AddDrawableComponent(outputTypeRectangleContainer.get());
+
+    outputTypeRectangleContainer->SetIsHidden(false);
+
+    _containerRectangles.push_back(std::move(outputTypeRectangleContainer));
+
     std::unique_ptr<RectDrawable> emitInputEventCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_ANCHORS,
         OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
         OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_SIZE, false)};
@@ -342,6 +352,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         SUB_TITLE_SIZE, WHITE}, [&]()
     {
         _presenter->OnPressEmitInputEventButton();
+        _inputTextBox->SetIsHidden(false);
+        _inputDisplayTextBox->SetIsHidden(false);
+        _switchToSubProfileRecycleView->SetIsHidden(true);
     }, false);
 
     emitInputEventCommandButtonRect->AddDrawableComponent(_emitInputEventCommandButton.get());
@@ -368,6 +381,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         SUB_TITLE_SIZE, WHITE}, [&]()
     {
         _presenter->OnPressSwitchToSubProfileButton();
+        _switchToSubProfileRecycleView->SetIsHidden(false);
+        _inputTextBox->SetIsHidden(true);
+        _inputDisplayTextBox->SetIsHidden(true);
     }, false);
 
     switchToSubProfileCommandButtonRect->AddDrawableComponent(_switchToSubProfileCommandButton.get());
@@ -385,15 +401,10 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     shutdownApplicationCommandButtonRect->AddDrawableComponent(_shutdownApplicationCommandButton.get());
 
-    outputTypeRect->AddDrawableComponent(outputTypeRectangleContainer.get());
     outputTypeRect->AddRectDrawable(std::move(emitInputEventCommandButtonRect));
     outputTypeRect->AddRectDrawable(std::move(macroCommandButtonRect));
     outputTypeRect->AddRectDrawable(std::move(switchToSubProfileCommandButtonRect));
     outputTypeRect->AddRectDrawable(std::move(shutdownApplicationCommandButtonRect));
-
-    outputTypeRectangleContainer->SetIsHidden(false);
-
-    _containerRectangles.push_back(std::move(outputTypeRectangleContainer));
 
     std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_RECT_ANCHORS,
         OUTPUT_TYPE_DETAILS_RECT_PIVOT, OUTPUT_TYPE_DETAILS_RECT_RELATIVE_POSITION, OUTPUT_TYPE_DETAILS_RECT_SIZE, false)};
@@ -405,6 +416,59 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     outputTypeDetailsRectangleContainer->SetIsHidden(false);
 
     _containerRectangles.push_back(std::move(outputTypeDetailsRectangleContainer));
+
+    std::unique_ptr<RectDrawable> outputTypeDetailsInputTextBoxRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_ANCHORS,
+        OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_PIVOT, OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_RELATIVE_POSITION,
+        OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_SIZE, false)};
+
+    _inputTextBox = DrawableFactory::CreateTextBox(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Type input to emit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
+        FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, WHITE}, true);
+
+    outputTypeDetailsInputTextBoxRect->AddDrawableComponent(_inputTextBox.get());
+
+    std::unique_ptr<RectDrawable> outputTypeDetailsInputDisplayTextBoxRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_ANCHORS,
+        OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_PIVOT, OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_RELATIVE_POSITION,
+        OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_SIZE, false)};
+
+    _inputDisplayTextBox = DrawableFactory::CreateDisplayTextBox(RectangleData{INPUT_DISPLAY_TEXT_BOX_COLOR, LOW_ROUNDING, THIN_BORDER, false},
+        TextData{"Emit inputs here", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
+        FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, INPUT_DISPLAY_TEXT_BOX_COLOR}, true);
+
+    outputTypeDetailsInputDisplayTextBoxRect->AddDrawableComponent(_inputDisplayTextBox.get());
+
+    _switchToSubProfileRecycleView = DrawableFactory::CreateRecycleView(LIST_OF_SUB_PROFILES_RECYCLE_VIEW_VIEWS_PER_ROW,
+        LIST_OF_SUB_PROFILES_RECYCLE_VIEW_PADDINGS, {0, LIST_OF_SUB_PROFILES_RECYCLE_VIEW_ROW_HEIGHT}, LIST_OF_SUB_PROFILES_RECYCLE_VIEW_BUFFER_ROWS,
+        [&](RectDrawable* view)
+        {
+            std::unique_ptr<Button> switchToSubProfileButton {_templateSwitchToSubProfileButton->Clone()};
+
+            view->AddDrawableComponent(switchToSubProfileButton.get());
+
+            _switchToSubProfileListButtons.push_back(std::move(switchToSubProfileButton));
+        },
+        [&]()
+        {
+            _switchToSubProfileListButtons.pop_back();
+        },
+        {
+            [&](uint8_t items)
+            {
+                _presenter->SetSwitchToSubProfileRecycleViewVisibleItemsCount(items);
+            },
+            [&](float size)
+            {
+                _presenter->SetSwitchToSubProfileRecyclerViewHeight(size);
+            },
+            [&](float scrollValue)
+            {
+                _presenter->OnSwitchToSubProfileScroll(scrollValue);
+            }
+        }, true);
+
+    outputTypeDetailsRect->AddRectDrawable(std::move(outputTypeDetailsInputTextBoxRect));
+    outputTypeDetailsRect->AddRectDrawable(std::move(outputTypeDetailsInputDisplayTextBoxRect));
+    outputTypeDetailsRect->AddDrawableComponent(_switchToSubProfileRecycleView.get());
 
     outputRect->AddRectDrawable(std::move(outputTitleRect));
     outputRect->AddRectDrawable(std::move(outputTypeRect));
@@ -462,6 +526,14 @@ void ProfileView::Enable()
 
     _inputRecycleView->Enable();
 
+    _emitInputEventCommandButton->Enable();
+
+    _macroCommandButton->Enable();
+
+    _switchToSubProfileCommandButton->Enable();
+
+    _shutdownApplicationCommandButton->Enable();
+
     _presenter->Restart();
 }
 
@@ -496,6 +568,14 @@ void ProfileView::Disable()
         _inputEditButtons.at(i)->SetIsHidden(true);
         _inputDeleteButtons.at(i)->SetIsHidden(true);
     }
+
+    _emitInputEventCommandButton->Disable();
+
+    _macroCommandButton->Disable();
+
+    _switchToSubProfileCommandButton->Disable();
+
+    _shutdownApplicationCommandButton->Disable();
 }
 
 void ProfileView::OnTitleUpdate() const

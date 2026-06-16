@@ -32,6 +32,8 @@ void RecycleView::SetIsHidden(bool isHidden)
 {
     DrawableComponent::SetIsHidden(isHidden);
 
+    isHidden ? Disable() : Enable();
+
     for (auto&& row : _rows)
     {
         row->SetIsHidden(isHidden);

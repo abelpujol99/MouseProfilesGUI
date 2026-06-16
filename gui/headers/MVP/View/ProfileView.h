@@ -3,6 +3,7 @@
 
 #include "MVP/Presenter/Profile/ProfilePresenter.h"
 #include "Strategies/TextStrategy/ApplyKey.h"
+#include "Strategies/TextStrategy/DisplayKey.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
 #include "UI/Elements/Advanced/Text/TextBox.h"
@@ -66,6 +67,13 @@ private:
 
     std::unique_ptr<Button> _shutdownApplicationCommandButton;
 
+    std::unique_ptr<TextBox<char, ApplyKey>> _inputTextBox;
+
+    std::unique_ptr<TextBox<Key, DisplayKey>> _inputDisplayTextBox;
+
+    std::unique_ptr<RecycleView> _switchToSubProfileRecycleView;
+
+
     std::unique_ptr<Rectangle> _templateContainerRectangle;
 
     std::unique_ptr<Button> _templateSubProfileEditButton;
@@ -76,6 +84,8 @@ private:
 
     std::unique_ptr<Button> _templateInputDeleteButton;
 
+    std::unique_ptr<Button> _templateSwitchToSubProfileButton;
+
     std::vector<std::unique_ptr<Rectangle>> _containerRectangles{};
 
     std::vector<std::unique_ptr<Button>> _subProfileEditButtons{};
@@ -85,4 +95,6 @@ private:
     std::vector<std::unique_ptr<Button>> _inputEditButtons{};
 
     std::vector<std::unique_ptr<Button>> _inputDeleteButtons{};
+
+    std::vector<std::unique_ptr<Button>> _switchToSubProfileListButtons{};
 };

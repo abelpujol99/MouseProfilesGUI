@@ -314,6 +314,65 @@ void ProfilePresenter::AddCodeRemap() const
     _serviceModel.AddCodeRemap(_profileIndex, _currentSubProfileIndex, std::move(codeRemap));
 }
 
+void ProfilePresenter::SetSwitchToSubProfileRecyclerViewHeight(float recyclerViewHeight)
+{
+    _switchToSubProfileRecycleViewPresenter.SetRecyclerViewHeight(recyclerViewHeight);
+}
+
+void ProfilePresenter::SetSwitchToSubProfileViewsPerRow(uint8_t viewsPerRow)
+{
+    _switchToSubProfileRecycleViewPresenter.SetViewsPerRow(viewsPerRow);
+}
+
+void ProfilePresenter::SetSwitchToSubProfileItemHeight(float itemHeight)
+{
+    _switchToSubProfileRecycleViewPresenter.SetItemHeight(itemHeight);
+}
+
+void ProfilePresenter::SetSwitchToSubProfileRecycleViewVisibleItemsCount(uint8_t visibleItemsCount)
+{
+    _switchToSubProfileRecycleViewPresenter.SetRecycleViewVisibleItemsCount(visibleItemsCount);
+}
+
+void ProfilePresenter::SetSwitchToSubProfileRecyclerViewBufferRows(uint8_t bufferRows)
+{
+    _switchToSubProfileRecycleViewPresenter.SetRecyclerViewBufferRows(bufferRows);
+}
+
+void ProfilePresenter::OnSwitchToSubProfileScroll(float scrollValue)
+{
+    _switchToSubProfileRecycleViewPresenter.OnScroll(scrollValue);
+}
+
+float ProfilePresenter::GetSwitchToSubProfileCurrentScroll() const
+{
+    return _switchToSubProfileRecycleViewPresenter.GetCurrentScroll();
+}
+
+std::vector<ButtonInfo> ProfilePresenter::GetSwitchToSubProfileVisibleButtons() const
+{
+    std::vector<ButtonInfo> buttonsInfo;
+
+    //TODO
+
+    return buttonsInfo;
+}
+
+bool ProfilePresenter::IsSwitchToSubProfileFirstItemPresent() const
+{
+    return _switchToSubProfileRecycleViewPresenter.IsFirstItemPresent();
+}
+
+bool ProfilePresenter::IsSwitchToSubProfileLastItemPresent() const
+{
+    return _switchToSubProfileRecycleViewPresenter.IsLastItemPresent();
+}
+
+void ProfilePresenter::OnPressSwitchToSubProfileRecycleViewButton(uint8_t index)
+{
+    //TODOO
+}
+
 void ProfilePresenter::OnPressBackButton()
 {
     DrawManager::GetInstance().EnableDeviceProfilesView(_deviceName);

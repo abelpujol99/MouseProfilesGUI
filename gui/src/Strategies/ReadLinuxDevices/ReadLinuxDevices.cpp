@@ -36,7 +36,7 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
 
         std::string physicalLocationString(physicalLocation);
 
-        if (physicalLocationString.empty() || physicalLocationString.back() != '0' || !IsAPeripheric(file))
+        if (!IsAPeripheric(file))
         {
             close(file);
             continue;

@@ -110,18 +110,16 @@ function(FetchImGui source_dir out_imgui_source_dir)
     set(${out_imgui_source_dir} ${imgui_SOURCE_DIR} PARENT_SCOPE)
 endfunction()
 
-function(AddImGuiTarget imgui_source_dir glfw_source_dir)
+function(AddImGuiTarget source_dir)
     add_library(imgui STATIC
-        ${imgui_source_dir}/imgui.cpp
-        ${imgui_source_dir}/imgui_draw.cpp
-        ${imgui_source_dir}/imgui_tables.cpp
-        ${imgui_source_dir}/imgui_widgets.cpp
-        ${imgui_source_dir}/backends/imgui_impl_glfw.cpp
-        ${imgui_source_dir}/backends/imgui_impl_opengl3.cpp)
+        ${source_dir}/imgui.cpp
+        ${source_dir}/imgui_draw.cpp
+        ${source_dir}/imgui_tables.cpp
+        ${source_dir}/imgui_widgets.cpp
+        ${source_dir}/backends/imgui_impl_glfw.cpp
+        ${source_dir}/backends/imgui_impl_opengl3.cpp)
 
-    IncludeDirectoriesToTarget(imgui PUBLIC imgui_source_dir)
-
-    target_include_directories(imgui PUBLIC ${glfw_source_dir}/include)
+    IncludeDirectoriesToTarget(imgui PUBLIC source_dir)
 endfunction()
 
 #GLFW

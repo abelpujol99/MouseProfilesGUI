@@ -3,7 +3,7 @@
 
 struct DeviceInfo
 {
-    std::string path;
+    std::vector<std::string> path;
     std::string name;
 };
 

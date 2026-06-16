@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <linux/input.h>
 #include <iostream>
+#include <map>
 
 std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
 {
@@ -13,6 +14,8 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
     std::vector<DeviceInfo> devicesInfo;
 
     auto devicesFile {std::filesystem::directory_iterator(devicesDirectory)};
+
+    std::map<DeviceId, DeviceInfo> devices;
 
     for (const auto& deviceFile : devicesFile)
     {
@@ -30,29 +33,58 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
             continue;
         }
 
-        char physicalLocation[256] = "";
-
-        ioctl(file, EVIOCGPHYS(sizeof(physicalLocation)), physicalLocation);
-
-        std::string physicalLocationString(physicalLocation);
-
         if (!IsAPeripheric(file))
         {
             close(file);
             continue;
         }
 
-        DeviceInfo deviceInfo;
+        char physicalLocation[256] = "";
 
-        char deviceName[256];
-        ioctl(file, EVIOCGNAME(sizeof(deviceName)), deviceName);
+        ioctl(file, EVIOCGPHYS(sizeof(physicalLocation)), physicalLocation);
 
-        deviceInfo.path = path;
-        deviceInfo.name = deviceName;
+        std::string physicalLocationString(physicalLocation);
 
-        devicesInfo.push_back(deviceInfo);
+        if (!physicalLocationString.empty() && physicalLocationString.back() != '0')
+        {
+            close(file);
+            continue;
+        }
+
+        input_id id{};
+
+        ioctl(file, EVIOCGID, &id);
+
+        DeviceId deviceId{
+            id.bustype,
+            id.vendor,
+            id.product,
+            id.version
+        };
+
+        if (devices.contains(deviceId))
+        {
+            devices.at(deviceId).path.push_back(path);
+        }
+        else
+        {
+            char deviceName[256];
+            ioctl(file, EVIOCGNAME(sizeof(deviceName)), deviceName);
+
+            DeviceInfo deviceInfo;
+
+            deviceInfo.path.push_back(path);
+            deviceInfo.name = deviceName;
+
+            devices.emplace(deviceId, deviceInfo);
+        }
 
         close(file);
+    }
+
+    for (auto&& [deviceId, deviceInfo] : devices)
+    {
+        devicesInfo.push_back(deviceInfo);
     }
 
     return devicesInfo;

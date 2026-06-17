@@ -16,7 +16,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 {
     _templateProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&](){}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&](){}, false);
 
 
 #pragma region Top Bar
@@ -27,7 +27,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
         TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE, false)};
 
     _title = DrawableFactory::CreateText(TextData{"", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE_SIZE, WHITE});
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, MAIN_TITLE_SIZE, WHITE, NO_PADDING});
 
     titleRect->AddDrawableComponent(_title.get());
     topBarRect->AddRectDrawable(std::move(titleRect));
@@ -37,7 +37,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Back", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-            SUB_TITLE_SIZE, WHITE},
+            TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING},
             [&]()
             {
                 _presenter->OnPressBackButton();
@@ -57,7 +57,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
         CURRENT_PROFILE_TITLE_RECT_PIVOT, CURRENT_PROFILE_TITLE_RECT_RELATIVE_POSITION, CURRENT_PROFILE_TITLE_RECT_SIZE, false)};
 
     _currentProfileTitle = DrawableFactory::CreateText(TextData{"Current Profile", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE});
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, TITLE_SIZE, WHITE, NO_PADDING});
 
     currentProfileTitleRect->AddDrawableComponent(_currentProfileTitle.get());
 
@@ -65,7 +65,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
         CURRENT_PROFILE_NAME_RECT_PIVOT, CURRENT_PROFILE_NAME_RECT_RELATIVE_POSITION, CURRENT_PROFILE_NAME_RECT_SIZE, false)};
 
     _currentProfileName = DrawableFactory::CreateText(TextData{"Name", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, WHITE});
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING});
 
     currentProfileNameRect->AddDrawableComponent(_currentProfileName.get());
 
@@ -77,7 +77,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     _editCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Edit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE},
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING},
         [&]()
         {
             _presenter->OnPressEditButton();
@@ -90,7 +90,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     _unloadCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE},
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING},
         [&]()
         {
             _presenter->OnPressUnloadButton();

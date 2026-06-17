@@ -18,23 +18,23 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _templateSubProfileEditButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, RED}, []() {}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, RED, NO_PADDING}, []() {}, false);
 
     _templateSubProfileDeleteButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, RED}, []() {}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, RED, NO_PADDING}, []() {}, false);
 
     _templateInputEditButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, RED}, []() {}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, RED, NO_PADDING}, []() {}, false);
 
     _templateInputDeleteButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, RED}, []() {}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, RED, NO_PADDING}, []() {}, false);
 
     _templateSwitchToSubProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, WHITE}, []() {}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, []() {}, false);
 
 #pragma region Top Bar
 
@@ -45,7 +45,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE, false)};
 
     _title = DrawableFactory::CreateText(TextData{"", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE_SIZE, WHITE});
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+        TITLE_SIZE, MAIN_TITLE_SIZE, WHITE, NO_PADDING});
 
     titleRect->AddDrawableComponent(_title.get());
     topBarRect->AddRectDrawable(std::move(titleRect));
@@ -55,7 +56,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Back", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-            SUB_TITLE_SIZE, WHITE},
+            TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING},
             [&]()
             {
                 _presenter->OnPressBackButton();
@@ -72,7 +73,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         PROFILE_NAME_RECT_PIVOT, PROFILE_NAME_RECT_RELATIVE_POSITION, PROFILE_NAME_RECT_SIZE, false)};
 
     _profileNameTextBox = DrawableFactory::CreateTextBox(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
-        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, WHITE});
+        TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
+            TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING});
 
     profileNameRect->AddDrawableComponent(_profileNameTextBox.get());
 
@@ -88,7 +90,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _profileLoadUnloadButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Load/Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, WHITE}, [&]() {
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&]() {
             _presenter->OnPressLoadUnloadButton();
         }, false);
 
@@ -99,7 +101,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _profileLinkButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Link", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TITLE_SIZE, WHITE}, [&]() {
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&]() {
             _presenter->OnPressLinkButton();
         }, false);
 
@@ -127,7 +129,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         SUB_PROFILE_TITLE_RECT_PIVOT, SUB_PROFILE_TITLE_RECT_RELATIVE_POSITION, SUB_PROFILE_TITLE_RECT_SIZE, false)};
 
     _subProfileTitle = DrawableFactory::CreateText(TextData{"SubProfiles", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, false);
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, false);
 
     subProfileTitleRect->AddDrawableComponent(_subProfileTitle.get());
 
@@ -213,7 +215,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         INPUT_TITLE_RECT_PIVOT, INPUT_TITLE_RECT_RELATIVE_POSITION, INPUT_TITLE_RECT_SIZE, false)};
 
     _inputTitle = DrawableFactory::CreateText(TextData{"Input", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, false);
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, false);
 
     inputTitleRect->AddDrawableComponent(_inputTitle.get());
 
@@ -299,7 +301,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         OUTPUT_TITLE_RECT_PIVOT, OUTPUT_TITLE_RECT_RELATIVE_POSITION, OUTPUT_TITLE_RECT_SIZE, false)};
 
     _outputTitle = DrawableFactory::CreateText(TextData{"Output", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE}, false);
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, false);
 
     outputTitleRect->AddDrawableComponent(_outputTitle.get());
 
@@ -320,7 +322,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _emitInputEventCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Emit Input Event", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&]()
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&]()
     {
         _presenter->OnPressEmitInputEventButton();
         _inputTextBox->SetIsHidden(false);
@@ -336,7 +338,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _macroCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Macro", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&]()
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&]()
     {
         _presenter->OnPressMacroButton();
     }, false);
@@ -349,7 +351,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _switchToSubProfileCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Switch to SubProfile", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&]()
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&]()
     {
         _presenter->OnPressSwitchToSubProfileButton();
         _switchToSubProfileRecycleView->SetIsHidden(false);
@@ -365,7 +367,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _shutdownApplicationCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Shutdown Application", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&]()
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&]()
     {
         _presenter->OnPressShutdownApplicationButton();
     }, false);
@@ -394,7 +396,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _inputTextBox = DrawableFactory::CreateTextBox(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER},
         TextData{"Type input to emit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
-        FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, WHITE}, true);
+        FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, true);
 
     outputTypeDetailsInputTextBoxRect->AddDrawableComponent(_inputTextBox.get());
 
@@ -404,7 +406,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _inputDisplayTextBox = DrawableFactory::CreateDisplayTextBox(RectangleData{INPUT_DISPLAY_TEXT_BOX_COLOR, LOW_ROUNDING, THIN_BORDER},
         TextData{"Emit inputs here", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
-        FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, INPUT_DISPLAY_TEXT_BOX_COLOR}, true);
+        FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, INPUT_DISPLAY_TEXT_BOX_COLOR, NO_PADDING}, true);
 
     outputTypeDetailsInputDisplayTextBoxRect->AddDrawableComponent(_inputDisplayTextBox.get());
 

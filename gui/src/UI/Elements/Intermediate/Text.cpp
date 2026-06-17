@@ -9,8 +9,8 @@
 Text::Text(TextData&& textData, bool isHidden) :
         DrawableComponent(isHidden), _text(textData.text),
         _horizontalAlignment(textData.horizontalAlignment), _verticalAlignment(textData.verticalAlignment),
-        _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _fontSize(textData.fontSize),
-        _color(textData.color), _currentColor(_color)
+        _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _minimumFontSize(textData.minimumFontSize),
+        _maximumFontSize(textData.maximumFontSize), _color(textData.color), _currentColor(_color), _textPadding(textData.textPadding)
 {}
 
 Text::Text(const Text& other) :
@@ -19,9 +19,11 @@ Text::Text(const Text& other) :
     _horizontalAlignment(other._horizontalAlignment),
     _verticalAlignment(other._verticalAlignment),
     _fontFamily(other._fontFamily),
-    _fontSize(other._fontSize),
+    _minimumFontSize(other._minimumFontSize),
+    _maximumFontSize(other._minimumFontSize),
     _color(other._color),
-    _currentColor(other._currentColor)
+    _currentColor(other._currentColor),
+    _textPadding(other._textPadding)
 {}
 
 void Text::SetParentState(ImVec2 *parentPositionPointer, ImVec2 *parentBottomRightPositionPointer,
@@ -82,7 +84,7 @@ void Text::SetFontFamily(ImFont* fontFamily)
 
 void Text::SetFontSize(float fontSize)
 {
-    _fontSize = fontSize;
+    _minimumFontSize = fontSize;
 
     CalculateTextSize();
 }
@@ -101,9 +103,14 @@ void Text::SetVerticalAlignment(TextVerticalAlignments verticalAlignment)
     CalculateTextSize();
 }
 
+void Text::SetPadding(TextPadding textPadding)
+{
+    _textPadding = textPadding;
+}
+
 void Text::CalculateTextSize()
 {
-    _textSize = _fontFamily->CalcTextSizeA(_fontSize, FLT_MAX, -1.0f, _text.c_str());
+    _textSize = _fontFamily->CalcTextSizeA(_minimumFontSize, FLT_MAX, -1.0f, _text.c_str());
 
     UpdateRelativePosition();
 }
@@ -156,7 +163,7 @@ std::string Text::GetText() const
 
 float Text::GetFontSize() const
 {
-    return _fontSize;
+    return _minimumFontSize;
 }
 
 ImVec2 Text::GetTextSize() const
@@ -186,5 +193,5 @@ void Text::Draw(ImDrawList* drawList)
         return;
     }
 
-    drawList->AddText(_fontFamily, _fontSize, {_getPositionXAction(), _getPositionYAction()}, _currentColor, _text.c_str());
+    drawList->AddText(_fontFamily, _minimumFontSize, {_getPositionXAction(), _getPositionYAction()}, _currentColor, _text.c_str());
 }

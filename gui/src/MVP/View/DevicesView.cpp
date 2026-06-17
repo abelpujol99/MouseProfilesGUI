@@ -16,7 +16,7 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 {
     _templateDeviceButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        SUB_TITLE_SIZE, WHITE}, [&](){}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&](){}, false);
 
 #pragma region Top Bar
 
@@ -27,7 +27,7 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE, false)};
 
     _title = DrawableFactory::CreateText(TextData{"Devices", TextHorizontalAlignments::CENTER,
-        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, MAIN_TITLE_SIZE, WHITE});
+        TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, MAIN_TITLE_SIZE, WHITE, NO_PADDING});
 
     titleRect->AddDrawableComponent(_title.get());
     topBarRect->AddRectDrawable(std::move(titleRect));
@@ -37,7 +37,7 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _reloadButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Reload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-            SUB_TITLE_SIZE, WHITE},
+            TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING},
             [&]()
             {
                 _presenter->OnPressReloadButton();

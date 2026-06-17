@@ -5,9 +5,7 @@
 #include <string>
 #include <functional>
 
-struct TextData;
-enum class TextHorizontalAlignments;
-enum class TextVerticalAlignments;
+#include "UI/Structs/TextData.h"
 
 class Text : public DrawableComponent
 {
@@ -40,6 +38,8 @@ public:
 
     void SetVerticalAlignment(TextVerticalAlignments verticalAlignment);
 
+    void SetPadding(TextPadding textPadding);
+
     [[nodiscard]] std::string GetText() const;
 
     [[nodiscard]] float GetFontSize() const;
@@ -66,9 +66,13 @@ private:
 
     TextVerticalAlignments _verticalAlignment;
 
+    TextPadding _textPadding;
+
     ImFont* _fontFamily;
 
-    float _fontSize;
+    float _minimumFontSize;
+
+    float _maximumFontSize;
 
     ImVec2 _textSize;
 

@@ -20,6 +20,16 @@ std::unique_ptr<InputManager> InputManager::_inputManagerInstance {nullptr};
 
 InputManager::InputManager()
 {
+    _charPressedActions.emplace(XKB_KEY_BackSpace, [&](){_charPressed.SendValue(BACKSPACE);});
+    _charPressedActions.emplace(XKB_KEY_Delete, [&](){_charPressed.SendValue(DELETE);});
+    _charPressedActions.emplace(XKB_KEY_space, [&](){_charPressed.SendValue(SPACE_BAR);});
+    _charPressedActions.emplace(XKB_KEY_Up, [&](){_charPressed.SendValue(UP_ARROW);});
+    _charPressedActions.emplace(XKB_KEY_Left, [&](){_charPressed.SendValue(LEFT_ARROW);});
+    _charPressedActions.emplace(XKB_KEY_Right, [&](){_charPressed.SendValue(RIGHT_ARROW);});
+    _charPressedActions.emplace(XKB_KEY_Down, [&](){_charPressed.SendValue(DOWN_ARROW);});
+    _charPressedActions.emplace(XKB_KEY_Home, [&](){_charPressed.SendValue(HOME);});
+    _charPressedActions.emplace(XKB_KEY_End, [&](){_charPressed.SendValue(END);});
+
     _mouseButtonsTimePressed->SetAction([&](uint32_t timePressed) {
 
         return timePressed;
@@ -135,38 +145,11 @@ void InputManager::KeyboardKey(void* data, wl_keyboard* waylandKeyboard, uint32_
 
     //Char
     uint32_t keyCode {key + XKB_OFFSET};
-    xkb_keysym_t sym = xkb_state_key_get_one_sym(context.xkbState, keyCode);
+    xkb_keysym_t symbol {xkb_state_key_get_one_sym(context.xkbState, keyCode)};
 
-    switch (sym) {
-        case XKB_KEY_BackSpace:
-            inputManager->_charPressed.SendValue(BACKSPACE);
-            return;
-        case XKB_KEY_Delete:
-            inputManager->_charPressed.SendValue(DELETE);
-            return;
-        case XKB_KEY_space:
-            inputManager->_charPressed.SendValue(SPACE_BAR);
-            return;
-        case XKB_KEY_Up:
-            inputManager->_charPressed.SendValue(UP_ARROW);
-            return;
-        case XKB_KEY_Left:
-            inputManager->_charPressed.SendValue(LEFT_ARROW);
-            return;
-        case XKB_KEY_Right:
-            inputManager->_charPressed.SendValue(RIGHT_ARROW);
-            return;
-        case XKB_KEY_Down:
-            inputManager->_charPressed.SendValue(DOWN_ARROW);
-            return;
-        case XKB_KEY_Home:
-            inputManager->_charPressed.SendValue(HOME);
-            return;
-        case XKB_KEY_End:
-            inputManager->_charPressed.SendValue(END);
-            return;
-        default:
-            break;
+    if (inputManager->_charPressedActions.contains(symbol))
+    {
+        inputManager->_charPressedActions.at(symbol)();
     }
 
     char utf8[8] = {0};

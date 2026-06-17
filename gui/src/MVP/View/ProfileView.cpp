@@ -217,34 +217,6 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     inputTitleRect->AddDrawableComponent(_inputTitle.get());
 
-    std::unique_ptr<RectDrawable> inputButtonsRect {DrawableFactory::CreateRectDrawable(INPUT_BUTTONS_RECT_ANCHORS,
-        INPUT_BUTTONS_RECT_PIVOT, INPUT_BUTTONS_RECT_RELATIVE_POSITION, INPUT_BUTTONS_RECT_SIZE, false)};
-
-    std::unique_ptr<RectDrawable> inputRecordButtonRect {DrawableFactory::CreateRectDrawable(Anchors{{0.05, 0}, {0.45, 0}},
-        INPUT_RECORD_BUTTON_RECT_PIVOT, INPUT_RECORD_BUTTON_RECT_RELATIVE_POSITION, INPUT_RECORD_BUTTON_RECT_SIZE, false)};
-
-    _inputRecordButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
-        TextData{"Record", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
-        [&]() {
-            _presenter->OnPressInputRecordButton();
-        }, false);
-
-    inputRecordButtonRect->AddDrawableComponent(_inputRecordButton.get());
-
-    std::unique_ptr<RectDrawable> inputDeleteButtonRect {DrawableFactory::CreateRectDrawable(INPUT_DELETE_BUTTON_RECT_ANCHORS,
-        INPUT_DELETE_BUTTON_RECT_PIVOT, INPUT_DELETE_BUTTON_RECT_RELATIVE_POSITION, INPUT_DELETE_BUTTON_RECT_SIZE, false)};
-
-    _inputDeleteButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
-        TextData{"Delete", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, WHITE},
-        [&]() {
-            //_presenter->OnPressInputDeleteButton();
-        }, false);
-
-    inputDeleteButtonRect->AddDrawableComponent(_inputDeleteButton.get());
-
-    inputButtonsRect->AddRectDrawable(std::move(inputRecordButtonRect));
-    inputButtonsRect->AddRectDrawable(std::move(inputDeleteButtonRect));
-
     std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(INPUT_LIST_RECT_ANCHORS,
         INPUT_LIST_RECT_PIVOT, INPUT_LIST_RECT_RELATIVE_POSITION, INPUT_LIST_RECT_SIZE, false)};
 
@@ -306,7 +278,6 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     inputListRect->AddDrawableComponent(_inputRecycleView.get());
 
     inputRect->AddRectDrawable(std::move(inputTitleRect));
-    inputRect->AddRectDrawable(std::move(inputButtonsRect));
     inputRect->AddRectDrawable(std::move(inputListRect));
 
 #pragma endregion
@@ -520,10 +491,6 @@ void ProfileView::Enable()
 
     _subProfileRecycleView->Enable();
 
-    _inputRecordButton->Subscribe();
-
-    _inputDeleteButton->Subscribe();
-
     _inputRecycleView->Enable();
 
     _emitInputEventCommandButton->Enable();
@@ -556,10 +523,6 @@ void ProfileView::Disable()
         _subProfileEditButtons.at(i)->SetIsHidden(true);
         _subProfileDeleteButtons.at(i)->SetIsHidden(true);
     }
-
-    _inputRecordButton->Unsubscribe();
-
-    _inputDeleteButton->Unsubscribe();
 
     _inputRecycleView->Disable();
 

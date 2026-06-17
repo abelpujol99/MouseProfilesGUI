@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "imgui.h"
 
 #include "Utilities/WaylandContext.h"
@@ -105,6 +107,8 @@ private:
 
     SingleEventBus<std::string> _charPressed;
 
+    std::map<int, std::function<void()>> _charPressedActions;
+
     WaylandContext _waylandContext;
 
     const wl_keyboard_listener _keyboardListener = {
@@ -113,7 +117,7 @@ private:
         .leave = KeyboardLeave,
         .key = KeyboardKey,
         .modifiers = KeyboardModifiers,
-        .repeat_info = KeyboardRepeatInfo,
+        .repeat_info = KeyboardRepeatInfo
     };
 
     const wl_pointer_listener _pointerListener = {

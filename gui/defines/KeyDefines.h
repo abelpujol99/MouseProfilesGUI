@@ -5,6 +5,7 @@
 #define CHAR_A 97
 #define CHAR_Z 122
 #define CHAR_PLUS 43
+
 #define BACKSPACE "Back"
 #define SPACE_BAR "Space"
 #define DELETE "Del"

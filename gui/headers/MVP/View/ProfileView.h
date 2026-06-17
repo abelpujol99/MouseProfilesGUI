@@ -52,10 +52,6 @@ private:
 
     std::unique_ptr<Text> _inputTitle;
 
-    std::unique_ptr<Button> _inputRecordButton;
-
-    std::unique_ptr<Button> _inputDeleteButton;
-
     std::unique_ptr<RecycleView> _inputRecycleView;
 
     std::unique_ptr<Text> _outputTitle;

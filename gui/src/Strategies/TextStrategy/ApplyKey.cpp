@@ -4,58 +4,30 @@
 #include "Managers/Input/InputManager.h"
 #include "UI/Elements/Intermediate/Text.h"
 
+ApplyKey::ApplyKey()
+{
+    _charPressedActions.emplace(BACKSPACE, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(DELETE, [&](){_text->ErasePreviousChar();});
+    _charPressedActions.emplace(UP_ARROW, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(LEFT_ARROW, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(RIGHT_ARROW, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(DOWN_ARROW, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(HOME, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(END, [&](){_text->EraseLastChar();});
+    _charPressedActions.emplace(SPACE_BAR, [&](){_text->AddText(" ");});
+}
+
 void ApplyKey::StartProcessData()
 {
     _onCharPressedAction = InputManager::GetInstance().SubscribeToCharPressed([&](std::string character) {
 
-        if (character == BACKSPACE)
+        if (_charPressedActions.contains(character))
         {
-            _text->EraseLastChar();
+            _charPressedActions.at(character)();
             return;
-        }
-        if (character == DELETE)
-        {
-            _text->ErasePreviousChar();
-            return;
-        }
-        if (character == UP_ARROW)
-        {
-            //TODO
-            return;
-        }
-        if (character == LEFT_ARROW)
-        {
-            //TODO
-            return;
-        }
-        if (character == RIGHT_ARROW)
-        {
-            //TODO
-            return;
-        }
-        if (character == DOWN_ARROW)
-        {
-            //TODO
-            return;
-        }
-        if (character == HOME)
-        {
-            //TODO
-            return;
-        }
-        if (character == END)
-        {
-            //TODO
-            return;
-        }
-        if (character == SPACE_BAR)
-        {
-            character = ' ';
         }
 
-        std::string string {character};
-
-        _text->AddText(string);
+        _text->AddText(character);
     });
 }
 

@@ -1,28 +1,54 @@
 #include "Strategies/TextStrategy/ApplyKey.h"
 
 #include "KeyDefines.h"
-#include "Managers/Input/TypeManager.h"
+#include "Managers/Input/InputManager.h"
 #include "UI/Elements/Intermediate/Text.h"
 
 void ApplyKey::StartProcessData()
 {
-    _onTypingWeakAction = TypeManager::GetInstance().SubscribeToCurrentTypedCharObserver([&](char character) {
+    _onCharPressedAction = InputManager::GetInstance().SubscribeToCharPressed([&](std::string character) {
 
-        if (character == Backspace)
+        if (character == BACKSPACE)
         {
             _text->EraseLastChar();
-
             return;
         }
-
-        if (character == Delete)
+        if (character == DELETE)
         {
             _text->ErasePreviousChar();
-
             return;
         }
-
-        if (character == SpaceBar)
+        if (character == UP_ARROW)
+        {
+            //TODO
+            return;
+        }
+        if (character == LEFT_ARROW)
+        {
+            //TODO
+            return;
+        }
+        if (character == RIGHT_ARROW)
+        {
+            //TODO
+            return;
+        }
+        if (character == DOWN_ARROW)
+        {
+            //TODO
+            return;
+        }
+        if (character == HOME)
+        {
+            //TODO
+            return;
+        }
+        if (character == END)
+        {
+            //TODO
+            return;
+        }
+        if (character == SPACE_BAR)
         {
             character = ' ';
         }
@@ -35,5 +61,5 @@ void ApplyKey::StartProcessData()
 
 void ApplyKey::StopProcessData()
 {
-    TypeManager::GetInstance().UnsubscribeToCurrentTypedCharObserver(_onTypingWeakAction);
+    InputManager::GetInstance().UnsubscribeToCharPressed(std::move(_onCharPressedAction));
 }

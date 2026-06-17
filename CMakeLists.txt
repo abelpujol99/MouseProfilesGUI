@@ -117,6 +117,7 @@ CopyResourcesToBuild(${GUI_PROJECT_NAME} ${GUI_SOURCE_DIR})
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBEVDEV REQUIRED libevdev)
+pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 
 #Includes
 set(GUI_INCLUDES
@@ -124,7 +125,8 @@ set(GUI_INCLUDES
         ${gui_target_dir}/headers
         ${gui_target_dir}/usings
         ${gui_target_dir}/libraries
-        ${LIBEVDEV_INCLUDE_DIRS})
+        ${LIBEVDEV_INCLUDE_DIRS}
+        ${XKBCOMMON_INCLUDE_DIRS})
 
 IncludeDirectoriesToTarget(${GUI_PROJECT_NAME} PRIVATE GUI_INCLUDES)
 
@@ -136,6 +138,7 @@ set(GUI_LIBRARIES
         glfw
         wayland-client
         ${LIBEVDEV_LIBRARIES}
+        ${XKBCOMMON_LIBRARIES}
         glad
         stb
         shared)

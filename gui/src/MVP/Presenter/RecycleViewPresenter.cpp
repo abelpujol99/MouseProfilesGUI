@@ -85,8 +85,8 @@ void RecycleViewPresenter::OnScroll(float scrollValue)
 
 void RecycleViewPresenter::UpdateRecycleViewDataDisplay()
 {
-    _firstItemToShowIndex = Utilities::Math::Clamp(
-        std::ceil(_currentScroll / _itemHeight) * _viewsPerRow - _bufferRows * _viewsPerRow, 0, _listLength - _visibleItemsCount);
+    _firstItemToShowIndex = Utilities::Math::Min<int8_t>(
+        Utilities::Math::Max<int8_t>(std::ceil(_currentScroll / _itemHeight) * _viewsPerRow - _bufferRows * _viewsPerRow, _listLength - _visibleItemsCount), 0);
 }
 
 float RecycleViewPresenter::GetCurrentScroll() const

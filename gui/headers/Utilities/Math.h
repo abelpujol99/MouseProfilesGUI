@@ -2,18 +2,24 @@
 
 namespace Utilities::Math
 {
-    [[nodiscard]] static float Absolute(float value);
+    template<typename T>
+    [[nodiscard]] static T Absolute(T value);
 
-    [[nodiscard]] static int Absolute(int value);
+    template<typename T>
+    [[nodiscard]] static T Absolute(T value);
 
-    [[nodiscard]] static float Min(float value, float min);
+    template<typename T>
+    [[nodiscard]] static T Min(T value, T min);
 
-    [[nodiscard]] static float Max(float value, float max);
+    template<typename T>
+    [[nodiscard]] static T Max(T value, T max);
 
-    [[nodiscard]] static float Clamp(float value, float min, float max);
+    template<typename T>
+    [[nodiscard]] static T Clamp(T value, T min, T max);
 }
 
-inline float Utilities::Math::Absolute(float value)
+template<typename T>
+T Utilities::Math::Absolute(T value)
 {
     if (value < 0.f)
     {
@@ -23,17 +29,8 @@ inline float Utilities::Math::Absolute(float value)
     return value;
 }
 
-inline int Utilities::Math::Absolute(int value)
-{
-    if (value < 0)
-    {
-        value *= -1;
-    }
-
-    return value;
-}
-
-inline float Utilities::Math::Min(float value, float min)
+template<typename T>
+T Utilities::Math::Min(T value, T min)
 {
     if (value < min)
     {
@@ -43,7 +40,8 @@ inline float Utilities::Math::Min(float value, float min)
     return value;
 }
 
-inline float Utilities::Math::Max(float value, float max)
+template<typename T>
+T Utilities::Math::Max(T value, T max)
 {
     if (value > max)
     {
@@ -53,7 +51,8 @@ inline float Utilities::Math::Max(float value, float max)
     return value;
 }
 
-inline float Utilities::Math::Clamp(float value, float min, float max)
+template<typename T>
+T Utilities::Math::Clamp(T value, T min, T max)
 {
     if (value > max)
     {

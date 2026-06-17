@@ -6,7 +6,6 @@
 #include "Managers/GLFWManager.h"
 
 #include "Managers/Input/InputManager.h"
-#include "Managers/Input/TypeManager.h"
 #include "Managers/MVPManager.h"
 #include "Managers/View/DrawManager.h"
 
@@ -39,8 +38,6 @@ void WindowManager::Update()
 {
     InputManager::GetInstance().Start();
 
-    TypeManager& typeManager {TypeManager::GetInstance()};
-
     MVPManager::GetInstance();
 
     DrawManager& drawManager {DrawManager::GetInstance()};
@@ -48,8 +45,6 @@ void WindowManager::Update()
     while (!glfwWindowShouldClose(_window))
     {
         GLFWManager::PrepareWindow();
-
-        typeManager.Update();
 
         drawManager.DrawElements(ImGui::GetBackgroundDrawList());
 

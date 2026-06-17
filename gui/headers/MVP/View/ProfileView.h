@@ -2,6 +2,7 @@
 #include "BaseView.h"
 
 #include "MVP/Presenter/Profile/ProfilePresenter.h"
+#include "Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
 #include "Strategies/TextStrategy/ApplyKey.h"
 #include "Strategies/TextStrategy/DisplayKey.h"
 #include "UI/Elements/Advanced/Button.h"
@@ -39,7 +40,7 @@ private:
 
     std::unique_ptr<Button> _backButton;
 
-    std::unique_ptr<TextBox<char, ApplyKey>> _profileNameTextBox;
+    std::unique_ptr<TextBox<ApplyKey>> _profileNameTextBox;
 
     std::unique_ptr<Button> _profileLoadUnloadButton;
 
@@ -67,14 +68,14 @@ private:
 
     std::unique_ptr<Button> _shutdownApplicationCommandButton;
 
-    std::unique_ptr<TextBox<char, ApplyKey>> _inputTextBox;
+    std::unique_ptr<TextBox<ApplyKey>> _inputTextBox;
 
-    std::unique_ptr<TextBox<Key, DisplayKey>> _inputDisplayTextBox;
+    std::unique_ptr<TextBox<DisplayKey>> _inputDisplayTextBox;
 
     std::unique_ptr<RecycleView> _switchToSubProfileRecycleView;
 
 
-    std::unique_ptr<Rectangle> _templateContainerRectangle;
+    std::unique_ptr<Rectangle<DrawEmptyRectangle>> _templateContainerRectangle;
 
     std::unique_ptr<Button> _templateSubProfileEditButton;
 
@@ -86,7 +87,7 @@ private:
 
     std::unique_ptr<Button> _templateSwitchToSubProfileButton;
 
-    std::vector<std::unique_ptr<Rectangle>> _containerRectangles{};
+    std::vector<std::unique_ptr<Rectangle<DrawEmptyRectangle>>> _containerRectangles{};
 
     std::vector<std::unique_ptr<Button>> _subProfileEditButtons{};
 

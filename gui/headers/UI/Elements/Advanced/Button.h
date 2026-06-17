@@ -1,4 +1,5 @@
 #pragma once
+#include "Strategies/DrawStrategy/Rectangle/DrawFilledRectangle.h"
 #include "UI/Helpers/IClickable.h"
 
 #include "UI/Elements/Intermediate/Rectangle.h"
@@ -17,7 +18,7 @@ public:
 
     void SetIsHidden(bool isHidden) override;
 
-    void SetRectangle(std::unique_ptr<Rectangle>&& rectangle);
+    void SetRectangle(std::unique_ptr<Rectangle<DrawFilledRectangle>>&& foregroundRectangle);
 
     void SetTextComponent(std::unique_ptr<Text>&& text);
 
@@ -50,7 +51,7 @@ public:
 
 private:
 
-    std::unique_ptr<Rectangle> _rectangle;
+    std::unique_ptr<Rectangle<DrawFilledRectangle>> _rectangle;
 
     std::unique_ptr<Text> _text;
 

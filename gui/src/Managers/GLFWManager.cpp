@@ -57,20 +57,20 @@ GLFWwindow* GLFWManager::CreateWindow(int width, int height, const char* windowN
     return window;
 }
 
-WaylandSettings GLFWManager::GetWaylandSettings(const wl_registry_listener* registryListener)
+WaylandContext GLFWManager::GetWaylandContext(const wl_registry_listener* registryListener)
 {
-    WaylandSettings waylandSettings;
+    WaylandContext waylandContext;
 
-    waylandSettings.display = glfwGetWaylandDisplay();
+    waylandContext.display = glfwGetWaylandDisplay();
 
-    waylandSettings.registry = wl_display_get_registry(waylandSettings.display);
+    waylandContext.registry = wl_display_get_registry(waylandContext.display);
 
-    wl_registry_add_listener(waylandSettings.registry, registryListener, &waylandSettings);
+    wl_registry_add_listener(waylandContext.registry, registryListener, &waylandContext);
 
-    wl_display_roundtrip(waylandSettings.display);
-    wl_display_roundtrip(waylandSettings.display);
+    wl_display_roundtrip(waylandContext.display);
+    wl_display_roundtrip(waylandContext.display);
 
-    return waylandSettings;
+    return waylandContext;
 }
 
 void GLFWManager::PrepareWindow()
@@ -93,9 +93,12 @@ void GLFWManager::CleanseWindow(GLFWwindow* window)
     window = nullptr;
 }
 
-void GLFWManager::CleanseInput(const WaylandSettings& waylandSettings) noexcept
+void GLFWManager::CleanseInput(const WaylandContext& waylandContext) noexcept
 {
-    wl_keyboard_destroy(waylandSettings.keyboard);
-    wl_pointer_destroy(waylandSettings.pointer);
-    wl_seat_destroy(waylandSettings.seat);
+    wl_keyboard_destroy(waylandContext.keyboard);
+    wl_pointer_destroy(waylandContext.pointer);
+    wl_seat_destroy(waylandContext.seat);
+    xkb_state_unref(waylandContext.xkbState);
+    xkb_keymap_unref(waylandContext.xkbKeymap);
+    xkb_context_unref(waylandContext.xkbContext);
 }

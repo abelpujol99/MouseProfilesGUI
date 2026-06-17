@@ -29,9 +29,9 @@ void Button::SetIsHidden(bool isHidden)
     isHidden ? Disable() : Enable();
 }
 
-void Button::SetRectangle(std::unique_ptr<Rectangle>&& rectangle)
+void Button::SetRectangle(std::unique_ptr<Rectangle<DrawFilledRectangle>>&& foregroundRectangle)
 {
-    _rectangle = std::move(rectangle);
+    _rectangle = std::move(foregroundRectangle);
 }
 
 void Button::SetTextComponent(std::unique_ptr<Text>&& text)

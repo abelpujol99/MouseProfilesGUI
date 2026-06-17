@@ -1,25 +1,28 @@
 #pragma once
+#include <utility>
+
 #include "Utilities/Concepts/DerivedFromBaseProcessDataStrategy.h"
 #include "UI/Helpers/ISelectable.h"
 
 #include "UI/Elements/Intermediate/Rectangle.h"
 #include "UI/Elements/Intermediate/Text.h"
 #include "Managers/Gestures/SelectableManager.h"
+#include "Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
+template<DerivedFromBaseProcessDataStrategy TProcessData>
 class TextBox : public DrawableComponent, public ISelectable
 {
 public:
 
-    TextBox(bool isHidden = false);
+    TextBox(std::string placeHolder, bool isHidden = false);
 
     TextBox(const TextBox& other);
 
     ~TextBox() noexcept override;
 
-    void SetRectangle(std::unique_ptr<Rectangle> rectangle);
+    void SetRectangle(std::unique_ptr<Rectangle<DrawEmptyRectangle>> rectangle);
 
-    void SetText(std::unique_ptr<Text> text);
+    void SetTextComponent(std::unique_ptr<Text> text);
 
     void SetIsHidden(bool isHidden) override;
 
@@ -44,54 +47,56 @@ public:
 
     void Disable() override;
 
-    [[nodiscard]] std::unique_ptr<TextBox<T, TProcessData>> Clone() const;
+    [[nodiscard]] std::unique_ptr<TextBox<TProcessData>> Clone() const;
 
     void Draw(ImDrawList* drawList) override;
 
 private:
 
+    std::string _placeHolder;
+
     std::unique_ptr<TProcessData> _processDataStrategy;
 
-    std::unique_ptr<Rectangle> _rectangle;
+    std::unique_ptr<Rectangle<DrawEmptyRectangle>> _rectangle;
 
     std::unique_ptr<Text> _text;
 };
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-TextBox<T, TProcessData>::TextBox(bool isHidden) :
-        DrawableComponent(isHidden), _processDataStrategy(std::make_unique<TProcessData>())
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+TextBox<TProcessData>::TextBox(std::string placeHolder, bool isHidden) :
+        DrawableComponent(isHidden), _placeHolder(std::move(placeHolder)), _processDataStrategy(std::make_unique<TProcessData>())
 {}
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-TextBox<T, TProcessData>::TextBox(const TextBox& other) :
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+TextBox<TProcessData>::TextBox(const TextBox& other) :
     DrawableComponent(other.IsHidden()),
     _rectangle(other._rectangle->Clone()),
     _processDataStrategy(std::make_unique<TProcessData>()),
     _text(other._text->Clone())
 {}
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-TextBox<T, TProcessData>::~TextBox() noexcept
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+TextBox<TProcessData>::~TextBox() noexcept
 {
-    TextBox<T, TProcessData>::Unsubscribe();
+    TextBox<TProcessData>::Unsubscribe();
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetRectangle(std::unique_ptr<Rectangle> rectangle)
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::SetRectangle(std::unique_ptr<Rectangle<DrawEmptyRectangle>> rectangle)
 {
     _rectangle = std::move(rectangle);
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetText(std::unique_ptr<Text> text)
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::SetTextComponent(std::unique_ptr<Text> text)
 {
     _text = std::move(text);
 
     _processDataStrategy->SetText(_text.get());
 }
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetIsHidden(bool isHidden)
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::SetIsHidden(bool isHidden)
 {
     DrawableComponent::SetIsHidden(isHidden);
 
@@ -102,8 +107,8 @@ void TextBox<T, TProcessData>::SetIsHidden(bool isHidden)
     _text->SetIsHidden(isHidden);
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
     ImVec2* parentSizePointer, bool* isParentHiddenPointer)
 {
     BaseDrawable::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
@@ -113,50 +118,50 @@ void TextBox<T, TProcessData>::SetParentState(ImVec2* parentPositionPointer, ImV
     _text->SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-ImVec2 TextBox<T, TProcessData>::GetParentPosition() const
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+ImVec2 TextBox<TProcessData>::GetParentPosition() const
 {
     return DrawableComponent::GetParentPosition();
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-ImVec2 TextBox<T, TProcessData>::GetParentBottomRightPosition() const
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+ImVec2 TextBox<TProcessData>::GetParentBottomRightPosition() const
 {
     return DrawableComponent::GetParentBottomRightPosition();
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-bool TextBox<T, TProcessData>::CanBeSelected()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+bool TextBox<TProcessData>::CanBeSelected()
 {
     return !IsHidden();
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::OnSelect()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::OnSelect()
 {
     _processDataStrategy->StartProcessData();
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::OnUnselect()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::OnUnselect()
 {
     _processDataStrategy->StopProcessData();
 }
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::Subscribe()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::Subscribe()
 {
     SelectableManager::GetInstance().AddSelectable(this);
 }
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::Unsubscribe()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::Unsubscribe()
 {
     SelectableManager::GetInstance().RemoveSelectable(this);
 }
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::Enable()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::Enable()
 {
     Subscribe();
 
@@ -165,8 +170,8 @@ void TextBox<T, TProcessData>::Enable()
     _text->Enable();
 }
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::Disable()
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::Disable()
 {
     Unsubscribe();
 
@@ -175,14 +180,14 @@ void TextBox<T, TProcessData>::Disable()
     _text->Disable();
 }
 
-template <typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-std::unique_ptr<TextBox<T, TProcessData>> TextBox<T, TProcessData>::Clone() const
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+std::unique_ptr<TextBox<TProcessData>> TextBox<TProcessData>::Clone() const
 {
-    return std::make_unique<TextBox<T, TProcessData>>(*this);
+    return std::make_unique<TextBox<TProcessData>>(*this);
 }
 
-template<typename T, DerivedFromBaseProcessDataStrategy<T> TProcessData>
-void TextBox<T, TProcessData>::Draw(ImDrawList* drawList)
+template<DerivedFromBaseProcessDataStrategy TProcessData>
+void TextBox<TProcessData>::Draw(ImDrawList* drawList)
 {
     if (IsHidden())
     {

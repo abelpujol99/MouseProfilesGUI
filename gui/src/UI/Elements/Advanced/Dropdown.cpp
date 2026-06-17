@@ -18,7 +18,7 @@ Dropdown::Dropdown(std::unique_ptr<Button>&& button, std::unique_ptr<RectDrawabl
     _button->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
     _recycleViewContainer->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
 
-    _rectangle = DrawableFactory::CreateRectangle(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, false}, false);
+    _rectangle = DrawableFactory::CreateRectangle<DrawFilledRectangle>(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER}, false);
     _recycleViewContainer->AddDrawableComponent(_rectangle.get());
 }
 

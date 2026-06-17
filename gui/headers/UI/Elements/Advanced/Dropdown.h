@@ -30,7 +30,7 @@ private:
     void OnParentSizeUpdated() override;
 
 private:
-    std::unique_ptr<Rectangle> _rectangle;
+    std::unique_ptr<Rectangle<DrawFilledRectangle>> _rectangle;
 
     std::unique_ptr<Button> _button;
 

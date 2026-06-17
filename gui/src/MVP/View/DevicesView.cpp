@@ -14,7 +14,7 @@
 
 DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DevicesPresenter>())
 {
-    _templateDeviceButton = DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+    _templateDeviceButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
         SUB_TITLE_SIZE, WHITE}, [&](){}, false);
 
@@ -35,7 +35,7 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     std::unique_ptr<RectDrawable> reloadButtonRect {DrawableFactory::CreateRectDrawable(RELOAD_BUTTON_RECT_ANCHORS,
         RELOAD_BUTTON_RECT_PIVOT, RELOAD_BUTTON_RECT_RELATIVE_POSITION, RELOAD_BUTTON_RECT_SIZE, false)};
 
-    _reloadButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, true},
+    _reloadButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Reload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
             SUB_TITLE_SIZE, WHITE},
             [&]()
@@ -101,8 +101,6 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 void DevicesView::Enable()
 {
     *_mustBeHidden = false;
-
-    _reloadButton->Click();
 
     _reloadButton->Subscribe();
 

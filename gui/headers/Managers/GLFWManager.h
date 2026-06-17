@@ -1,6 +1,6 @@
  #pragma once
 
-#include "Utilities/WaylandSettings.h"
+#include "Utilities/WaylandContext.h"
 
  struct GLFWwindow;
 
@@ -10,13 +10,13 @@ public:
 
     static GLFWwindow* CreateWindow(int width, int height, const char* windowName);
 
-    static WaylandSettings GetWaylandSettings(const wl_registry_listener* registryListener);
+    static WaylandContext GetWaylandContext(const wl_registry_listener* registryListener);
 
     static void PrepareWindow();
 
     static void CleanseWindow(GLFWwindow* window);
 
-    static void CleanseInput(const WaylandSettings& waylandSettings) noexcept;
+    static void CleanseInput(const WaylandContext& waylandContext) noexcept;
 
 private:
 

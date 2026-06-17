@@ -1,7 +1,10 @@
 #pragma once
 #include "BaseProcessDataStrategy.h"
 
-class ApplyKey : public BaseProcessDataStrategy<char>
+#include <functional>
+#include <memory>
+
+class ApplyKey : public BaseProcessDataStrategy
 {
 public:
 
@@ -10,5 +13,9 @@ public:
     void StartProcessData() override;
 
     void StopProcessData() override;
+
+private:
+
+    std::weak_ptr<std::function<void(std::string)>> _onCharPressedAction;
 
 };

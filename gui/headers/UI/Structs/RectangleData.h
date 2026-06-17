@@ -7,5 +7,4 @@ struct RectangleData
     ImColor color;
     float rounding;
     float thickness;
-    bool isFilled;
 };

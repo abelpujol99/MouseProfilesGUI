@@ -15,12 +15,12 @@ void Pivot::SetPivot(float x, float y)
 
 void Pivot::SetXPivot(float value)
 {
-    _x = Utilities::Math::Clamp(value, 0, 1);
+    _x = Utilities::Math::Clamp(value, 0.f, 1.f);
 }
 
 void Pivot::SetYPivot(float value)
 {
-    _y = Utilities::Math::Clamp(value, 0, 1);
+    _y = Utilities::Math::Clamp(value, 0.f, 1.f);
 }
 
 float Pivot::GetXPivot() const

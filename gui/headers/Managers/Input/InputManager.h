@@ -2,10 +2,7 @@
 
 #include "imgui.h"
 
-#include "Observer/ObserverSingleValue.h"
-#include "TimeUsings.h"
-#include "Utilities/WaylandSettings.h"
-#include "Utilities/Event/MapEventBus.h"
+#include "Utilities/WaylandContext.h"
 #include "Utilities/Event/SingleEventBus.h"
 
 class InputManager
@@ -22,6 +19,12 @@ public:
     static InputManager& GetInstance();
 
     void Start();
+
+    std::weak_ptr<std::function<void(const char*)>> SubscribeToKeyPressed(std::function<void(const char*)>&& action);
+    void UnsubscribeToKeyPressed(std::weak_ptr<std::function<void(const char*)>>&& action);
+
+    std::weak_ptr<std::function<void(std::string)>> SubscribeToCharPressed(std::function<void(std::string)>&& action);
+    void UnsubscribeToCharPressed(std::weak_ptr<std::function<void(std::string)>>&& action);
 
     [[nodiscard]] ImVec2 GetMousePosition() const;
 
@@ -41,7 +44,7 @@ private:
 
     static void KeyboardKey(void* data, wl_keyboard* waylandKeyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
 
-    static void KeyboardModifiers(void* data, wl_keyboard* waylandKeyboard, uint32_t, uint32_t modifiersReleased, uint32_t modifiersLatched,
+    static void KeyboardModifiers(void* data, wl_keyboard* waylandKeyboard, uint32_t, uint32_t modifiersPressed, uint32_t modifiersLatched,
         uint32_t modifiersLocked, uint32_t group);
 
     static void KeyboardRepeatInfo(void* data, wl_keyboard* waylandKeyboard, int32_t rate, int32_t delay);
@@ -92,13 +95,17 @@ private:
 
     static std::unique_ptr<InputManager> _inputManagerInstance;
 
-    TimePoint _mousePressedTimePoint[ImGuiMouseButton_COUNT];
+    uint32_t _mousePressedTimePoint[ImGuiMouseButton_COUNT];
 
-    SingleEventBus<Duration> _mouseButtonsTimePressed[ImGuiMouseButton_COUNT];
+    SingleEventBus<uint32_t> _mouseButtonsTimePressed[ImGuiMouseButton_COUNT];
 
     ImVec2 _mousePosition;
 
-    WaylandSettings _waylandSettings;
+    SingleEventBus<const char*> _keyPressed;
+
+    SingleEventBus<std::string> _charPressed;
+
+    WaylandContext _waylandContext;
 
     const wl_keyboard_listener _keyboardListener = {
         .keymap = KeyboardKeymap,

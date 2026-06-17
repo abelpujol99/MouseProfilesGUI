@@ -1,8 +1,11 @@
 #include "Managers/Input/InputManager.h"
 
 #include <unistd.h>
+#include <sys/mman.h>
+#include <bits/mman-linux.h>
 #include <libevdev/libevdev.h>
 
+#include "KeyDefines.h"
 #include "Factory/ImGuiFactory.h"
 #include "Managers/GLFWManager.h"
 #include "Managers/Application/ApplicationManager.h"
@@ -11,11 +14,13 @@
 #include "Managers/Gestures/SelectableManager.h"
 #include "Utilities/Math.h"
 
+#define XKB_OFFSET 8
+
 std::unique_ptr<InputManager> InputManager::_inputManagerInstance {nullptr};
 
 InputManager::InputManager()
 {
-    _mouseButtonsTimePressed->SetAction([&](Duration timePressed) {
+    _mouseButtonsTimePressed->SetAction([&](uint32_t timePressed) {
 
         return timePressed;
     });
@@ -23,7 +28,7 @@ InputManager::InputManager()
 
 InputManager::~InputManager() noexcept
 {
-    GLFWManager::CleanseInput(_waylandSettings);
+    GLFWManager::CleanseInput(_waylandContext);
 }
 
 InputManager& InputManager::GetInstance()
@@ -38,7 +43,29 @@ InputManager& InputManager::GetInstance()
 
 void InputManager::Start()
 {
-    _waylandSettings = GLFWManager::GetWaylandSettings(&_registryListener);
+    _waylandContext = GLFWManager::GetWaylandContext(&_registryListener);
+}
+
+std::weak_ptr<std::function<void(const char*)>> InputManager::SubscribeToKeyPressed(
+    std::function<void(const char*)>&& action)
+{
+    return _keyPressed.Subscribe(std::move(action));
+}
+
+void InputManager::UnsubscribeToKeyPressed(std::weak_ptr<std::function<void(const char*)>>&& action)
+{
+    _keyPressed.Unsubscribe(std::move(action));
+}
+
+std::weak_ptr<std::function<void(std::string)>> InputManager::SubscribeToCharPressed(
+    std::function<void(std::string)>&& action)
+{
+    return _charPressed.Subscribe(std::move(action));
+}
+
+void InputManager::UnsubscribeToCharPressed(std::weak_ptr<std::function<void(std::string)>>&& action)
+{
+    _charPressed.Unsubscribe(std::move(action));
 }
 
 ImVec2 InputManager::GetMousePosition() const
@@ -52,7 +79,43 @@ ImVec2 InputManager::GetMousePosition() const
 
 void InputManager::KeyboardKeymap(void* data, wl_keyboard* waylandKeyboard, uint32_t format, int32_t file, uint32_t size)
 {
-    printf("[keyboard] keymap received (format=%u, size=%u)\n", format, size);
+    InputManager* inputManager {static_cast<InputManager*>(data)};
+    WaylandContext& context {inputManager->_waylandContext};
+
+    if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1)
+    {
+        close(file);
+        return;
+    }
+
+    char* mapString {static_cast<char*>(mmap(nullptr, size, PROT_READ, MAP_PRIVATE, file, 0))};
+
+    if (mapString == MAP_FAILED)
+    {
+        close(file);
+        return;
+    }
+
+    if (context.xkbContext == nullptr)
+    {
+        context.xkbContext = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+    }
+    if (context.xkbState != nullptr)
+    {
+        xkb_state_unref(context.xkbState);
+    }
+    if (context.xkbKeymap != nullptr)
+    {
+        xkb_keymap_unref(context.xkbKeymap);
+    }
+
+    context.xkbKeymap = xkb_keymap_new_from_string(context.xkbContext, mapString, XKB_KEYMAP_FORMAT_TEXT_V1,
+        XKB_KEYMAP_COMPILE_NO_FLAGS);
+
+    context.xkbState = xkb_state_new(context.xkbKeymap);
+
+    munmap(mapString, size);
+
     close(file);
 }
 
@@ -60,16 +123,73 @@ void InputManager::KeyboardKey(void* data, wl_keyboard* waylandKeyboard, uint32_
     uint32_t state)
 {
     InputManager* inputManager {static_cast<InputManager*>(data)};
+    WaylandContext& context {inputManager->_waylandContext};
 
-    const char* name {libevdev_event_code_get_name(EV_KEY, key)};
-    printf("[keyboard] %s | %d\n", name, state);
+    if (context.xkbState == nullptr || state != WL_KEYBOARD_KEY_STATE_PRESSED)
+    {
+        return;
+    }
+
+    //Physical Key
+    inputManager->_keyPressed.SendValue(libevdev_event_code_get_name(EV_KEY, key));
+
+    //Char
+    uint32_t keyCode {key + XKB_OFFSET};
+    xkb_keysym_t sym = xkb_state_key_get_one_sym(context.xkbState, keyCode);
+
+    switch (sym) {
+        case XKB_KEY_BackSpace:
+            inputManager->_charPressed.SendValue(BACKSPACE);
+            return;
+        case XKB_KEY_Delete:
+            inputManager->_charPressed.SendValue(DELETE);
+            return;
+        case XKB_KEY_space:
+            inputManager->_charPressed.SendValue(SPACE_BAR);
+            return;
+        case XKB_KEY_Up:
+            inputManager->_charPressed.SendValue(UP_ARROW);
+            return;
+        case XKB_KEY_Left:
+            inputManager->_charPressed.SendValue(LEFT_ARROW);
+            return;
+        case XKB_KEY_Right:
+            inputManager->_charPressed.SendValue(RIGHT_ARROW);
+            return;
+        case XKB_KEY_Down:
+            inputManager->_charPressed.SendValue(DOWN_ARROW);
+            return;
+        case XKB_KEY_Home:
+            inputManager->_charPressed.SendValue(HOME);
+            return;
+        case XKB_KEY_End:
+            inputManager->_charPressed.SendValue(END);
+            return;
+        default:
+            break;
+    }
+
+    char utf8[8] = {0};
+    int length {xkb_state_key_get_utf8(context.xkbState, keyCode, utf8, sizeof(utf8))};
+
+    if (length > 0)
+    {
+        inputManager->_charPressed.SendValue(utf8);
+    }
 }
 
-void InputManager::KeyboardModifiers(void* data, wl_keyboard* waylandKeyboard, uint32_t, uint32_t modifiersReleased,
+void InputManager::KeyboardModifiers(void* data, wl_keyboard* waylandKeyboard, uint32_t, uint32_t modifiersPressed,
     uint32_t modifiersLatched, uint32_t modifiersLocked, uint32_t group)
 {
-    printf("[keyboard] mods: depressed=%u latched=%u locked=%u group=%u\n",
-           modifiersReleased, modifiersLatched, modifiersLocked, group);
+    InputManager* inputManager {static_cast<InputManager*>(data)};
+    WaylandContext& context {inputManager->_waylandContext};
+
+    if (context.xkbState == nullptr)
+    {
+        return;
+    }
+
+    xkb_state_update_mask(context.xkbState, modifiersPressed, modifiersLatched, modifiersLocked, 0, 0, group);
 }
 
 void InputManager::KeyboardRepeatInfo(void* data, wl_keyboard* waylandKeyboard, int32_t rate, int32_t delay)
@@ -106,15 +226,15 @@ void InputManager::PointerButton(void* data, wl_pointer* waylandPointer, uint32_
     InputManager* inputManager {static_cast<InputManager*>(data)};
 
     const char* name {libevdev_event_code_get_name(EV_KEY, button)};
-    printf("[pointer] %s | %d\n", name, state);
 
     if (state == 1)
     {
-        inputManager->_mousePressedTimePoint[button] = SystemClock::now();
+        inputManager->_mousePressedTimePoint[button] = time;
+        inputManager->_keyPressed.SendValue(name);
         return;
     }
 
-    inputManager->_mouseButtonsTimePressed->SendValue(SystemClock::now() - inputManager->_mousePressedTimePoint[button]);
+    inputManager->_mouseButtonsTimePressed->SendValue(time - inputManager->_mousePressedTimePoint[button]);
 
     ClickableManager::GetInstance().OnClick(inputManager->_mousePosition);
     SelectableManager::GetInstance().OnSelect(inputManager->_mousePosition);
@@ -124,7 +244,7 @@ void InputManager::PointerAxis(void* data, wl_pointer* waylandPointer, uint32_t 
 {
     InputManager* inputManager {static_cast<InputManager*>(data)};
 
-    float valueClamped {Utilities::Math::Clamp(wl_fixed_from_double(value), -1, 1)};
+    float valueClamped {Utilities::Math::Clamp<float>(wl_fixed_from_double(value), -1.f, 1.f)};
 
     const char* name {libevdev_event_code_get_name(EV_REL, axis)};
     printf("[pointer] %s | %d\n", name, value);
@@ -145,7 +265,7 @@ void InputManager::PointerAxis(void* data, wl_pointer* waylandPointer, uint32_t 
 
 void InputManager::SeatCapabilities(void* data, wl_seat* waylandSeat, uint32_t caps)
 {
-    WaylandSettings* settings = static_cast<WaylandSettings*>(data);
+    WaylandContext* settings = static_cast<WaylandContext*>(data);
 
     bool has_kb  = caps & WL_SEAT_CAPABILITY_KEYBOARD;
     bool has_ptr = caps & WL_SEAT_CAPABILITY_POINTER;
@@ -189,7 +309,7 @@ void InputManager::SeatName(void* data, wl_seat* waylandSeat, const char* name)
 void InputManager::RegistryGlobal(void* data, wl_registry* waylandRegistry, uint32_t name, const char* interface,
     uint32_t version)
 {
-    WaylandSettings* settings = static_cast<WaylandSettings*>(data);
+    WaylandContext* settings = static_cast<WaylandContext*>(data);
 
     if (strcmp(interface, wl_seat_interface.name) == 0)
     {

@@ -14,7 +14,7 @@
 
 DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _presenter(std::make_unique<DeviceProfilesPresenter>())
 {
-    _templateProfileButton = DrawableFactory::CreateButton(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER, false},
+    _templateProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
         SUB_TITLE_SIZE, WHITE}, [&](){}, false);
 
@@ -35,7 +35,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
     std::unique_ptr<RectDrawable> backButtonRect {DrawableFactory::CreateRectDrawable(BACK_BUTTON_RECT_ANCHORS,
         BACK_BUTTON_RECT_PIVOT, BACK_BUTTON_RECT_RELATIVE_POSITION, BACK_BUTTON_RECT_SIZE, false)};
 
-    _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER, true},
+    _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Back", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
             SUB_TITLE_SIZE, WHITE},
             [&]()
@@ -75,7 +75,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
     std::unique_ptr<RectDrawable> currentProfileEditButtonRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_EDIT_BUTTON_RECT_ANCHORS,
         CURRENT_PROFILE_EDIT_BUTTON_RECT_PIVOT, CURRENT_PROFILE_EDIT_BUTTON_RECT_RELATIVE_POSITION, CURRENT_PROFILE_EDIT_BUTTON_RECT_SIZE, false)};
 
-    _editCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{BLUE, LOW_ROUNDING, THIN_BORDER, true},
+    _editCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Edit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
         SUB_TITLE_SIZE, WHITE},
         [&]()
@@ -88,7 +88,7 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
     std::unique_ptr<RectDrawable> currentProfileUnloadButtonRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_UNLOAD_BUTTON_RECT_ANCHORS,
         CURRENT_PROFILE_UNLOAD_BUTTON_RECT_PIVOT, CURRENT_PROFILE_UNLOAD_BUTTON_RECT_RELATIVE_POSITION, CURRENT_PROFILE_UNLOAD_BUTTON_RECT_SIZE, false)};
 
-    _unloadCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{BLUE, LOW_ROUNDING, THIN_BORDER, true},
+    _unloadCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
         SUB_TITLE_SIZE, WHITE},
         [&]()

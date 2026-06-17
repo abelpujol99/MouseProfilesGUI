@@ -1,10 +1,7 @@
 #pragma once
-#include <memory>
-#include <functional>
 
 class Text;
 
-template<typename T>
 class BaseProcessDataStrategy
 {
 public:
@@ -19,13 +16,5 @@ public:
 
 protected:
 
-    std::weak_ptr<std::function<void(T)>> _onTypingWeakAction;
-
     Text* _text{nullptr};
 };
-
-template<typename T>
-void BaseProcessDataStrategy<T>::SetText(Text* text)
-{
-    _text = text;
-}

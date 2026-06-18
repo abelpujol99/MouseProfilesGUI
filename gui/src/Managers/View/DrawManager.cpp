@@ -5,8 +5,8 @@ DrawManager* DrawManager::_drawManagerInstance {nullptr};
 DrawManager::DrawManager()
 {
     _devicesView = std::make_unique<DevicesView>(true);
-    _deviceProfilesView = std::make_unique<DeviceProfilesView>(true);
-    _profileView = std::make_unique<ProfileView>(true);
+    /*_deviceProfilesView = std::make_unique<DeviceProfilesView>(true);
+    _profileView = std::make_unique<ProfileView>(true);*/
 
     _currentView = _devicesView.get();
     _currentView->Enable();

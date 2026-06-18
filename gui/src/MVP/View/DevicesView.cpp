@@ -16,15 +16,15 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 {
     _templateDeviceButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
-        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, [&](){}, false);
+        TEXT_SIZE, SUB_TITLE_SIZE, WHITE, LOW_PADDING}, [&](){}, false);
 
 #pragma region Top Bar
 
-    std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
-        TOP_BAR_RECT_PIVOT, TOP_BAR_RECT_RELATIVE_POSITION,  TOP_BAR_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(RectDrawableData{TOP_BAR_RECT_ANCHORS,
+        TOP_BAR_RECT_PIVOT, TOP_BAR_RECT_RELATIVE_POSITION,  TOP_BAR_RECT_SIZE}, false)};
 
-    std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(TITLE_RECT_ANCHORS,
-        TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{TITLE_RECT_ANCHORS,
+        TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE}, false)};
 
     _title = DrawableFactory::CreateText(TextData{"Devices", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, MAIN_TITLE_SIZE, WHITE, NO_PADDING});
@@ -32,8 +32,8 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     titleRect->AddDrawableComponent(_title.get());
     topBarRect->AddRectDrawable(std::move(titleRect));
 
-    std::unique_ptr<RectDrawable> reloadButtonRect {DrawableFactory::CreateRectDrawable(RELOAD_BUTTON_RECT_ANCHORS,
-        RELOAD_BUTTON_RECT_PIVOT, RELOAD_BUTTON_RECT_RELATIVE_POSITION, RELOAD_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> reloadButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{RELOAD_BUTTON_RECT_ANCHORS,
+        RELOAD_BUTTON_RECT_PIVOT, RELOAD_BUTTON_RECT_RELATIVE_POSITION, RELOAD_BUTTON_RECT_SIZE}, false)};
 
     _reloadButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Reload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -50,8 +50,8 @@ DevicesView::DevicesView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region Devices Recycle View
 
-    std::unique_ptr<RectDrawable> devicesRecycleViewRect {DrawableFactory::CreateRectDrawable(DEVICES_RECYCLE_VIEW_RECT_ANCHORS,
-        DEVICES_RECYCLE_VIEW_RECT_PIVOT, DEVICES_RECYCLE_VIEW_RECT_RELATIVE_POSITION, DEVICES_RECYCLE_VIEW_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> devicesRecycleViewRect {DrawableFactory::CreateRectDrawable(RectDrawableData{DEVICES_RECYCLE_VIEW_RECT_ANCHORS,
+        DEVICES_RECYCLE_VIEW_RECT_PIVOT, DEVICES_RECYCLE_VIEW_RECT_RELATIVE_POSITION, DEVICES_RECYCLE_VIEW_RECT_SIZE}, false)};
 
     _devicesRecycleView = DrawableFactory::CreateRecycleView(DEVICES_RECYCLE_VIEW_VIEWS_PER_ROW,
         DEVICES_RECYCLE_VIEW_PADDINGS, {0, DEVICES_RECYCLE_VIEW_ROW_HEIGHT}, DEVICES_RECYCLE_VIEW_BUFFER_ROWS,

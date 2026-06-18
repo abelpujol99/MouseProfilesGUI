@@ -5,13 +5,10 @@
 
 struct TextPadding
 {
-public:
-
+    TextPadding() = delete;
     TextPadding(float padding);
     TextPadding(float verticalPadding, float horizontalPadding);
     TextPadding(float topPadding, float bottomPadding, float leftPadding, float rightPadding);
-
-private:
 
     float topPadding;
     float bottomPadding;
@@ -43,5 +40,5 @@ struct TextData
     float minimumFontSize;
     float maximumFontSize;
     ImColor color;
-    TextPadding textPadding;
+    TextPadding padding;
 };

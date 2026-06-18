@@ -38,11 +38,11 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region Top Bar
 
-    std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
-        TOP_BAR_RECT_PIVOT,TOP_BAR_RECT_RELATIVE_POSITION, TOP_BAR_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(RectDrawableData{TOP_BAR_RECT_ANCHORS,
+        TOP_BAR_RECT_PIVOT,TOP_BAR_RECT_RELATIVE_POSITION, TOP_BAR_RECT_SIZE}, false)};
 
-    std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(TITLE_RECT_ANCHORS,
-        TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{TITLE_RECT_ANCHORS,
+        TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE}, false)};
 
     _title = DrawableFactory::CreateText(TextData{"", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -51,8 +51,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     titleRect->AddDrawableComponent(_title.get());
     topBarRect->AddRectDrawable(std::move(titleRect));
 
-    std::unique_ptr<RectDrawable> backButtonRect {DrawableFactory::CreateRectDrawable(BACK_BUTTON_RECT_ANCHORS,
-        BACK_BUTTON_RECT_PIVOT, BACK_BUTTON_RECT_RELATIVE_POSITION, BACK_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> backButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{BACK_BUTTON_RECT_ANCHORS,
+        BACK_BUTTON_RECT_PIVOT, BACK_BUTTON_RECT_RELATIVE_POSITION, BACK_BUTTON_RECT_SIZE}, false)};
 
     _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Back", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -69,8 +69,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region Profile Name
 
-    std::unique_ptr<RectDrawable> profileNameRect {DrawableFactory::CreateRectDrawable(PROFILE_NAME_RECT_ANCHORS,
-        PROFILE_NAME_RECT_PIVOT, PROFILE_NAME_RECT_RELATIVE_POSITION, PROFILE_NAME_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> profileNameRect {DrawableFactory::CreateRectDrawable(RectDrawableData{PROFILE_NAME_RECT_ANCHORS,
+        PROFILE_NAME_RECT_PIVOT, PROFILE_NAME_RECT_RELATIVE_POSITION, PROFILE_NAME_RECT_SIZE}, false)};
 
     _profileNameTextBox = DrawableFactory::CreateTextBox(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"", TextHorizontalAlignments::LEFT, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -82,11 +82,11 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region Profile Buttons
 
-    std::unique_ptr<RectDrawable> profileButtonsRect {DrawableFactory::CreateRectDrawable(PROFILE_BUTTONS_RECT_ANCHORS,
-        PROFILE_BUTTONS_RECT_PIVOT, PROFILE_BUTTONS_RECT_RELATIVE_POSITION, PROFILE_NAME_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> profileButtonsRect {DrawableFactory::CreateRectDrawable(RectDrawableData{PROFILE_BUTTONS_RECT_ANCHORS,
+        PROFILE_BUTTONS_RECT_PIVOT, PROFILE_BUTTONS_RECT_RELATIVE_POSITION, PROFILE_NAME_RECT_SIZE}, false)};
 
-    std::unique_ptr<RectDrawable> profileLoadUnloadButtonRect {DrawableFactory::CreateRectDrawable(PROFILE_LOAD_UNLOAD_BUTTON_RECT_ANCHORS,
-        PROFILE_LOAD_UNLOAD_BUTTON_RECT_PIVOT, PROFILE_LOAD_UNLOAD_BUTTON_RECT_RELATIVE_POSITION, PROFILE_LOAD_UNLOAD_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> profileLoadUnloadButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{PROFILE_LOAD_UNLOAD_BUTTON_RECT_ANCHORS,
+        PROFILE_LOAD_UNLOAD_BUTTON_RECT_PIVOT, PROFILE_LOAD_UNLOAD_BUTTON_RECT_RELATIVE_POSITION, PROFILE_LOAD_UNLOAD_BUTTON_RECT_SIZE}, false)};
 
     _profileLoadUnloadButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Load/Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -96,8 +96,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     profileLoadUnloadButtonRect->AddDrawableComponent(_profileLoadUnloadButton.get());
 
-    std::unique_ptr<RectDrawable> profileLinkButtonRect {DrawableFactory::CreateRectDrawable(PROFILE_LINK_BUTTON_RECT_ANCHORS,
-        PROFILE_LINK_BUTTON_RECT_PIVOT, PROFILE_LINK_BUTTON_RECT_RELATIVE_POSITION, PROFILE_LINK_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> profileLinkButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{PROFILE_LINK_BUTTON_RECT_ANCHORS,
+        PROFILE_LINK_BUTTON_RECT_PIVOT, PROFILE_LINK_BUTTON_RECT_RELATIVE_POSITION, PROFILE_LINK_BUTTON_RECT_SIZE}, false)};
 
     _profileLinkButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Link", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -114,8 +114,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region SubProfile
 
-    std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECT_ANCHORS,
-        SUB_PROFILE_RECT_PIVOT, SUB_PROFILE_RECT_RELATIVE_POSITION, SUB_PROFILE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> subProfileRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_RECT_ANCHORS,
+        SUB_PROFILE_RECT_PIVOT, SUB_PROFILE_RECT_RELATIVE_POSITION, SUB_PROFILE_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> subProfileRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -125,16 +125,16 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(subProfileRectangleContainer));
 
-    std::unique_ptr<RectDrawable> subProfileTitleRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_TITLE_RECT_ANCHORS,
-        SUB_PROFILE_TITLE_RECT_PIVOT, SUB_PROFILE_TITLE_RECT_RELATIVE_POSITION, SUB_PROFILE_TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> subProfileTitleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_TITLE_RECT_ANCHORS,
+        SUB_PROFILE_TITLE_RECT_PIVOT, SUB_PROFILE_TITLE_RECT_RELATIVE_POSITION, SUB_PROFILE_TITLE_RECT_SIZE}, false)};
 
     _subProfileTitle = DrawableFactory::CreateText(TextData{"SubProfiles", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, false);
 
     subProfileTitleRect->AddDrawableComponent(_subProfileTitle.get());
 
-    std::unique_ptr<RectDrawable> subProfileListRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_LIST_RECT_ANCHORS,
-        SUB_PROFILE_LIST_RECT_PIVOT, SUB_PROFILE_LIST_RECT_RELATIVE_POSITION, SUB_PROFILE_LIST_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> subProfileListRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_LIST_RECT_ANCHORS,
+        SUB_PROFILE_LIST_RECT_PIVOT, SUB_PROFILE_LIST_RECT_RELATIVE_POSITION, SUB_PROFILE_LIST_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> subProfileListRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -148,9 +148,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         SUB_PROFILE_RECYCLE_VIEW_PADDINGS, {0, SUB_PROFILE_RECYCLE_VIEW_ROW_HEIGHT}, SUB_PROFILE_RECYCLE_VIEW_BUFFER_ROWS,
         [&](RectDrawable* view)
         {
-            std::unique_ptr<RectDrawable> subProfileEditButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_ANCHORS,
+            std::unique_ptr<RectDrawable> subProfileEditButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_ANCHORS,
                 SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_RELATIVE_POSITION,
-                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_SIZE, false)};
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_EDIT_BUTTON_RECT_SIZE}, false)};
 
             std::unique_ptr<Button> subProfileEditButton {_templateSubProfileEditButton->Clone()};
 
@@ -158,9 +158,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
             _subProfileEditButtons.push_back(std::move(subProfileEditButton));
 
-            std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_ANCHORS,
+            std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_ANCHORS,
                 SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_RELATIVE_POSITION,
-                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_SIZE, false)};
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_SUB_PROFILE_DELETE_BUTTON_RECT_SIZE}, false)};
 
             std::unique_ptr<Button> subProfileDeleteButton {_templateSubProfileDeleteButton->Clone()};
 
@@ -200,8 +200,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region Input
 
-    std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(INPUT_RECT_ANCHORS, INPUT_RECT_PIVOT,
-        INPUT_RECT_RELATIVE_POSITION, INPUT_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> inputRect {DrawableFactory::CreateRectDrawable(RectDrawableData{INPUT_RECT_ANCHORS, INPUT_RECT_PIVOT,
+        INPUT_RECT_RELATIVE_POSITION, INPUT_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> inputRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -211,16 +211,16 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(inputRectangleContainer));
 
-    std::unique_ptr<RectDrawable> inputTitleRect {DrawableFactory::CreateRectDrawable(INPUT_TITLE_RECT_ANCHORS,
-        INPUT_TITLE_RECT_PIVOT, INPUT_TITLE_RECT_RELATIVE_POSITION, INPUT_TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> inputTitleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{INPUT_TITLE_RECT_ANCHORS,
+        INPUT_TITLE_RECT_PIVOT, INPUT_TITLE_RECT_RELATIVE_POSITION, INPUT_TITLE_RECT_SIZE}, false)};
 
     _inputTitle = DrawableFactory::CreateText(TextData{"Input", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, false);
 
     inputTitleRect->AddDrawableComponent(_inputTitle.get());
 
-    std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(INPUT_LIST_RECT_ANCHORS,
-        INPUT_LIST_RECT_PIVOT, INPUT_LIST_RECT_RELATIVE_POSITION, INPUT_LIST_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> inputListRect {DrawableFactory::CreateRectDrawable(RectDrawableData{INPUT_LIST_RECT_ANCHORS,
+        INPUT_LIST_RECT_PIVOT, INPUT_LIST_RECT_RELATIVE_POSITION, INPUT_LIST_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> inputListRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -234,9 +234,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         INPUT_RECYCLE_VIEW_PADDINGS, {0, INPUT_RECYCLE_VIEW_ROW_HEIGHT}, INPUT_RECYCLE_VIEW_BUFFER_ROWS,
         [&](RectDrawable* view)
         {
-            std::unique_ptr<RectDrawable> subProfileEditButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_ANCHORS,
+            std::unique_ptr<RectDrawable> subProfileEditButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_ANCHORS,
                 SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_RELATIVE_POSITION,
-                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_SIZE, false)};
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_EDIT_BUTTON_RECT_SIZE}, false)};
 
             std::unique_ptr<Button> subProfileEditButton {_templateInputEditButton->Clone()};
 
@@ -244,9 +244,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
             _inputEditButtons.push_back(std::move(subProfileEditButton));
 
-            std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_ANCHORS,
+            std::unique_ptr<RectDrawable> subProfileDeleteButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_ANCHORS,
                 SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_PIVOT, SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_RELATIVE_POSITION,
-                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_SIZE, false)};
+                SUB_PROFILE_RECYCLE_VIEW_DEFAULT_INPUT_DELETE_BUTTON_RECT_SIZE}, false)};
 
             std::unique_ptr<Button> subProfileDeleteButton {_templateInputDeleteButton->Clone()};
 
@@ -286,8 +286,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
 #pragma region Output
 
-    std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(OUTPUT_RECT_ANCHORS, OUTPUT_RECT_PIVOT,
-        OUTPUT_RECT_RELATIVE_POSITION, OUTPUT_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> outputRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_RECT_ANCHORS, OUTPUT_RECT_PIVOT,
+        OUTPUT_RECT_RELATIVE_POSITION, OUTPUT_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> outputRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -297,16 +297,16 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(outputRectangleContainer));
 
-    std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(OUTPUT_TITLE_RECT_ANCHORS,
-        OUTPUT_TITLE_RECT_PIVOT, OUTPUT_TITLE_RECT_RELATIVE_POSITION, OUTPUT_TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> outputTitleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_TITLE_RECT_ANCHORS,
+        OUTPUT_TITLE_RECT_PIVOT, OUTPUT_TITLE_RECT_RELATIVE_POSITION, OUTPUT_TITLE_RECT_SIZE}, false)};
 
     _outputTitle = DrawableFactory::CreateText(TextData{"Output", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING}, false);
 
     outputTitleRect->AddDrawableComponent(_outputTitle.get());
 
-    std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_RECT_ANCHORS,
-        OUTPUT_TYPE_RECT_PIVOT, OUTPUT_TYPE_RECT_RELATIVE_POSITION, OUTPUT_TYPE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> outputTypeRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_TYPE_RECT_ANCHORS,
+        OUTPUT_TYPE_RECT_PIVOT, OUTPUT_TYPE_RECT_RELATIVE_POSITION, OUTPUT_TYPE_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> outputTypeRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -316,9 +316,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(outputTypeRectangleContainer));
 
-    std::unique_ptr<RectDrawable> emitInputEventCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_ANCHORS,
+    std::unique_ptr<RectDrawable> emitInputEventCommandButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_ANCHORS,
         OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
-        OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_SIZE, false)};
+        OUTPUT_EMIT_INPUT_EVENT_COMMAND_BUTTON_RECT_SIZE}, false)};
 
     _emitInputEventCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Emit Input Event", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -332,9 +332,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     emitInputEventCommandButtonRect->AddDrawableComponent(_emitInputEventCommandButton.get());
 
-    std::unique_ptr<RectDrawable> macroCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_MACRO_COMMAND_BUTTON_RECT_ANCHORS,
-        OUTPUT_MACRO_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_MACRO_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
-        OUTPUT_MACRO_COMMAND_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> macroCommandButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_MACRO_COMMAND_BUTTON_RECT_ANCHORS,
+        OUTPUT_MACRO_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_MACRO_COMMAND_BUTTON_RECT_RELATIVE_POSITION, OUTPUT_MACRO_COMMAND_BUTTON_RECT_SIZE},
+        false)};
 
     _macroCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Macro", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -345,9 +345,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     macroCommandButtonRect->AddDrawableComponent(_macroCommandButton.get());
 
-    std::unique_ptr<RectDrawable> switchToSubProfileCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_ANCHORS,
+    std::unique_ptr<RectDrawable> switchToSubProfileCommandButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_ANCHORS,
         OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
-        OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_SIZE, false)};
+        OUTPUT_SWITCH_TO_SUB_PROFILE_COMMAND_BUTTON_RECT_SIZE}, false)};
 
     _switchToSubProfileCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Switch to SubProfile", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -361,9 +361,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     switchToSubProfileCommandButtonRect->AddDrawableComponent(_switchToSubProfileCommandButton.get());
 
-    std::unique_ptr<RectDrawable> shutdownApplicationCommandButtonRect {DrawableFactory::CreateRectDrawable(OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_ANCHORS,
+    std::unique_ptr<RectDrawable> shutdownApplicationCommandButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_ANCHORS,
         OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_PIVOT, OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_RELATIVE_POSITION,
-        OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_SIZE, false)};
+        OUTPUT_SHUTDOWN_APPLICATION_COMMAND_BUTTON_RECT_SIZE}, false)};
 
     _shutdownApplicationCommandButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Shutdown Application", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -379,8 +379,8 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
     outputTypeRect->AddRectDrawable(std::move(switchToSubProfileCommandButtonRect));
     outputTypeRect->AddRectDrawable(std::move(shutdownApplicationCommandButtonRect));
 
-    std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_RECT_ANCHORS,
-        OUTPUT_TYPE_DETAILS_RECT_PIVOT, OUTPUT_TYPE_DETAILS_RECT_RELATIVE_POSITION, OUTPUT_TYPE_DETAILS_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> outputTypeDetailsRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_TYPE_DETAILS_RECT_ANCHORS,
+        OUTPUT_TYPE_DETAILS_RECT_PIVOT, OUTPUT_TYPE_DETAILS_RECT_RELATIVE_POSITION, OUTPUT_TYPE_DETAILS_RECT_SIZE}, false)};
 
     std::unique_ptr<Rectangle<DrawEmptyRectangle>> outputTypeDetailsRectangleContainer {_templateContainerRectangle->Clone()};
 
@@ -390,9 +390,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     _containerRectangles.push_back(std::move(outputTypeDetailsRectangleContainer));
 
-    std::unique_ptr<RectDrawable> outputTypeDetailsInputTextBoxRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_ANCHORS,
+    std::unique_ptr<RectDrawable> outputTypeDetailsInputTextBoxRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_ANCHORS,
         OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_PIVOT, OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_RELATIVE_POSITION,
-        OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_SIZE, false)};
+        OUTPUT_TYPE_DETAILS_INPUT_TEXT_BOX_RECT_SIZE}, false)};
 
     _inputTextBox = DrawableFactory::CreateTextBox(RectangleData{WHITE, LOW_ROUNDING, THIN_BORDER},
         TextData{"Type input to emit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
@@ -400,9 +400,9 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
 
     outputTypeDetailsInputTextBoxRect->AddDrawableComponent(_inputTextBox.get());
 
-    std::unique_ptr<RectDrawable> outputTypeDetailsInputDisplayTextBoxRect {DrawableFactory::CreateRectDrawable(OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_ANCHORS,
+    std::unique_ptr<RectDrawable> outputTypeDetailsInputDisplayTextBoxRect {DrawableFactory::CreateRectDrawable(RectDrawableData{OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_ANCHORS,
         OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_PIVOT, OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_RELATIVE_POSITION,
-        OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_SIZE, false)};
+        OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_SIZE}, false)};
 
     _inputDisplayTextBox = DrawableFactory::CreateDisplayTextBox(RectangleData{INPUT_DISPLAY_TEXT_BOX_COLOR, LOW_ROUNDING, THIN_BORDER},
         TextData{"Emit inputs here", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,

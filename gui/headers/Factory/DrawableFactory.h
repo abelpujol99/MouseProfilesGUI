@@ -14,6 +14,7 @@
 #include "UI/Structs/TextData.h"
 #include "AnchorsDefines.h"
 #include "PivotDefines.h"
+#include "UI/Elements/Intermediate/Text.h"
 
 template<DerivedFromDrawRectangleStrategy TDrawRectangleStrategy>
 class Rectangle;
@@ -24,8 +25,7 @@ public:
 
     DrawableFactory() = delete;
 
-    static std::unique_ptr<RectDrawable> CreateRectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition,
-    ImVec2&& desiredSize, bool isHidden);
+    static std::unique_ptr<RectDrawable> CreateRectDrawable(RectDrawableData&& rectDrawableData, bool isHidden);
 
     static std::unique_ptr<Texture> CreateTexture(const char* textureFileName, bool isHidden = false);
 

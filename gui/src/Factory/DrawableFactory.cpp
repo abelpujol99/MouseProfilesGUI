@@ -4,11 +4,9 @@
 #include "PivotDefines.h"
 #include "UI/Structs/TextData.h"
 
-std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(Anchors&& anchors, Pivot&& pivot ,ImVec2&& relativePosition,
-                                                                  ImVec2&& desiredSize, bool isHidden)
+std::unique_ptr<RectDrawable> DrawableFactory::CreateRectDrawable(RectDrawableData&& rectDrawableData, bool isHidden)
 {
-    return std::make_unique<RectDrawable>(std::move(anchors), std::move(pivot), std::move(relativePosition),
-        std::move(desiredSize), isHidden);
+    return std::make_unique<RectDrawable>(std::move(rectDrawableData), isHidden);
 }
 
 std::unique_ptr<Texture> DrawableFactory::CreateTexture(const char* textureFileName, bool isHidden)

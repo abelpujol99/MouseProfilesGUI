@@ -3,7 +3,7 @@
 #include "UI/Helpers/IClickable.h"
 
 #include "UI/Elements/Intermediate/Rectangle.h"
-#include "UI/Elements/Intermediate/Text.h"
+#include "../Intermediate/Text.h"
 
 class Button : public DrawableComponent, public IClickable
 {
@@ -26,6 +26,8 @@ public:
 
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
         bool* isParentHiddenPointer) override;
+
+    void OnParentSizeUpdated() override;
 
     [[nodiscard]] ImVec2 GetParentPosition() const override;
 

@@ -3,10 +3,10 @@
 #include "Managers/View/ResolutionManager.h"
 #include "Utilities/Math.h"
 
-RectDrawable::RectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden) :
-        BaseDrawable(isHidden), _anchors(std::move(anchors)), _pivot(std::move(pivot)),
-        _relativePosition({ResolutionManager::GetInstance().AdaptWidth(relativePosition.x),
-        ResolutionManager::GetInstance().AdaptHeight(relativePosition.y)}), _desiredSize(std::move(desiredSize))
+RectDrawable::RectDrawable(RectDrawableData&& rectDrawableData, bool isHidden) :
+        BaseDrawable(isHidden), _anchors(std::move(rectDrawableData.anchors)), _pivot(std::move(rectDrawableData.pivot)),
+        _relativePosition({ResolutionManager::GetInstance().AdaptWidth(rectDrawableData.relativePosition.x),
+        ResolutionManager::GetInstance().AdaptHeight(rectDrawableData.relativePosition.y)}), _desiredSize(std::move(rectDrawableData.desiredSize))
 {}
 
 void RectDrawable::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
@@ -205,11 +205,7 @@ void RectDrawable::UpdateRectDrawables()
 
     for (auto it {_rectDrawables.begin()}; it != itEnd; ++it)
     {
-        (*it)->UpdatePosition();
-
-        (*it)->UpdateSize();
-
-        (*it)->UpdateRectDrawables();
+        (*it)->UpdateAttributes();
     }
 }
 

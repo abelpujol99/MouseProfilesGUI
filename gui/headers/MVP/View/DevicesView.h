@@ -4,6 +4,7 @@
 
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
+#include "UI/Elements/Intermediate/Text.h"
 
 class DevicesView : public BaseView
 {

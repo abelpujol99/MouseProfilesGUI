@@ -123,3 +123,10 @@ void Button::Draw(ImDrawList* drawList)
 
     _text->Draw(drawList);
 }
+
+void Button::OnParentSizeUpdated()
+{
+    _rectangle->OnParentSizeUpdated();
+
+    _text->OnParentSizeUpdated();
+}

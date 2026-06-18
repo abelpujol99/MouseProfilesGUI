@@ -4,6 +4,7 @@
 #include <set>
 
 #include "UI/Elements/Base/DrawableComponent.h"
+#include "UI/Structs/RectDrawableData.h"
 #include "Utilities/UI/Anchors.h"
 #include "Utilities/UI/Pivot.h"
 #include "Utilities/Concepts/Pointer.h"
@@ -12,7 +13,7 @@ class RectDrawable : public BaseDrawable, public DrawableTransform
 {
 public:
 
-    RectDrawable(Anchors&& anchors, Pivot&& pivot, ImVec2&& relativePosition, ImVec2&& desiredSize, bool isHidden);
+    RectDrawable(RectDrawableData&& rectDrawableData, bool isHidden);
 
     ~RectDrawable() override = default;
 

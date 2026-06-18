@@ -5,7 +5,7 @@
 #include "UI/Helpers/ISelectable.h"
 
 #include "UI/Elements/Intermediate/Rectangle.h"
-#include "UI/Elements/Intermediate/Text.h"
+#include "../../Intermediate/Text.h"
 #include "Managers/Gestures/SelectableManager.h"
 #include "Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
 

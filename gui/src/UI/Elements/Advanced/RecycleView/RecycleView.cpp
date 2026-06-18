@@ -132,17 +132,17 @@ void RecycleView::UpdateResizableDrawablesCount()
 
 void RecycleView::CreateRow(ImVec2&& lastRowPosition)
 {
-    std::unique_ptr<RectDrawable> row {DrawableFactory::CreateRectDrawable(ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
-        {lastRowPosition.x, lastRowPosition.y + _rowsSize.y}, {_rowsSize.x, _rowsSize.y}, false)};
+    std::unique_ptr<RectDrawable> row {DrawableFactory::CreateRectDrawable(RectDrawableData{ANCHORS_TOP_STRETCH, PIVOT_TOP_CENTER,
+        {lastRowPosition.x, lastRowPosition.y + _rowsSize.y}, {_rowsSize.x, _rowsSize.y}}, false)};
 
     _views.emplace(row.get(), std::vector<RectDrawable*>{});
 
     for (uint8_t i {0}; i < _viewsPerRow; ++i)
     {
-        std::unique_ptr<RectDrawable> view {DrawableFactory::CreateRectDrawable(
+        std::unique_ptr<RectDrawable> view {DrawableFactory::CreateRectDrawable(RectDrawableData{
             Anchors{{i * _widthPerView + _marginBetweenViews.x, _marginBetweenViews.y},
                 {(i + 1) * _widthPerView - _marginBetweenViews.x, 1 - _marginBetweenViews.y}}, PIVOT_MIDDLE_CENTER,
-                {0, 0}, {0, 0}, false)};
+                {0, 0}, {0, 0}}, false)};
 
         _addDefault(view.get());
 

@@ -1,7 +1,7 @@
 #include "Strategies/TextStrategy/DisplayKey.h"
 
 #include "Managers/Input/InputManager.h"
-#include "UI/Elements/Intermediate/Text.h"
+#include "../../../headers/UI/Elements/Intermediate/Text.h"
 
 void DisplayKey::StartProcessData()
 {
@@ -9,10 +9,10 @@ void DisplayKey::StartProcessData()
 
         if (!_text->GetText().empty())
         {
-            _text->AddText("+");
+            //_text->AddText("+");
         }
 
-        _text->AddText(std::string(keyPressed));
+        //_text->AddText(std::string(keyPressed));
     });
 }
 

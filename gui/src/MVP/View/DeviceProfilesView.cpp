@@ -20,11 +20,11 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
 
 #pragma region Top Bar
-    std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(TOP_BAR_RECT_ANCHORS,
-        TOP_BAR_RECT_PIVOT,TOP_BAR_RECT_RELATIVE_POSITION, TOP_BAR_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> topBarRect{DrawableFactory::CreateRectDrawable(RectDrawableData{TOP_BAR_RECT_ANCHORS,
+        TOP_BAR_RECT_PIVOT,TOP_BAR_RECT_RELATIVE_POSITION, TOP_BAR_RECT_SIZE}, false)};
 
-    std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(TITLE_RECT_ANCHORS,
-        TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> titleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{TITLE_RECT_ANCHORS,
+        TITLE_RECT_PIVOT, TITLE_RECT_RELATIVE_POSITION, TITLE_RECT_SIZE}, false)};
 
     _title = DrawableFactory::CreateText(TextData{"", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TITLE_SIZE, MAIN_TITLE_SIZE, WHITE, NO_PADDING});
@@ -32,8 +32,8 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
     titleRect->AddDrawableComponent(_title.get());
     topBarRect->AddRectDrawable(std::move(titleRect));
 
-    std::unique_ptr<RectDrawable> backButtonRect {DrawableFactory::CreateRectDrawable(BACK_BUTTON_RECT_ANCHORS,
-        BACK_BUTTON_RECT_PIVOT, BACK_BUTTON_RECT_RELATIVE_POSITION, BACK_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> backButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{BACK_BUTTON_RECT_ANCHORS,
+        BACK_BUTTON_RECT_PIVOT, BACK_BUTTON_RECT_RELATIVE_POSITION, BACK_BUTTON_RECT_SIZE}, false)};
 
     _backButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Back", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -50,30 +50,30 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
 #pragma region Current Profile
 
-    std::unique_ptr<RectDrawable> currentProfileRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_RECT_ANCHORS,
-        CURRENT_PROFILE_RECT_PIVOT, CURRENT_PROFILE_RECT_RELATIVE_POSITION, CURRENT_PROFILE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> currentProfileRect {DrawableFactory::CreateRectDrawable(RectDrawableData{CURRENT_PROFILE_RECT_ANCHORS,
+        CURRENT_PROFILE_RECT_PIVOT, CURRENT_PROFILE_RECT_RELATIVE_POSITION, CURRENT_PROFILE_RECT_SIZE}, false)};
 
-    std::unique_ptr<RectDrawable> currentProfileTitleRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_TITLE_RECT_ANCHORS,
-        CURRENT_PROFILE_TITLE_RECT_PIVOT, CURRENT_PROFILE_TITLE_RECT_RELATIVE_POSITION, CURRENT_PROFILE_TITLE_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> currentProfileTitleRect {DrawableFactory::CreateRectDrawable(RectDrawableData{CURRENT_PROFILE_TITLE_RECT_ANCHORS,
+        CURRENT_PROFILE_TITLE_RECT_PIVOT, CURRENT_PROFILE_TITLE_RECT_RELATIVE_POSITION, CURRENT_PROFILE_TITLE_RECT_SIZE}, false)};
 
     _currentProfileTitle = DrawableFactory::CreateText(TextData{"Current Profile", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, SUB_TITLE_SIZE, TITLE_SIZE, WHITE, NO_PADDING});
 
     currentProfileTitleRect->AddDrawableComponent(_currentProfileTitle.get());
 
-    std::unique_ptr<RectDrawable> currentProfileNameRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_NAME_RECT_ANCHORS,
-        CURRENT_PROFILE_NAME_RECT_PIVOT, CURRENT_PROFILE_NAME_RECT_RELATIVE_POSITION, CURRENT_PROFILE_NAME_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> currentProfileNameRect {DrawableFactory::CreateRectDrawable(RectDrawableData{CURRENT_PROFILE_NAME_RECT_ANCHORS,
+        CURRENT_PROFILE_NAME_RECT_PIVOT, CURRENT_PROFILE_NAME_RECT_RELATIVE_POSITION, CURRENT_PROFILE_NAME_RECT_SIZE}, false)};
 
     _currentProfileName = DrawableFactory::CreateText(TextData{"Name", TextHorizontalAlignments::CENTER,
         TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, WHITE, NO_PADDING});
 
     currentProfileNameRect->AddDrawableComponent(_currentProfileName.get());
 
-    std::unique_ptr<RectDrawable> currentProfileButtonsRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_BUTTONS_RECT_ANCHORS,
-        CURRENT_PROFILE_BUTTONS_RECT_PIVOT, CURRENT_PROFILE_BUTTONS_RECT_RELATIVE_POSITION, CURRENT_PROFILE_BUTTONS_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> currentProfileButtonsRect {DrawableFactory::CreateRectDrawable(RectDrawableData{CURRENT_PROFILE_BUTTONS_RECT_ANCHORS,
+        CURRENT_PROFILE_BUTTONS_RECT_PIVOT, CURRENT_PROFILE_BUTTONS_RECT_RELATIVE_POSITION, CURRENT_PROFILE_BUTTONS_RECT_SIZE}, false)};
 
-    std::unique_ptr<RectDrawable> currentProfileEditButtonRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_EDIT_BUTTON_RECT_ANCHORS,
-        CURRENT_PROFILE_EDIT_BUTTON_RECT_PIVOT, CURRENT_PROFILE_EDIT_BUTTON_RECT_RELATIVE_POSITION, CURRENT_PROFILE_EDIT_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> currentProfileEditButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{CURRENT_PROFILE_EDIT_BUTTON_RECT_ANCHORS,
+        CURRENT_PROFILE_EDIT_BUTTON_RECT_PIVOT, CURRENT_PROFILE_EDIT_BUTTON_RECT_RELATIVE_POSITION, CURRENT_PROFILE_EDIT_BUTTON_RECT_SIZE}, false)};
 
     _editCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Edit", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -85,8 +85,8 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
     currentProfileEditButtonRect->AddDrawableComponent(_editCurrentProfileButton.get());
 
-    std::unique_ptr<RectDrawable> currentProfileUnloadButtonRect {DrawableFactory::CreateRectDrawable(CURRENT_PROFILE_UNLOAD_BUTTON_RECT_ANCHORS,
-        CURRENT_PROFILE_UNLOAD_BUTTON_RECT_PIVOT, CURRENT_PROFILE_UNLOAD_BUTTON_RECT_RELATIVE_POSITION, CURRENT_PROFILE_UNLOAD_BUTTON_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> currentProfileUnloadButtonRect {DrawableFactory::CreateRectDrawable(RectDrawableData{CURRENT_PROFILE_UNLOAD_BUTTON_RECT_ANCHORS,
+        CURRENT_PROFILE_UNLOAD_BUTTON_RECT_PIVOT, CURRENT_PROFILE_UNLOAD_BUTTON_RECT_RELATIVE_POSITION, CURRENT_PROFILE_UNLOAD_BUTTON_RECT_SIZE}, false)};
 
     _unloadCurrentProfileButton = DrawableFactory::CreateButton(RectangleData{GRAY, LOW_ROUNDING, THIN_BORDER},
         TextData{"Unload", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE, FontFamilyTypes::ROBOTO_REGULAR,
@@ -109,8 +109,8 @@ DeviceProfilesView::DeviceProfilesView(bool isHidden) : BaseView(isHidden), _pre
 
 #pragma region Profile Recycle View
 
-    std::unique_ptr<RectDrawable> profileRecycleViewRect {DrawableFactory::CreateRectDrawable(PROFILE_RECYCLE_VIEW_RECT_ANCHORS_SHRANK,
-        PROFILE_RECYCLE_VIEW_RECT_PIVOT, PROFILE_RECYCLE_VIEW_RECT_RELATIVE_POSITION, PROFILE_RECYCLE_VIEW_RECT_SIZE, false)};
+    std::unique_ptr<RectDrawable> profileRecycleViewRect {DrawableFactory::CreateRectDrawable(RectDrawableData{PROFILE_RECYCLE_VIEW_RECT_ANCHORS_SHRANK,
+        PROFILE_RECYCLE_VIEW_RECT_PIVOT, PROFILE_RECYCLE_VIEW_RECT_RELATIVE_POSITION, PROFILE_RECYCLE_VIEW_RECT_SIZE}, false)};
 
     _profileRecycleViewRect = profileRecycleViewRect.get();
 

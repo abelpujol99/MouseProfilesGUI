@@ -7,6 +7,7 @@
 #include "UI/Structs/TextData.h"
 
 #define MAX_ITERATIONS 10
+#define BASE_FONT_SIZE 100
 
 Text::Text(TextData&& textData, bool isHidden) :
         DrawableComponent(isHidden), _text(textData.text),
@@ -16,6 +17,9 @@ Text::Text(TextData&& textData, bool isHidden) :
         _fontSize(_minimumFontSize)
 {
     TextToWords();
+
+    _spaceWidth = CalculateTextSize(BASE_FONT_SIZE, " ").x;
+    _referenceTextHeight = CalculateTextSize(BASE_FONT_SIZE, "a").y;
 }
 
 Text::Text(const Text& other) :
@@ -29,7 +33,9 @@ Text::Text(const Text& other) :
     _color(other._color),
     _currentColor(other._currentColor),
     _padding(other._padding),
-    _fontSize(_minimumFontSize)
+    _fontSize(_minimumFontSize),
+    _spaceWidth(other._spaceWidth),
+    _referenceTextHeight(other._referenceTextHeight)
 {
     TextToWords();
 }
@@ -119,20 +125,20 @@ void Text::UpdateRelativePosition()
 {
     if (_horizontalAlignment == TextHorizontalAlignments::LEFT)
     {
-        _getPositionXAction = [&]() {
+        _getPositionXAction = [&](Line line) {
             return GetParentPosition().x;
         };
     }
     else if (_horizontalAlignment == TextHorizontalAlignments::CENTER)
     {
-        _getPositionXAction = [&]() {
-            return GetParentPosition().x - _textSize.x / 2 + GetParentSize().x / 2;
+        _getPositionXAction = [&](Line line) {
+            return GetParentPosition().x + GetParentSize().x / 2 - line.width / 2;
         };
     }
     else if (_horizontalAlignment == TextHorizontalAlignments::RIGHT)
     {
-        _getPositionXAction = [&]() {
-            return GetParentPosition().x - _textSize.x + GetParentSize().x;
+        _getPositionXAction = [&](Line line) {
+            return GetParentPosition().x + GetParentSize().x - line.width;
         };
     }
 
@@ -145,13 +151,13 @@ void Text::UpdateRelativePosition()
     else if (_verticalAlignment == TextVerticalAlignments::MIDDLE)
     {
         _getPositionYAction = [&]() {
-            return GetParentPosition().y - _textHeight / 2 + GetParentSize().y / 2;
+            return GetParentPosition().y + GetParentSize().y / 2 - _textHeight * _lines.size() / 2;
         };
     }
     else if (_verticalAlignment == TextVerticalAlignments::BOTTOM)
     {
         _getPositionYAction = [&]() {
-            return GetParentPosition().y - _textHeight + GetParentSize().y;
+            return GetParentPosition().y + GetParentSize().y - _textHeight * _lines.size();
         };
     }
 }
@@ -161,15 +167,6 @@ void Text::UpdateLayout()
     TextToWords();
 
     UpdateMeasures();
-}
-
-void Text::UpdateMeasures()
-{
-    UpdateFontSize();
-
-    BuildLines(_fontSize, _lines);
-
-    _textHeight = CalculateTextHeight(_fontSize);
 }
 
 void Text::TextToWords()
@@ -203,6 +200,30 @@ void Text::TextToWords()
 
         start = end + 1;
     }
+
+    CalculateWordsWidth();
+}
+
+void Text::CalculateWordsWidth()
+{
+    for (Word& word : _words)
+    {
+        word.referenceWidth = CalculateTextSize(BASE_FONT_SIZE, word.text).x;
+    }
+}
+
+ImVec2 Text::CalculateTextSize(float fontSize, std::string text)
+{
+    return _fontFamily->CalcTextSizeA(fontSize, FLT_MAX, -1.f, text.c_str());
+}
+
+void Text::UpdateMeasures()
+{
+    UpdateFontSize();
+
+    _lines = CreateLines(_fontSize);
+
+    _textHeight = _referenceTextHeight * (_fontSize / BASE_FONT_SIZE);
 }
 
 void Text::UpdateFontSize()
@@ -219,7 +240,7 @@ void Text::UpdateFontSize()
     {
         float mid {(low + high) * 0.5f};
 
-        if (LayoutFits(mid))
+        if (DoesLayoutFit(mid))
         {
             low = mid;
         }
@@ -234,32 +255,34 @@ void Text::UpdateFontSize()
     UpdateRelativePosition();
 }
 
-bool Text::LayoutFits(float fontSize)
+bool Text::DoesLayoutFit(float fontSize)
 {
-    std::vector<std::string> tempLines;
+    std::vector<Line> tempLines {CreateLines(fontSize)};
 
-    BuildLines(fontSize, tempLines);
+    const float lineHeight {_textHeight * (fontSize / BASE_FONT_SIZE)};
 
-    float availableHeight {GetParentSize().y - _padding.topPadding - _padding.bottomPadding};
+    float broadestLine {0};
 
-    const float lineHeight {CalculateTextHeight(fontSize)};
+    for (const auto& line : tempLines)
+    {
+        if (line.width <= broadestLine)
+        {
+            continue;
+        }
 
-    return tempLines.size() * lineHeight <= availableHeight;
+        broadestLine = line.width;
+    }
+
+    const float availableHeight {GetParentSize().y - _padding.topPadding - _padding.bottomPadding};
+
+    const float availableWidth {GetParentSize().x - _padding.leftPadding - _padding.rightPassing};
+
+    return broadestLine <= availableWidth && tempLines.size() * lineHeight <= availableHeight;
 }
 
-ImVec2 Text::CalculateTextSize(float fontSize, std::string text)
+std::vector<Text::Line> Text::CreateLines(float fontSize)
 {
-    return _fontFamily->CalcTextSizeA(fontSize, FLT_MAX, -1.f, text.c_str());
-}
-
-float Text::CalculateTextHeight(float fontSize)
-{
-    return _fontFamily->CalcTextSizeA(fontSize, FLT_MAX, -1.f, "a").y;
-}
-
-void Text::BuildLines(float fontSize, std::vector<std::string>& outLines)
-{
-    outLines.clear();
+    std::vector<Line> lines;
 
     const float availableWidth {GetParentSize().x - _padding.leftPadding - _padding.rightPassing};
 
@@ -267,11 +290,13 @@ void Text::BuildLines(float fontSize, std::vector<std::string>& outLines)
 
     float currentWidth {0};
 
-    const float spaceWidth {CalculateTextSize(fontSize, " ").x};
+    float scale {fontSize / BASE_FONT_SIZE};
+
+    const float spaceWidth {_spaceWidth * scale};
 
     for (const Word& word : _words)
     {
-        const float wordWidth {CalculateTextSize(fontSize, word.text).x};
+        const float wordWidth {word.referenceWidth * scale};
 
         bool isCurrentLineEmpty {currentLine.empty()};
 
@@ -291,12 +316,12 @@ void Text::BuildLines(float fontSize, std::vector<std::string>& outLines)
         {
             if (isCurrentLineEmpty)
             {
-                outLines.push_back(word.text);
+                lines.emplace_back(word.text, wordWidth);
                 currentWidth = 0;
                 continue;
             }
 
-            outLines.push_back(currentLine);
+            lines.emplace_back(currentLine, currentWidth);
             currentLine = word.text;
             currentWidth = wordWidth;
         }
@@ -304,8 +329,10 @@ void Text::BuildLines(float fontSize, std::vector<std::string>& outLines)
 
     if (!currentLine.empty())
     {
-        outLines.push_back(currentLine);
+        lines.emplace_back(currentLine, currentWidth);
     }
+
+    return lines;
 }
 
 std::string Text::GetText() const
@@ -339,8 +366,8 @@ void Text::Draw(ImDrawList* drawList)
 
     for (const auto& line : _lines)
     {
-        drawList->AddText(_fontFamily, _fontSize, {_getPositionXAction(), positionY}, _currentColor,
-        line.c_str());
+        drawList->AddText(_fontFamily, _fontSize, {_getPositionXAction(line), positionY}, _currentColor,
+        line.text.c_str());
 
         positionY += _textHeight;
     }

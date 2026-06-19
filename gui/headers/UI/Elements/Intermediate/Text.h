@@ -57,6 +57,12 @@ private:
     struct Word
     {
         std::string text;
+        float referenceWidth;
+    };
+
+    struct Line
+    {
+        std::string text;
         float width;
     };
 
@@ -68,15 +74,15 @@ private:
 
     void TextToWords();
 
-    void UpdateFontSize();
-
-    bool LayoutFits(float fontSize);
-
-    void BuildLines(float fontSize, std::vector<std::string>& outLines);
+    void CalculateWordsWidth();
 
     [[nodiscard]] ImVec2 CalculateTextSize(float fontSize, std::string text);
 
-    float CalculateTextHeight(float fontSize);
+    void UpdateFontSize();
+
+    bool DoesLayoutFit(float fontSize);
+
+    std::vector<Line> CreateLines(float fontSize);
 
     float _previousParentWidth;
 
@@ -84,9 +90,11 @@ private:
 
     std::vector<Word> _words;
 
-    std::vector<std::string> _lines;
+    std::vector<Line> _lines;
 
     float _spaceWidth;
+
+    float _referenceTextHeight;
 
     float _textHeight;
 
@@ -110,7 +118,7 @@ private:
 
     ImColor _currentColor;
 
-    std::function<float()> _getPositionXAction;
+    std::function<float(Line)> _getPositionXAction;
 
     std::function<float()> _getPositionYAction;
 };

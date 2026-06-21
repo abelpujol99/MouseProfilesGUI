@@ -1,6 +1,8 @@
 #pragma once
+#include <cstdint>
+#include <functional>
 #include <memory>
-#include <unordered_map>
+#include <map>
 #include "imgui.h"
 
 enum class FontFamilyTypes;
@@ -16,7 +18,9 @@ public:
 
     static FontFactory& GetInstance();
 
-    ImFont* GetFontFamily(FontFamilyTypes fontFamilyType) const;
+    [[nodiscard]] ImFont* GetFontFamily(FontFamilyTypes fontFamilyType) const;
+
+    [[nodiscard]] float GetTextReferenceWidth(const FontFamilyTypes& fontFamily, std::string text) const;
 
 private:
 
@@ -24,6 +28,12 @@ private:
 
     static std::unique_ptr<FontFactory> _fontFamilyInstance;
 
-    std::unordered_map<FontFamilyTypes, ImFont*> _fontFamilies;
+    std::map<FontFamilyTypes, ImFont*> _fontFamilies;
+
+    std::map<FontFamilyTypes, ImFontBaked*> _fontBackedFamilies;
+
+    std::map<FontFamilyTypes, std::function<float(uint32_t)>> _fontsSizes;
+
+    std::map<uint32_t, float> _robotoSizes;
 
 };

@@ -7,8 +7,8 @@
 #include "TextDefines.h"
 #include "Factory/Font/FontFamilyTypes.h"
 #include "Factory/DrawableFactory.h"
-#include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
-#include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
+#include "UI/Elements/Intermediate/Text/TextHorizontalAlignments.h"
+#include "UI/Elements/Intermediate/Text/TextVerticalAlignments.h"
 #include "UI/Structs/TextData.h"
 #include "Themes/DeviceProfilesViewThemeDefines.h"
 

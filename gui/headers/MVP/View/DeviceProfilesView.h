@@ -4,7 +4,7 @@
 
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
-#include "UI/Elements/Intermediate/Text.h"
+#include "UI/Elements/Intermediate/Text/Text.h"
 
 class DeviceProfilesView : public BaseView
 {

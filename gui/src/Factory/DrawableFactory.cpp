@@ -19,20 +19,9 @@ std::unique_ptr<Text> DrawableFactory::CreateText(TextData&& textData, bool isHi
     return std::make_unique<Text>(std::move(textData), isHidden);
 }
 
-std::unique_ptr<TextBox<ApplyKey>> DrawableFactory::CreateTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
+std::unique_ptr<TextBox> DrawableFactory::CreateTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
 {
-    std::unique_ptr<TextBox<ApplyKey>> textBox {std::make_unique<TextBox<ApplyKey>>(textData.text, isHidden)};
-
-    textBox->SetRectangle(CreateRectangle<DrawEmptyRectangle>(std::move(rectangleData), isHidden));
-
-    textBox->SetTextComponent(CreateText(std::move(textData), isHidden));
-
-    return textBox;
-}
-
-std::unique_ptr<TextBox<DisplayKey>> DrawableFactory::CreateDisplayTextBox(RectangleData&& rectangleData, TextData&& textData, bool isHidden)
-{
-    std::unique_ptr<TextBox<DisplayKey>> textBox {std::make_unique<TextBox<DisplayKey>>(textData.text, isHidden)};
+    std::unique_ptr<TextBox> textBox {std::make_unique<TextBox>(textData.text, isHidden)};
 
     textBox->SetRectangle(CreateRectangle<DrawEmptyRectangle>(std::move(rectangleData), isHidden));
 

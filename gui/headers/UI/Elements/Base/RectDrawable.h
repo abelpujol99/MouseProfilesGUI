@@ -15,6 +15,8 @@ public:
 
     RectDrawable(RectDrawableData&& rectDrawableData, bool isHidden);
 
+    RectDrawable(const RectDrawable& other);
+
     ~RectDrawable() override = default;
 
     void SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer, ImVec2* parentSizePointer,
@@ -57,6 +59,8 @@ public:
     void Enable() override;
 
     void Disable() override;
+
+    [[nodiscard]] std::unique_ptr<RectDrawable> Clone() const;
 
     void Draw(ImDrawList* drawList) override;
 

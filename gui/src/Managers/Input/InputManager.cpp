@@ -23,10 +23,8 @@ InputManager::InputManager()
     _charPressedActions.emplace(XKB_KEY_BackSpace, [&](){_charPressed.SendValue(BACKSPACE);});
     _charPressedActions.emplace(XKB_KEY_Delete, [&](){_charPressed.SendValue(DELETE);});
     _charPressedActions.emplace(XKB_KEY_space, [&](){_charPressed.SendValue(SPACE_BAR);});
-    _charPressedActions.emplace(XKB_KEY_Up, [&](){_charPressed.SendValue(UP_ARROW);});
     _charPressedActions.emplace(XKB_KEY_Left, [&](){_charPressed.SendValue(LEFT_ARROW);});
     _charPressedActions.emplace(XKB_KEY_Right, [&](){_charPressed.SendValue(RIGHT_ARROW);});
-    _charPressedActions.emplace(XKB_KEY_Down, [&](){_charPressed.SendValue(DOWN_ARROW);});
     _charPressedActions.emplace(XKB_KEY_Home, [&](){_charPressed.SendValue(HOME);});
     _charPressedActions.emplace(XKB_KEY_End, [&](){_charPressed.SendValue(END);});
 
@@ -253,8 +251,6 @@ void InputManager::SeatCapabilities(void* data, wl_seat* waylandSeat, uint32_t c
     bool has_kb  = caps & WL_SEAT_CAPABILITY_KEYBOARD;
     bool has_ptr = caps & WL_SEAT_CAPABILITY_POINTER;
 
-    printf("[seat] capabilities: keyboard=%d pointer=%d\n", has_kb, has_ptr);
-
     // Keyboard
     if (has_kb && !settings->keyboard)
     {
@@ -280,11 +276,6 @@ void InputManager::SeatCapabilities(void* data, wl_seat* waylandSeat, uint32_t c
     }
 }
 
-void InputManager::SeatName(void* data, wl_seat* waylandSeat, const char* name)
-{
-    printf("[seat] name: %s\n", name);
-}
-
 #pragma endregion
 
 #pragma region Registry
@@ -300,8 +291,6 @@ void InputManager::RegistryGlobal(void* data, wl_registry* waylandRegistry, uint
             &wl_seat_interface,version < 5 ? version : 5));
 
         wl_seat_add_listener(settings->seat, &GetInstance()._seatListener, settings);
-
-        printf("[registry] bound wl_seat v%u\n", version < 5 ? version : 5);
     }
 }
 

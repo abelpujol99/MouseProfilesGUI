@@ -83,5 +83,5 @@ private:
 
     std::function<void()> _removeLastViewComponents;
 
-    RecycleViewActions _devicesPresenterActions;
+    RecycleViewActions _presenterActions;
 };

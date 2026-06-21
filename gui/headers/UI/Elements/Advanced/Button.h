@@ -3,7 +3,7 @@
 #include "UI/Helpers/IClickable.h"
 
 #include "UI/Elements/Intermediate/Rectangle.h"
-#include "../Intermediate/Text.h"
+#include "UI/Elements/Intermediate/Text/Text.h"
 
 class Button : public DrawableComponent, public IClickable
 {

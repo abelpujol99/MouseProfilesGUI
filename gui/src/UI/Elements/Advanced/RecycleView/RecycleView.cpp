@@ -13,7 +13,7 @@ RecycleView::RecycleView(uint8_t viewsPerRow, ImVec2&& marginBetweenViews, ImVec
     RecycleViewActions&& devicesPresenterActions, bool isHidden) :
         DrawableComponent(isHidden), _viewsPerRow(viewsPerRow), _marginBetweenViews({marginBetweenViews.x / _viewsPerRow, marginBetweenViews.y}),
         _rowsSize(std::move(rowsSize)), _bufferRows(bufferRows * 2), _widthPerView(1 / static_cast<float>(_viewsPerRow)),
-        _addDefault(std::move(addDefault)), _removeLastViewComponents(std::move(removeLastView)), _devicesPresenterActions(std::move(devicesPresenterActions))
+        _addDefault(std::move(addDefault)), _removeLastViewComponents(std::move(removeLastView)), _presenterActions(std::move(devicesPresenterActions))
 {
     CreateRow({0, -(_rowsSize.y + _marginBetweenViews.y)});
 
@@ -82,7 +82,7 @@ void RecycleView::OnParentSizeUpdated()
 {
     *_size = GetParentSize();
 
-    _devicesPresenterActions.ExecuteOnUpdateSize(_size->y);
+    _presenterActions.ExecuteOnUpdateSize(_size->y);
 
     for (auto&& row : _rows)
     {
@@ -127,7 +127,7 @@ void RecycleView::UpdateResizableDrawablesCount()
         _rows.shrink_to_fit();
     }
 
-    _devicesPresenterActions.ExecuteOnUpdateRowsCount(_rows.size() * _viewsPerRow);
+    _presenterActions.ExecuteOnUpdateRowsCount(_rows.size() * _viewsPerRow);
 }
 
 void RecycleView::CreateRow(ImVec2&& lastRowPosition)
@@ -197,7 +197,7 @@ void RecycleView::Scroll(float scrollValue)
 {
     scrollValue *= SCROLL_MULTIPLIER;
 
-    _devicesPresenterActions.ExecuteOnScroll(-scrollValue);
+    _presenterActions.ExecuteOnScroll(-scrollValue);
 }
 
 void RecycleView::SetCurrentScroll(float currentScroll)

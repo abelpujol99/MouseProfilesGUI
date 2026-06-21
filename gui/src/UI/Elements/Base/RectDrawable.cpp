@@ -9,8 +9,16 @@ RectDrawable::RectDrawable(RectDrawableData&& rectDrawableData, bool isHidden) :
         ResolutionManager::GetInstance().AdaptHeight(rectDrawableData.relativePosition.y)}), _desiredSize(std::move(rectDrawableData.desiredSize))
 {}
 
+RectDrawable::RectDrawable(const RectDrawable& other) :
+    BaseDrawable(true),
+    _anchors(other._anchors),
+    _pivot(other._pivot),
+    _relativePosition(other._relativePosition),
+    _desiredSize(other._desiredSize)
+{}
+
 void RectDrawable::SetParentState(ImVec2* parentPositionPointer, ImVec2* parentBottomRightPositionPointer,
-    ImVec2* parentSizePointer, bool* isParentHiddenPointer)
+                                  ImVec2* parentSizePointer, bool* isParentHiddenPointer)
 {
     BaseDrawable::SetParentState(parentPositionPointer, parentBottomRightPositionPointer, parentSizePointer, isParentHiddenPointer);
 
@@ -185,6 +193,11 @@ void RectDrawable::Disable()
     DisableDrawables(_drawableComponents);
 
     DisableDrawables(_rectDrawables);
+}
+
+std::unique_ptr<RectDrawable> RectDrawable::Clone() const
+{
+    return std::make_unique<RectDrawable>(*this);
 }
 
 void RectDrawable::UpdateRectDrawablesPosition()

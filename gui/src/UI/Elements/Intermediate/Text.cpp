@@ -1,24 +1,24 @@
-#include "UI/Elements/Intermediate/Text.h"
+#include "UI/Elements/Intermediate/Text/Text.h"
 
 #include "ColorDefines.h"
+#include "TextDefines.h"
 #include "Factory/Font/FontFactory.h"
-#include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
-#include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
+#include "UI/Elements/Intermediate/Text/TextVerticalAlignments.h"
+#include "UI/Elements/Intermediate/Text/TextHorizontalAlignments.h"
 #include "UI/Structs/TextData.h"
 
 #define MAX_ITERATIONS 10
-#define BASE_FONT_SIZE 100
 
 Text::Text(TextData&& textData, bool isHidden) :
         DrawableComponent(isHidden), _text(textData.text),
-        _horizontalAlignment(textData.horizontalAlignment), _verticalAlignment(textData.verticalAlignment),
+        _horizontalAlignment(textData.horizontalAlignment), _verticalAlignment(textData.verticalAlignment), _fontFamilyType(textData.fontFamily),
         _fontFamily(FontFactory::GetInstance().GetFontFamily(textData.fontFamily)), _minimumFontSize(textData.minimumFontSize),
         _maximumFontSize(textData.maximumFontSize), _color(textData.color), _currentColor(_color), _padding(textData.padding),
         _fontSize(_minimumFontSize)
 {
     TextToWords();
 
-    _spaceWidth = CalculateTextSize(BASE_FONT_SIZE, " ").x;
+    _spaceWidth = FontFactory::GetInstance().GetTextReferenceWidth(_fontFamilyType, " ");
     _referenceTextHeight = CalculateTextSize(BASE_FONT_SIZE, "a").y;
 }
 
@@ -27,7 +27,8 @@ Text::Text(const Text& other) :
     _text(other._text),
     _horizontalAlignment(other._horizontalAlignment),
     _verticalAlignment(other._verticalAlignment),
-    _fontFamily(other._fontFamily),
+    _fontFamilyType(other._fontFamilyType),
+    _fontFamily(FontFactory::GetInstance().GetFontFamily(_fontFamilyType)),
     _minimumFontSize(other._minimumFontSize),
     _maximumFontSize(other._maximumFontSize),
     _color(other._color),
@@ -121,6 +122,16 @@ void Text::SetPadding(TextPadding padding)
     UpdateMeasures();
 }
 
+float Text::GetFontSize() const
+{
+    return _fontSize;
+}
+
+FontFamilyTypes Text::GetFontFamily() const
+{
+    return _fontFamilyType;
+}
+
 void Text::UpdateRelativePosition()
 {
     if (_horizontalAlignment == TextHorizontalAlignments::LEFT)
@@ -208,7 +219,7 @@ void Text::CalculateWordsWidth()
 {
     for (Word& word : _words)
     {
-        word.referenceWidth = CalculateTextSize(BASE_FONT_SIZE, word.text).x;
+        word.referenceWidth = FontFactory::GetInstance().GetTextReferenceWidth(_fontFamilyType, word.text);
     }
 }
 
@@ -280,7 +291,7 @@ bool Text::DoesLayoutFit(float fontSize)
     return broadestLine <= availableWidth && tempLines.size() * lineHeight <= availableHeight;
 }
 
-std::vector<Text::Line> Text::CreateLines(float fontSize)
+std::vector<Text::Line> Text::CreateLines(float fontSize) const
 {
     std::vector<Line> lines;
 
@@ -290,7 +301,7 @@ std::vector<Text::Line> Text::CreateLines(float fontSize)
 
     float currentWidth {0};
 
-    float scale {fontSize / BASE_FONT_SIZE};
+    float scale (fontSize / BASE_FONT_SIZE);
 
     const float spaceWidth {_spaceWidth * scale};
 
@@ -361,6 +372,8 @@ void Text::Draw(ImDrawList* drawList)
     {
         return;
     }
+
+    UpdateRelativePosition();
 
     float positionY {_getPositionYAction()};
 

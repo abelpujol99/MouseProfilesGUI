@@ -42,6 +42,10 @@ public:
 
     void SetPadding(TextPadding padding);
 
+    [[nodiscard]] float GetFontSize() const;
+
+    [[nodiscard]] FontFamilyTypes GetFontFamily() const;
+
     [[nodiscard]] std::string GetText() const;
 
     void Enable() override;
@@ -82,7 +86,7 @@ private:
 
     bool DoesLayoutFit(float fontSize);
 
-    std::vector<Line> CreateLines(float fontSize);
+    std::vector<Line> CreateLines(float fontSize) const;
 
     float _previousParentWidth;
 
@@ -103,6 +107,8 @@ private:
     TextVerticalAlignments _verticalAlignment;
 
     TextPadding _padding;
+
+    FontFamilyTypes _fontFamilyType;
 
     ImFont* _fontFamily;
 

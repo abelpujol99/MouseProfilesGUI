@@ -7,8 +7,8 @@
 #include "Factory/Font/FontFamilyTypes.h"
 #include "RectangleDefines.h"
 #include "Factory/DrawableFactory.h"
-#include "UI/Elements/Advanced/Text/TextHorizontalAlignments.h"
-#include "UI/Elements/Advanced/Text/TextVerticalAlignments.h"
+#include "UI/Elements/Intermediate/Text/TextHorizontalAlignments.h"
+#include "UI/Elements/Intermediate/Text/TextVerticalAlignments.h"
 #include "UI/Structs/TextData.h"
 #include "Themes/ProfileViewThemeDefines.h"
 
@@ -404,7 +404,7 @@ ProfileView::ProfileView(bool isHidden) : BaseView(isHidden), _presenter(std::ma
         OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_PIVOT, OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_RELATIVE_POSITION,
         OUTPUT_TYPE_DETAILS_INPUT_DISPLAY_TEXT_BOX_RECT_SIZE}, false)};
 
-    _inputDisplayTextBox = DrawableFactory::CreateDisplayTextBox(RectangleData{INPUT_DISPLAY_TEXT_BOX_COLOR, LOW_ROUNDING, THIN_BORDER},
+    _inputDisplayTextBox = DrawableFactory::CreateTextBox(RectangleData{INPUT_DISPLAY_TEXT_BOX_COLOR, LOW_ROUNDING, THIN_BORDER},
         TextData{"Emit inputs here", TextHorizontalAlignments::CENTER, TextVerticalAlignments::MIDDLE,
         FontFamilyTypes::ROBOTO_REGULAR, TEXT_SIZE, SUB_TITLE_SIZE, INPUT_DISPLAY_TEXT_BOX_COLOR, NO_PADDING}, true);
 

@@ -81,7 +81,7 @@ private:
 
     static void SeatCapabilities(void* data, wl_seat* waylandSeat, uint32_t caps);
 
-    static void SeatName(void* data, wl_seat* waylandSeat, const char* name);
+    static void SeatName(void* data, wl_seat* waylandSeat, const char* name) {};
 
 #pragma endregion
 

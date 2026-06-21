@@ -3,12 +3,10 @@
 
 #include "MVP/Presenter/Profile/ProfilePresenter.h"
 #include "Strategies/DrawStrategy/Rectangle/DrawEmptyRectangle.h"
-#include "Strategies/TextStrategy/ApplyKey.h"
-#include "Strategies/TextStrategy/DisplayKey.h"
 #include "UI/Elements/Advanced/Button.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
-#include "UI/Elements/Advanced/Text/TextBox.h"
-#include "UI/Elements/Intermediate/Text.h"
+#include "UI/Elements/Advanced/TextBox.h"
+#include "UI/Elements/Intermediate/Text/Text.h"
 
 class ProfileView : public BaseView
 {
@@ -40,7 +38,7 @@ private:
 
     std::unique_ptr<Button> _backButton;
 
-    std::unique_ptr<TextBox<ApplyKey>> _profileNameTextBox;
+    std::unique_ptr<TextBox> _profileNameTextBox;
 
     std::unique_ptr<Button> _profileLoadUnloadButton;
 
@@ -64,9 +62,9 @@ private:
 
     std::unique_ptr<Button> _shutdownApplicationCommandButton;
 
-    std::unique_ptr<TextBox<ApplyKey>> _inputTextBox;
+    std::unique_ptr<TextBox> _inputTextBox;
 
-    std::unique_ptr<TextBox<DisplayKey>> _inputDisplayTextBox;
+    std::unique_ptr<TextBox> _inputDisplayTextBox;
 
     std::unique_ptr<RecycleView> _switchToSubProfileRecycleView;
 

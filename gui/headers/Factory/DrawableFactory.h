@@ -5,16 +5,14 @@
 
 #include "UI/Elements/Intermediate/Texture.h"
 #include "UI/Elements/Advanced/Button.h"
-#include "UI/Elements/Advanced/Text/TextBox.h"
+#include "UI/Elements/Advanced/TextBox.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleView.h"
 #include "UI/Elements/Advanced/RecycleView/RecycleViewActions.h"
 #include "UI/Elements/Advanced/Dropdown.h"
-#include "Strategies/TextStrategy/ApplyKey.h"
-#include "Strategies/TextStrategy/DisplayKey.h"
 #include "UI/Structs/TextData.h"
 #include "AnchorsDefines.h"
 #include "PivotDefines.h"
-#include "UI/Elements/Intermediate/Text.h"
+#include "UI/Elements/Intermediate/Text/Text.h"
 
 template<DerivedFromDrawRectangleStrategy TDrawRectangleStrategy>
 class Rectangle;
@@ -34,10 +32,7 @@ public:
 
     static std::unique_ptr<Text> CreateText(TextData&& textData, bool isHidden = false);
 
-    static std::unique_ptr<TextBox<ApplyKey>> CreateTextBox(RectangleData&& rectangleData, TextData&& textData,
-        bool isHidden = false);
-
-    static std::unique_ptr<TextBox<DisplayKey>> CreateDisplayTextBox(RectangleData&& rectangleData, TextData&& textData,
+    static std::unique_ptr<TextBox> CreateTextBox(RectangleData&& rectangleData, TextData&& textData,
         bool isHidden = false);
 
     static std::unique_ptr<Button> CreateButton(RectangleData&& rectangleData, TextData&& textData,

@@ -5,6 +5,7 @@
 #include "Factory/DrawableFactory.h"
 #include "Factory/Font/FontFactory.h"
 #include "Managers/Input/InputManager.h"
+#include "Utilities/Math.h"
 
 TextBox::TextBox(std::string placeHolder, bool isHidden) : DrawableComponent(isHidden), _placeHolder(std::move(placeHolder))
 {
@@ -39,7 +40,12 @@ void TextBox::MapSubscriptions()
             return;
         }
 
-        const int firstIndex {_pointerPosition - _selectionCount != 0 ? _selectionCount : 1};
+        if (_selectionCount == 0 && _pointerPosition == 0)
+        {
+            return;
+        }
+
+        const int firstIndex {_pointerPosition - (_selectionCount != 0 ? _selectionCount : 1)};
 
         {
             const std::string message {_text->GetText()};
@@ -49,11 +55,13 @@ void TextBox::MapSubscriptions()
             const float fontSize {_text->GetFontSize()};
 
             _textWidth -= static_cast<uint16_t>(textReferenceWidth * (fontSize / BASE_FONT_SIZE));
-
-            _pointerPosition = firstIndex;
         }
 
-        _text->EraseFromIndexToIndex(firstIndex, _pointerPosition);
+        _text->EraseFromIndex(firstIndex, _pointerPosition - firstIndex);
+
+        _pointerPosition = firstIndex;
+
+        UpdateTextContainerSize();
     });
     _charPressedActions.emplace(DELETE, [&]()
     {
@@ -63,11 +71,16 @@ void TextBox::MapSubscriptions()
             return;
         }
 
-        const int lastIndex {_pointerPosition + _selectionCount != 0 ? _selectionCount : 1};
+        const std::string message {_text->GetText()};
+
+        if (_selectionCount == 0 && _pointerPosition == message.size())
+        {
+            return;
+        }
+
+        const int lastIndex {_pointerPosition + (_selectionCount != 0 ? _selectionCount : 1)};
 
         {
-            const std::string message {_text->GetText()};
-
             const float textReferenceWidth {FontFactory::GetInstance().GetTextReferenceWidth(_text->GetFontFamily(), message.substr(_pointerPosition, lastIndex))};
 
             const float fontSize {_text->GetFontSize()};
@@ -75,13 +88,20 @@ void TextBox::MapSubscriptions()
             _textWidth -= static_cast<uint16_t>(textReferenceWidth * (fontSize / BASE_FONT_SIZE));
         }
 
-        _text->EraseFromIndexToIndex(_pointerPosition, lastIndex);
+        _text->EraseFromIndex(_pointerPosition, lastIndex - _pointerPosition);
+
+        UpdateTextContainerSize();
     });
-    _charPressedActions.emplace(LEFT_ARROW, [&](){_pointerPosition--;});
-    _charPressedActions.emplace(RIGHT_ARROW, [&](){_pointerPosition++;});
-    /*_charPressedActions.emplace(HOME, [&](){_text->EraseLastChar();});
-    _charPressedActions.emplace(END, [&](){_text->EraseLastChar();});*/
-    _charPressedActions.emplace(SPACE_BAR, [&](){_text->AddText(" ", _pointerPosition);});
+    _charPressedActions.emplace(LEFT_ARROW, [&](){_pointerPosition = Utilities::Math::Min(--_pointerPosition, static_cast<__uint8_t>(0));});
+    _charPressedActions.emplace(RIGHT_ARROW, [&](){_pointerPosition = Utilities::Math::Max(++_pointerPosition, static_cast<__uint8_t>(_text->GetText().size()));});
+    _charPressedActions.emplace(HOME, [&](){_pointerPosition = 0;});
+    _charPressedActions.emplace(END, [&](){_pointerPosition = _text->GetText().size();});
+    _charPressedActions.emplace(SPACE_BAR, [&]()
+    {
+        _text->AddText(" ", _pointerPosition++);
+
+        UpdateTextContainerSize();
+    });
 }
 
 void TextBox::CreateTextContainer()
@@ -90,6 +110,11 @@ void TextBox::CreateTextContainer()
         {0, 0}, {0, 0}}, *_mustBeHidden);
 
     _textContainer->SetParentState(_position.get(), _bottomRightPosition.get(), _size.get(), _mustBeHidden.get());
+}
+
+void TextBox::UpdateTextContainerSize()
+{
+
 }
 
 TextBox::~TextBox() noexcept
@@ -164,6 +189,8 @@ void TextBox::OnSelect()
         _textWidth += static_cast<uint16_t>(textReferenceWidth * (fontSize / BASE_FONT_SIZE));
 
         _text->AddText(character, _pointerPosition++);
+
+        UpdateTextContainerSize();
     });
 }
 
@@ -219,7 +246,7 @@ void TextBox::Draw(ImDrawList* drawList)
 
 void TextBox::EraseSelection(size_t first, size_t last) const
 {
-    _text->EraseFromIndexToIndex(first, last);
+    _text->EraseFromIndex(first, last);
 }
 
 void TextBox::OnParentPositionUpdated()

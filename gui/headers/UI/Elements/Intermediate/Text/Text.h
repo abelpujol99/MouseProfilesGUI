@@ -28,7 +28,7 @@ public:
 
     void AddText(const std::string& text, size_t index);
 
-    void EraseFromIndexToIndex(size_t fist, size_t last);
+    void EraseFromIndex(size_t fist, size_t count);
 
     void SetFontFamily(ImFont* fontFamily);
 

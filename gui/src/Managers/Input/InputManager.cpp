@@ -153,14 +153,33 @@ void InputManager::KeyboardKey(void* data, wl_keyboard* waylandKeyboard, uint32_
     char utf8[8] = {0};
     int length {xkb_state_key_get_utf8(context.xkbState, keyCode, utf8, sizeof(utf8))};
 
-    if (length > 0)
+    if (length == 0 || !IsPrintable(utf8))
     {
-        inputManager->_charPressed.SendValue(utf8);
+        return;
     }
+
+    inputManager->_charPressed.SendValue(utf8);
+}
+
+bool InputManager::IsPrintable(const std::string& string)
+{
+    if (string.empty())
+    {
+        return false;
+    }
+
+    unsigned char first {static_cast<unsigned char>(string[0])};
+
+    if (first >= 0x80)
+    {
+        return true;
+    }
+
+    return std::isprint(first);
 }
 
 void InputManager::KeyboardModifiers(void* data, wl_keyboard* waylandKeyboard, uint32_t, uint32_t modifiersPressed,
-    uint32_t modifiersLatched, uint32_t modifiersLocked, uint32_t group)
+                                     uint32_t modifiersLatched, uint32_t modifiersLocked, uint32_t group)
 {
     InputManager* inputManager {static_cast<InputManager*>(data)};
     WaylandContext& context {inputManager->_waylandContext};

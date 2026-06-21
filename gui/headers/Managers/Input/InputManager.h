@@ -46,6 +46,8 @@ private:
 
     static void KeyboardKey(void* data, wl_keyboard* waylandKeyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
 
+    static bool IsPrintable(const std::string& string);
+
     static void KeyboardModifiers(void* data, wl_keyboard* waylandKeyboard, uint32_t, uint32_t modifiersPressed, uint32_t modifiersLatched,
         uint32_t modifiersLocked, uint32_t group);
 

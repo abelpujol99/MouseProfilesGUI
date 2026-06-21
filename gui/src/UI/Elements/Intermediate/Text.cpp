@@ -73,9 +73,9 @@ void Text::AddText(const std::string& text, size_t index)
     UpdateLayout();
 }
 
-void Text::EraseFromIndexToIndex(size_t fist, size_t last)
+void Text::EraseFromIndex(size_t fist, size_t count)
 {
-    _text.erase(fist, last);
+    _text.erase(fist, count);
 
     UpdateLayout();
 }

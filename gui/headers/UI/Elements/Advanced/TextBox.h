@@ -65,6 +65,8 @@ private:
 
     void CreateTextContainer();
 
+    void UpdateTextContainerSize();
+
     __uint8_t _pointerPosition {0};
 
     int8_t _selectionCount {0};

@@ -7,5 +7,5 @@ public:
 
     virtual ~ICommand() = default;
 
-    virtual void Execute() = 0;
+    virtual void Execute() const = 0;
 };

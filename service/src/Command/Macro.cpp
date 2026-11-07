@@ -1,11 +1,11 @@
-#include "Command/EmitInputEventCommand.h"
+#include "Command/Macro.h"
 
 #include "Managers/VirtualDeviceManager.h"
 
-EmitInputEventCommand::EmitInputEventCommand(std::vector<EmitData>&& emitsData) : _emitsData(std::move(emitsData))
+Macro::Macro(std::vector<EmitData>&& emitsData) : _emitsData(std::move(emitsData))
 {}
 
-void EmitInputEventCommand::Execute()
+void Macro::Execute() const
 {
     for (size_t i {0}; i < _emitsData.size(); ++i)
     {

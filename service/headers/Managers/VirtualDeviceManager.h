@@ -28,11 +28,11 @@ public:
 
     static void RegisterHidrawInputEvent(unsigned char code, int value);
 
+    void Emit(InputDevices inputDevice, InputEvent inputEvent) const;
+
 private:
 
     VirtualDeviceManager();
-
-    void Emit(InputDevices inputDevice, InputEvent inputEvent) const;
 
     void DestroyVirtualFiles();
 

@@ -3,7 +3,6 @@
 #include "Managers/ApplicationManager.h"
 #include "Managers/ThreadsManager.h"
 #include "Managers/VirtualDeviceManager.h"
-#include "Factory/CommandFactory.h"
 #include "Input/Strategy/ButtonInputCommandStrategy.h"
 #include "Input/Strategy/WheelScrollInputCommandStrategy.h"
 #include "Input/Strategy/WheelTiltInputCommandStrategy.h"

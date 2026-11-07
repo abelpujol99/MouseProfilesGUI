@@ -1,9 +1,9 @@
-#include "Command/ShutdownApplicationCommand.h"
+#include "Command/ShutdownApplication.h"
 
 #include <iostream>
 #include "Managers/ApplicationManager.h"
 
-void ShutdownApplicationCommand::Execute()
+void ShutdownApplication::Execute() const
 {
     std::cout << "Shutdown" << std::endl;
     MVPManager::GetInstance().SwitchShouldRun();

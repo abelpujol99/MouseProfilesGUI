@@ -3,7 +3,7 @@
 #include "Input/Strategy/IMouseInputState.h"
 
 
-#include "Input/Button/ButtonInputCommand.h"
+#include "Input/Key/KeyInputCommand.h"
 #include "State/Button/IButtonInputStateAction.h"
 
 
@@ -11,7 +11,7 @@ class ButtonInputCommandStrategy : public IInputCommandStrategy, public IMouseIn
 {
 public:
 
-    ButtonInputCommandStrategy(std::vector<std::unique_ptr<ButtonInputCommand>>&& buttonInputCommands);
+    ButtonInputCommandStrategy(std::vector<std::unique_ptr<KeyInputCommand>>&& buttonInputCommands);
 
     void ChangeProfile(int profileIndex) override;
 
@@ -43,7 +43,7 @@ private:
 
     unsigned char _state {0};
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> _buttonInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> _buttonInputCommands;
 
-    ButtonInputCommand* _currentButtonInputCommand {nullptr};
+    KeyInputCommand* _currentButtonInputCommand {nullptr};
 };

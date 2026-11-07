@@ -64,7 +64,7 @@ void ProfileManager::CreateProfile()
 
     std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> profile;
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonLeftInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonLeftInputCommands;
     buttonLeftInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonLeftPressEmits;
@@ -86,7 +86,7 @@ void ProfileManager::CreateProfile()
             CommandFactory::CreateEmitInputEventCommand(std::move(buttonLeftHoldEmits)),
                 nullptr, Duration(500), Duration(20)));
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonRightInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonRightInputCommands;
     buttonRightInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonRightPressEmits;
@@ -108,7 +108,7 @@ void ProfileManager::CreateProfile()
             CommandFactory::CreateEmitInputEventCommand(std::move(buttonRightHoldEmits)),
                 nullptr, Duration(500), Duration(20)));
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonBackInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonBackInputCommands;
     buttonBackInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonBackPressEmits;
@@ -129,7 +129,7 @@ void ProfileManager::CreateProfile()
 
     buttonBackInputCommands.emplace_back(nullptr);
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonForwardInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonForwardInputCommands;
     buttonForwardInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonForwardPressEmits;
@@ -149,7 +149,7 @@ void ProfileManager::CreateProfile()
 
     buttonForwardInputCommands.emplace_back(nullptr);
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonSideInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonSideInputCommands;
     buttonSideInputCommands.reserve(SUB_PROFILES);
 
     buttonSideInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
@@ -158,7 +158,7 @@ void ProfileManager::CreateProfile()
     buttonSideInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
         nullptr, nullptr, CommandFactory::CreateSwitchToMainProfileCommand(), Duration(500), Duration(20)));
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonExtraInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonExtraInputCommands;
     buttonExtraInputCommands.reserve(SUB_PROFILES);
 
     buttonExtraInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
@@ -166,7 +166,7 @@ void ProfileManager::CreateProfile()
 
     buttonExtraInputCommands.emplace_back(nullptr);
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonTaskInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonTaskInputCommands;
     buttonTaskInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> buttonTaskPressEmits;
@@ -187,7 +187,7 @@ void ProfileManager::CreateProfile()
 
     buttonTaskInputCommands.emplace_back(nullptr);
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> buttonHiddenInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> buttonHiddenInputCommands;
     buttonHiddenInputCommands.reserve(SUB_PROFILES);
 
     buttonHiddenInputCommands.emplace_back(CommandFactory::CreateButtonInputCommand(
@@ -204,7 +204,7 @@ void ProfileManager::CreateProfile()
     profile.try_emplace(275, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonSideInputCommands)));
     profile.try_emplace(276, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonExtraInputCommands)));
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> wheelNegativeTiltInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> wheelNegativeTiltInputCommands;
     buttonHiddenInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> wheelNegativeTiltPressEmits;
@@ -226,7 +226,7 @@ void ProfileManager::CreateProfile()
 
     wheelNegativeTiltInputCommands.emplace_back(nullptr);
 
-    std::vector<std::unique_ptr<ButtonInputCommand>> wheelPositiveTiltInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommand>> wheelPositiveTiltInputCommands;
     wheelPositiveTiltInputCommands.reserve(SUB_PROFILES);
 
     std::vector<EmitData> wheelPositiveTiltPressEmits;

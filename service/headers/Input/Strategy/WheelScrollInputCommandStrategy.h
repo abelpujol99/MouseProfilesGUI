@@ -3,14 +3,14 @@
 
 #include <vector>
 
-#include "Input/Wheel/Scroll/WheelScrollInputCommand.h"
+#include "../Relative/RelativeInputCommand.h"
 
 class WheelScrollInputCommandStrategy : public IInputCommandStrategy
 {
 public:
 
-    WheelScrollInputCommandStrategy(std::vector<std::unique_ptr<WheelScrollInputCommand>>&& wheelNegativeInputCommands,
-        std::vector<std::unique_ptr<WheelScrollInputCommand>>&& wheelPositiveInputCommands);
+    WheelScrollInputCommandStrategy(std::vector<std::unique_ptr<RelativeInputCommand>>&& wheelNegativeInputCommands,
+        std::vector<std::unique_ptr<RelativeInputCommand>>&& wheelPositiveInputCommands);
 
     void ChangeProfile(int profileIndex) override;
 
@@ -18,10 +18,10 @@ public:
 
 private:
 
-    std::vector<std::unique_ptr<WheelScrollInputCommand>> _wheelNegativeInputCommands;
-    std::vector<std::unique_ptr<WheelScrollInputCommand>> _wheelPositiveInputCommands;
+    std::vector<std::unique_ptr<RelativeInputCommand>> _wheelNegativeInputCommands;
+    std::vector<std::unique_ptr<RelativeInputCommand>> _wheelPositiveInputCommands;
 
-    WheelScrollInputCommand* _currentWheelNegativeInputCommand {nullptr};
-    WheelScrollInputCommand* _currentWheelPositiveInputCommand {nullptr};
+    RelativeInputCommand* _currentWheelNegativeInputCommand {nullptr};
+    RelativeInputCommand* _currentWheelPositiveInputCommand {nullptr};
 
 };

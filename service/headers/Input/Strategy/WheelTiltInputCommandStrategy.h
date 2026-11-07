@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "Input/Wheel/Tilt/WheelTiltInputCommand.h"
+#include "Input/Relative/Tilt/WheelTiltInputCommand.h"
 #include "State/Wheel/IWheelTiltInputStateAction.h"
 
 

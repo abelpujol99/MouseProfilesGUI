@@ -1,7 +1,7 @@
 #include "Input/Strategy/WheelScrollInputCommandStrategy.h"
 
-WheelScrollInputCommandStrategy::WheelScrollInputCommandStrategy(std::vector<std::unique_ptr<WheelScrollInputCommand>>&& wheelNegativeInputCommands,
-    std::vector<std::unique_ptr<WheelScrollInputCommand>>&& wheelPositiveInputCommands) :
+WheelScrollInputCommandStrategy::WheelScrollInputCommandStrategy(std::vector<std::unique_ptr<RelativeInputCommand>>&& wheelNegativeInputCommands,
+    std::vector<std::unique_ptr<RelativeInputCommand>>&& wheelPositiveInputCommands) :
         _wheelNegativeInputCommands(std::move(wheelNegativeInputCommands)), _wheelPositiveInputCommands(std::move(wheelPositiveInputCommands))
 {}
 

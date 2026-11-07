@@ -3,7 +3,7 @@
 #include "Managers/ProfileManager.h"
 #include "State/Button/ButtonPressStateAction.h"
 
-ButtonInputCommandStrategy::ButtonInputCommandStrategy(std::vector<std::unique_ptr<ButtonInputCommand>>&& buttonInputCommands) :
+ButtonInputCommandStrategy::ButtonInputCommandStrategy(std::vector<std::unique_ptr<KeyInputCommand>>&& buttonInputCommands) :
     _buttonInputState(std::make_unique<ButtonPressStateAction>(this)), _buttonInputCommands(std::move(buttonInputCommands))
 {}
 

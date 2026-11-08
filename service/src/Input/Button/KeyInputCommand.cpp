@@ -17,7 +17,7 @@ void KeyInputCommand::Press() const
 
 void KeyInputCommand::Hold() const
 {
-    if (!HasHoldCommand())
+    if (_onHoldCommand == nullptr)
     {
         return;
     }
@@ -33,9 +33,4 @@ void KeyInputCommand::Release() const
     }
 
     _onReleaseCommand->Execute();
-}
-
-bool KeyInputCommand::HasHoldCommand() const
-{
-    return _onHoldCommand != nullptr;
 }

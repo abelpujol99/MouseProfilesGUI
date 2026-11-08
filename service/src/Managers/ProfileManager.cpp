@@ -3,8 +3,8 @@
 #include "Managers/ApplicationManager.h"
 #include "Managers/ThreadsManager.h"
 #include "Managers/VirtualDeviceManager.h"
-#include "Input/Strategy/ButtonInputCommandStrategy.h"
-#include "Input/Strategy/WheelScrollInputCommandStrategy.h"
+#include "Input/Strategy/KeyInputStrategy.h"
+#include "Input/Strategy/RelativeInputStrategy.h"
 #include "Input/Strategy/WheelTiltInputCommandStrategy.h"
 #include "TimeDefines.h"
 
@@ -195,14 +195,14 @@ void ProfileManager::CreateProfile()
 
     buttonHiddenInputCommands.emplace_back(nullptr);
 
-    profile.try_emplace(80, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonHiddenInputCommands)));
-    profile.try_emplace(81, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonTaskInputCommands)));
-    profile.try_emplace(82, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonBackInputCommands)));
-    profile.try_emplace(84, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonForwardInputCommands)));
-    profile.try_emplace(272, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonLeftInputCommands)));
-    profile.try_emplace(273, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonRightInputCommands)));
-    profile.try_emplace(275, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonSideInputCommands)));
-    profile.try_emplace(276, std::make_unique<ButtonInputCommandStrategy>(std::move(buttonExtraInputCommands)));
+    profile.try_emplace(80, std::make_unique<KeyInputStrategy>(std::move(buttonHiddenInputCommands)));
+    profile.try_emplace(81, std::make_unique<KeyInputStrategy>(std::move(buttonTaskInputCommands)));
+    profile.try_emplace(82, std::make_unique<KeyInputStrategy>(std::move(buttonBackInputCommands)));
+    profile.try_emplace(84, std::make_unique<KeyInputStrategy>(std::move(buttonForwardInputCommands)));
+    profile.try_emplace(272, std::make_unique<KeyInputStrategy>(std::move(buttonLeftInputCommands)));
+    profile.try_emplace(273, std::make_unique<KeyInputStrategy>(std::move(buttonRightInputCommands)));
+    profile.try_emplace(275, std::make_unique<KeyInputStrategy>(std::move(buttonSideInputCommands)));
+    profile.try_emplace(276, std::make_unique<KeyInputStrategy>(std::move(buttonExtraInputCommands)));
 
     std::vector<std::unique_ptr<KeyInputCommand>> wheelNegativeTiltInputCommands;
     buttonHiddenInputCommands.reserve(SUB_PROFILES);
@@ -248,8 +248,8 @@ void ProfileManager::CreateProfile()
 
     wheelPositiveTiltInputCommands.emplace_back(nullptr);
 
-    profile.try_emplace(32, std::make_unique<ButtonInputCommandStrategy>(std::move(wheelNegativeTiltInputCommands)));
-    profile.try_emplace(64, std::make_unique<ButtonInputCommandStrategy>(std::move(wheelPositiveTiltInputCommands)));
+    profile.try_emplace(32, std::make_unique<KeyInputStrategy>(std::move(wheelNegativeTiltInputCommands)));
+    profile.try_emplace(64, std::make_unique<KeyInputStrategy>(std::move(wheelPositiveTiltInputCommands)));
 
     std::unordered_map<unsigned long, std::unordered_set<int>> mouseCapableInputs;
 

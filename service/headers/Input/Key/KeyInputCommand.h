@@ -20,8 +20,6 @@ public:
 
     void Release() const;
 
-    [[nodiscard]] bool HasHoldCommand() const;
-
 private:
 
     const std::unique_ptr<ICommand const> _onPressCommand;

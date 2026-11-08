@@ -25,11 +25,11 @@ void ThreadsManager::SetProfileAction(std::function<void()>&& profileAction)
 
 void ThreadsManager::Start() {
 
-    MVPManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
+    ApplicationManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
         _shouldKeepRunning = value;
     });
 
-    MVPManager::GetInstance().SubscribeToShouldGUIRunObserver([&](bool value) {
+    ApplicationManager::GetInstance().SubscribeToShouldGUIRunObserver([&](bool value) {
         _shouldGUIKeepRunning = value;
     });
 
@@ -73,6 +73,6 @@ void ThreadsManager::GUIThreadLoop()
             continue;
         }
 
-        MVPManager::GetInstance().StartGUI();
+        ApplicationManager::GetInstance().StartGUI();
     }
 }

@@ -7,7 +7,12 @@
 #include <unordered_set>
 
 #include "CodeUsings.h"
+#include "Input/InputEvent.h"
+#include "Input/Relative/RelativeInput.h"
 #include "Input/Strategy/IInputCommandStrategy.h"
+#include "Input/Strategy/KeyInputStrategy.h"
+#include "Trigger/TriggerBus.h"
+#include "Serialization/RelativeCode.h"
 
 class IMouseInputState;
 
@@ -28,13 +33,11 @@ public:
 
     void ChangeCurrentSubProfile(uint8_t subProfileIndex);
 
-    void ChangeMouseInputState(IMouseInputState* mouseInputState);
+    bool CanRegisterInput(InputEvent inputEvent);
 
-    bool IsCodeInUse(Code code) const;
+    std::weak_ptr<std::function<void()>> SubscribeToTriggerKeyHoldCommand(std::function<void()>&& action);
 
-    void RegisterInput(Code code, int value) const;
-
-    void UnsubscribeToActionsOnChangeProfile(const std::weak_ptr<std::function<void()>>& weakActionOnChangeProfile);
+    void UnsubscribeToTriggerKeyHoldCommand(std::weak_ptr<std::function<void()>>&& action);
 
 private:
 
@@ -42,27 +45,28 @@ private:
 
     void CreateProfile();
 
-    void SetProfile(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& profile);
+    void SetProfile(std::unordered_map<Code, KeyInputStrategy>&& keyInputsProfile,
+        std::unordered_map<Code, RelativeInput>&& relativeInputsProfile);
 
     void UpdateCodesBindings();
 
-    void MouseInputStateLoop(std::shared_ptr<bool> shouldKeepRun);
+    void TriggerHoldCommands();
 
-    static std::unique_ptr<ProfileManager> _profileManagerInstance;
+    std::unordered_map<Code, KeyInputStrategy> _keyInputs;
 
-    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> _profile;
+    std::unordered_map<Code, RelativeInput> _relativeInputs;
 
-    std::unordered_map<uint8_t, std::forward_list<Code>> _allSubProfilesCodes;
+    std::unordered_map<uint8_t, std::forward_list<Code>> _subProfilesKeyCodes;
 
-    std::unordered_set<Code> _currentSubProfileCodes;
+    std::unordered_map<uint8_t, std::forward_list<RelativeCode>> _subProfilesRelativeCodes;
+
+    std::unordered_set<Code> _currentKeyInputs;
+
+    std::unordered_map<Code, bool[2]> _currentRelativeInputs;
 
     uint8_t _currentSubProfileIndex;
 
-    IMouseInputState* _mouseInputState {nullptr};
-
-    std::vector<std::shared_ptr<std::function<void()>>> _actionsOnChangeProfile;
+    TriggerBus _triggerKeyHoldCommandEvent;
 
     mutable std::mutex _mutex;
-
-    std::shared_ptr<bool> _shouldMouseInputLoopRun;
 };

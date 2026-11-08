@@ -1,5 +1,5 @@
 #pragma once
-#include "State/Button/IKeyState.h"
+#include "State/Key/IKeyState.h"
 
 class KeyInputStrategy;
 

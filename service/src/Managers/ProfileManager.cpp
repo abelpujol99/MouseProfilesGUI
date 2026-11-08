@@ -1,37 +1,32 @@
 #include "Managers/ProfileManager.h"
 
-#include "Managers/ApplicationManager.h"
 #include "Managers/ThreadsManager.h"
 #include "Managers/VirtualDeviceManager.h"
 #include "Input/Strategy/KeyInputStrategy.h"
-#include "Input/Strategy/RelativeInputStrategy.h"
-#include "Input/Strategy/WheelTiltInputCommandStrategy.h"
-#include "TimeDefines.h"
+#include "Input/Relative/RelativeInput.h"
 
-std::unique_ptr<ProfileManager> ProfileManager::_profileManagerInstance = nullptr;
-
-ProfileManager::ProfileManager() : _currentSubProfileIndex(0), _shouldMouseInputLoopRun(std::make_shared<bool>(false))
+ProfileManager::ProfileManager() : _currentSubProfileIndex(0)
 {
-    MVPManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
-        *_shouldMouseInputLoopRun = value;
+    ThreadsManager::GetInstance().SetProfileAction([&]()
+    {
+        TriggerHoldCommands();
     });
 }
 
 ProfileManager& ProfileManager::GetInstance()
 {
-    if (!_profileManagerInstance)
-    {
-        _profileManagerInstance.reset(new ProfileManager());
-    }
+    static ProfileManager _profileManagerInstance;
 
-    return *_profileManagerInstance;
+    return _profileManagerInstance;
 }
 
 void ProfileManager::OnChangeApplicationFocus()
 {
-    _allSubProfilesCodes.clear();
+    //TODO CATCH ON APPLICATION FOCUS FOR EACH LINUX ENVIRONMENT
 
-    //TODO PROCESS PARAMETER DATA
+    //TODO READ CONFIG FILE
+
+    /*_allSubProfilesCodes.clear();
 
     std::forward_list<Code> codes;
 
@@ -55,14 +50,14 @@ void ProfileManager::OnChangeApplicationFocus()
 
     _allSubProfilesCodes.try_emplace(1, codes);
 
-    CreateProfile();
+    CreateProfile();*/
 }
 
 void ProfileManager::CreateProfile()
 {
 #define SUB_PROFILES 2
 
-    std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> profile;
+    /*std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> profile;
 
     std::vector<std::unique_ptr<KeyInputCommand>> buttonLeftInputCommands;
     buttonLeftInputCommands.reserve(SUB_PROFILES);
@@ -284,125 +279,114 @@ void ProfileManager::CreateProfile()
 
     VirtualDeviceManager::GetInstance().CreateVirtualDevice(KEYBOARD, mouseCapableInputs, usetup);
 
-    SetProfile(std::move(profile));
+    SetProfile(std::move(profile));*/
 }
 
-void ProfileManager::SetProfile(std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>>&& profile)
+void ProfileManager::SetProfile(std::unordered_map<Code, KeyInputStrategy>&& keyInputsProfile,
+    std::unordered_map<Code, RelativeInput>&& relativeInputsProfile)
 {
-    _profile = std::move(profile);
+    _keyInputs = std::move(keyInputsProfile);
+    _relativeInputs = std::move(relativeInputsProfile);
 
     UpdateCodesBindings();
 }
 
 void ProfileManager::ChangeCurrentSubProfile(uint8_t subProfileIndex)
 {
-    for (const auto& action : _actionsOnChangeProfile)
-    {
-        (*action)();
-    }
-
-    _actionsOnChangeProfile.clear();
-    _currentSubProfileCodes.clear();
-
     _currentSubProfileIndex = subProfileIndex;
 
     UpdateCodesBindings();
 }
 
-void ProfileManager::ChangeMouseInputState(IMouseInputState* mouseInputState)
-{
-    _mouseInputState = mouseInputState;
-    *_shouldMouseInputLoopRun = false;
-    _shouldMouseInputLoopRun = std::make_shared<bool>(true);
-    ThreadsManager::GetInstance().SetProfileAction([&](){MouseInputStateLoop(_shouldMouseInputLoopRun);});
-}
-
-bool ProfileManager::IsCodeInUse(Code code) const
-{
-    return _currentSubProfileCodes.contains(code);
-}
-
 void ProfileManager::UpdateCodesBindings()
 {
-    std::forward_list<Code>& codes {_allSubProfilesCodes.at(_currentSubProfileIndex)};
+    _currentKeyInputs.clear();
+    _currentRelativeInputs.clear();
 
-    for (auto& code : codes)
-    {
-        _currentSubProfileCodes.emplace(code);
+    const std::forward_list<Code>& keyCodes {_subProfilesKeyCodes.at(_currentSubProfileIndex)};
+    const std::forward_list<RelativeCode>& relativeCodes {_subProfilesRelativeCodes.at(_currentSubProfileIndex)};
 
-        _profile.at(code)->ChangeProfile(_currentSubProfileIndex);
-    }
-}
-
-void ProfileManager::MouseInputStateLoop(std::shared_ptr<bool> shouldKeepRun)
-{
-    const Duration& firstTimeDelay {_mouseInputState->GetFirstTimeDelay()};
-
-    Duration timeElapsed {0};
-
-    TimePoint start {SystemClock::now()};
-
-    Duration defaultThreadSleepMillis {Duration(DEFAULT_THREAD_SLEEP_MILLIS)};
-
-    do {
-
-        Duration difference {SystemClock::now() - start};
-        timeElapsed += difference;
-        start = SystemClock::now();
-        std::this_thread::sleep_for(defaultThreadSleepMillis);
-
-    } while (*shouldKeepRun && _mouseInputState && _mouseInputState->IsHolding() && timeElapsed < firstTimeDelay);
-
-    const Duration& millisToRepeatInput {_mouseInputState->GetMillisToRepeatInput()};
-
-    while (*shouldKeepRun && _mouseInputState && _mouseInputState->IsHolding())
-    {
-        _mouseInputState->Hold();
-
-        timeElapsed = Duration(0);
-
-        do {
-
-            Duration difference {SystemClock::now() - start};
-            timeElapsed += difference;
-            start = SystemClock::now();
-            std::this_thread::sleep_for(defaultThreadSleepMillis);
-
-        } while (*shouldKeepRun && _mouseInputState && _mouseInputState->IsHolding() && timeElapsed < millisToRepeatInput);
-    }
-
-    if (!_mouseInputState)
-    {
-        return;
-    }
-
-    _mouseInputState->Release();
-    _mouseInputState = nullptr;
-}
-
-void ProfileManager::RegisterInput(Code code, int value) const
-{
     _mutex.lock();
-    _profile.at(code)->RegisterValue(value);
+
+    for (auto& code : keyCodes)
+    {
+        _currentKeyInputs.emplace(code);
+
+        _keyInputs.at(code).ChangeProfile(_currentSubProfileIndex);
+    }
+
+    for (auto& relativeCode : relativeCodes)
+    {
+        bool inputFlags[] {relativeCode.hasNegativeInput, relativeCode.hasPositiveInput};
+
+        _currentRelativeInputs.emplace(relativeCode.code, inputFlags);
+
+        _relativeInputs.at(relativeCode.code).ChangeProfile(_currentSubProfileIndex);
+    }
+
     _mutex.unlock();
 }
 
-void ProfileManager::UnsubscribeToActionsOnChangeProfile(const std::weak_ptr<std::function<void()>>& weakActionOnChangeProfile)
+bool ProfileManager::CanRegisterInput(InputEvent inputEvent)
 {
-    if (const auto actionOnChangeProfile {weakActionOnChangeProfile.lock()})
-    {
-        auto itEnd {_actionsOnChangeProfile.cend()};
+    const Code& code {inputEvent.GetCode()};
 
-        for (auto it {_actionsOnChangeProfile.begin()}; it != itEnd; ++it)
-        {
-            if (it->get() != actionOnChangeProfile.get())
+    const int& value {inputEvent.GetValue()};
+
+    switch (inputEvent.GetType())
+    {
+        case EV_KEY:
+
+            if (!_keyInputs.contains(code))
             {
-                continue;
+                return false;
             }
 
-            _actionsOnChangeProfile.erase(it);
+            _mutex.lock();
+            _keyInputs.at(code).RegisterValue(value);
+            _mutex.unlock();
 
-            return;
-        }
+            break;
+
+        case EV_REL:
+
+            if (!_relativeInputs.contains(code))
+            {
+                return false;
+            }
+
+            const RelativeInput& relativeInput {_relativeInputs.at(code)};
+
+            if (value < 0 && relativeInput.HasNegativeInput())
+            {
+                _mutex.lock();
+                relativeInput.TriggerNegativeInput();
+                _mutex.unlock();
+            }
+            else if (relativeInput.HasPositiveInput())
+            {
+                _mutex.lock();
+                relativeInput.TriggerPositiveInput();
+                _mutex.unlock();
+            }
+
+            break;
     }
+
+    return true;
+}
+
+std::weak_ptr<std::function<void()>> ProfileManager::SubscribeToTriggerKeyHoldCommand(std::function<void()>&& action)
+{
+    return _triggerKeyHoldCommandEvent.Subscribe(std::move(action));
+}
+
+void ProfileManager::UnsubscribeToTriggerKeyHoldCommand(std::weak_ptr<std::function<void()>>&& action)
+{
+    _triggerKeyHoldCommandEvent.Unsubscribe(std::move(action));
+}
+
+void ProfileManager::TriggerHoldCommands()
+{
+    _triggerKeyHoldCommandEvent.Trigger();
 }

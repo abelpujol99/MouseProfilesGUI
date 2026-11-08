@@ -6,5 +6,5 @@
 void ShutdownApplication::Execute() const
 {
     std::cout << "Shutdown" << std::endl;
-    MVPManager::GetInstance().SwitchShouldRun();
+    ApplicationManager::GetInstance().SwitchShouldRun();
 }

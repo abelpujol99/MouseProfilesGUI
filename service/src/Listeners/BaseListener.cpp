@@ -10,7 +10,7 @@
 BaseListener::BaseListener(FileCodes&& fileCodes) : _filePath(std::move(fileCodes.GetFilePath())), _codes(std::move(fileCodes.GetCodes()))
 {
     _shouldRunListenerAction =
-        MVPManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
+        ApplicationManager::GetInstance().SubscribeToShouldRunObserver([&](bool value) {
             std::cout << "Stop Listeners" << std::endl;
             _keepLooping = value;
         });

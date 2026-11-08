@@ -2,7 +2,7 @@
 
 int main()
 {
-    MVPManager::GetInstance().Start();
+    ApplicationManager::GetInstance().Start();
 
     return 0;
 }

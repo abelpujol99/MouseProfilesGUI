@@ -1,10 +1,10 @@
 #include "Input/Strategy/KeyInputStrategy.h"
 
 #include "Managers/ProfileManager.h"
-#include "State/Button/PressKeyState.h"
+#include "State/Key/PressKeyState.h"
 
 KeyInputStrategy::KeyInputStrategy(std::vector<std::unique_ptr<KeyInputCommand const>>&& buttonInputCommands,
-    CommandDelay&& commandDelay) :
+                                   CommandDelay&& commandDelay) :
     _keyState(std::make_unique<PressKeyState>(this)), _keyInputCommands(std::move(buttonInputCommands)),
     _commandDelay(std::move(commandDelay))
 {}

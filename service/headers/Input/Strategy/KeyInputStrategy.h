@@ -4,7 +4,7 @@
 #include <functional>
 
 #include "Input/Key/KeyInputCommand.h"
-#include "State/Button/IKeyState.h"
+#include "State/Key/IKeyState.h"
 
 
 class KeyInputStrategy : public IInputCommandStrategy

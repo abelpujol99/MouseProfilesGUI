@@ -28,7 +28,7 @@ public:
 
     void TriggerNotification(T notification);
 
-    std::weak_ptr<TEvent> Subscribe(T notification, std::function<void()>&& action);
+    std::weak_ptr<TEvent> Subscribe(T notification, TEvent&& action);
     void Unsubscribe(T notification, std::weak_ptr<TEvent>&& weakAction);
     void UnsubscribeAllNotification(T notification);
     void UnsubscribeAll();
@@ -73,7 +73,7 @@ void NotificationBus<T>::TriggerNotification(T notification)
 }
 
 template <typename T>
-std::weak_ptr<typename NotificationBus<T>::TEvent> NotificationBus<T>::Subscribe(T notification, std::function<void()>&& action)
+std::weak_ptr<typename NotificationBus<T>::TEvent> NotificationBus<T>::Subscribe(T notification, TEvent&& action)
 {
     std::shared_ptr<TEvent> sharedAction {std::make_shared<TEvent>(action)};
     _notifications.at(notification).push_back(sharedAction);
@@ -106,7 +106,6 @@ void NotificationBus<T>::Unsubscribe(T notification, std::weak_ptr<TEvent>&& wea
                 _notifications.at(itMap->first).erase(itValue);
                 return;
             }
-            return;
         }
     }
 }

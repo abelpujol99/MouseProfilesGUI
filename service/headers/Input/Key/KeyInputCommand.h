@@ -4,7 +4,7 @@
 
 #include "Command/ICommand.h"
 #include "Command/CommandDelay.h"
-#include "Command/KeyStateCommands.h"
+#include "Input/Key/KeyStateCommands.h"
 
 class KeyInputCommand
 {

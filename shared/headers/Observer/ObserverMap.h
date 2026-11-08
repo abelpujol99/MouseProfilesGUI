@@ -143,7 +143,6 @@ void ObserverMap<TKey, TValue>::Unsubscribe(TKey key, std::weak_ptr<TEvent>&& we
 				_events.at(itMap->first).erase(itValue);
 				return;
 			}
-			return;
 		}
 	}
 }

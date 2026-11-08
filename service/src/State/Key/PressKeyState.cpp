@@ -1,7 +1,7 @@
-#include "State/Button/PressKeyState.h"
+#include "State/Key/PressKeyState.h"
 
 #include "Input/Strategy/KeyInputStrategy.h"
-#include "State/Button/ReleaseKeyState.h"
+#include "State/Key/ReleaseKeyState.h"
 
 PressKeyState::PressKeyState(KeyInputStrategy* buttonInputCommand)
     : _buttonInputCommand(buttonInputCommand)

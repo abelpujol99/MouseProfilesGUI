@@ -11,11 +11,11 @@ public:
 
     void CreateProfile() override;
 
-    bool HasInputRegistered(InputEvent inputEvent) override;
+    bool HasInputRegistered(const InputEvent& inputEvent) override;
 
-    void ExecuteInput(DeviceId deviceId, InputEvent inputEvent) override;
+    void ExecuteInput(DeviceId deviceId, const InputEvent& inputEvent) override;
 
-    void Emit(InputEvent inputEvent) override;
+    void Emit(const InputEvent& inputEvent) override;
 
     void Synchronize() override;
 

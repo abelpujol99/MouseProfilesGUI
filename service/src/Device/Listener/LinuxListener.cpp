@@ -11,7 +11,11 @@
 
 #define TIMEOUT_MILLIS 100
 
-void LinuxListener::ListenerUpdate(DeviceId deviceId, std::string&& filePath)
+LinuxListener::LinuxListener(DeviceId deviceId, std::string&& filePath) :
+    _listenerThread(std::thread(&LinuxListener::ListenerUpdate, this, deviceId, std::move(filePath)))
+{}
+
+void LinuxListener::ListenerUpdate(DeviceId deviceId, std::string&& filePath) const
 {
     int readFile {open(filePath.c_str(), O_RDONLY | O_NONBLOCK)};
 
@@ -27,10 +31,8 @@ void LinuxListener::ListenerUpdate(DeviceId deviceId, std::string&& filePath)
 
     std::vector<InputEvent> inputEvents;
 
-    while (_keepLooping)
+    while (_keepLooping.load())
     {
-        _mutex.unlock();
-
         if (ReadWithTimeout(readFile, &event, sizeof(event)) <= 0)
         {
             continue;
@@ -39,12 +41,11 @@ void LinuxListener::ListenerUpdate(DeviceId deviceId, std::string&& filePath)
         if (event.type == EV_SYN && event.code == SYN_REPORT)
         {
             DevicesManager::GetInstance().RegisterInputEvents(deviceId, std::move(inputEvents));
+            inputEvents.clear();
             continue;
         }
 
         inputEvents.emplace_back(event.type, event.code, event.value);
-
-        _mutex.lock();
     }
 
     ioctl(readFile, EVIOCGRAB, 0);
@@ -53,9 +54,14 @@ void LinuxListener::ListenerUpdate(DeviceId deviceId, std::string&& filePath)
 
 void LinuxListener::StopListener()
 {
-    _mutex.lock();
-    _keepLooping = false;
-    _mutex.unlock();
+    _keepLooping.store(false);
+
+    if (!_listenerThread.joinable())
+    {
+        return;
+    }
+
+    _listenerThread.join();
 }
 
 ssize_t LinuxListener::ReadWithTimeout(int readFile, void* buffer, size_t size)

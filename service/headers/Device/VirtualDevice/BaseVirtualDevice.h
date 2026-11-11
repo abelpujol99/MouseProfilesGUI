@@ -52,11 +52,11 @@ public:
 
     void ChangeCurrentSubProfile(uint8_t subProfileIndex);
 
-    virtual bool HasInputRegistered(InputEvent inputEvent) = 0;
+    virtual bool HasInputRegistered(const InputEvent& inputEvent) = 0;
 
-    virtual void ExecuteInput(DeviceId deviceId, InputEvent inputEvent) = 0;
+    virtual void ExecuteInput(DeviceId deviceId, const InputEvent& inputEvent) = 0;
 
-    virtual void Emit(InputEvent inputEvent) = 0;
+    virtual void Emit(const InputEvent& inputEvent) = 0;
 
     virtual void Synchronize() = 0;
 

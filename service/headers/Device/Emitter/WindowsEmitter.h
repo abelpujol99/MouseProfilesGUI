@@ -1,18 +1,26 @@
 #pragma once
 
+#include <thread>
+
 #include "DeviceUsings.h"
 
 class WindowsEmitter
 {
 public:
 
-    ~WindowsEmitter() = default;
+    WindowsEmitter(DeviceId deviceId);
 
-    void EmitterUpdate(DeviceId deviceId);
+    ~WindowsEmitter() = default;
 
     void StopEmitter();
 
 private:
 
-    bool _keepLooping {false};
+    void EmitterUpdate(DeviceId deviceId);
+
+    uint8_t _inputToRetrieve {0};
+
+    std::atomic<bool> _keepLooping {false};
+
+    std::thread _emitterThread;
 };

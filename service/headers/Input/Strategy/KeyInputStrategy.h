@@ -43,7 +43,7 @@ private:
 
     const CommandDelay _commandDelay;
 
-    Duration _timeElapsed;
+    Duration _timeElapsed {0};
 
     TimePoint _previousTimePoint;
 

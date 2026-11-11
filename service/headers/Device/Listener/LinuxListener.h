@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mutex>
+#include <thread>
 #include <string>
 
 #include "DeviceUsings.h"
@@ -9,7 +9,7 @@ class LinuxListener
 {
 public:
 
-    LinuxListener() = default;
+    LinuxListener(DeviceId deviceId, std::string&& filePath);
 
     LinuxListener(const LinuxListener& other) = delete;
     LinuxListener& operator=(const LinuxListener& other) = delete;
@@ -18,15 +18,15 @@ public:
 
     ~LinuxListener() = default;
 
-    void ListenerUpdate(DeviceId deviceId, std::string&& filePath);
-
     void StopListener();
 
 private:
 
+    void ListenerUpdate(DeviceId deviceId, std::string&& filePath) const;
+
     static ssize_t ReadWithTimeout(int readFile, void* buffer, size_t size);
 
-    bool _keepLooping {true};
+    std::atomic<bool> _keepLooping {true};
 
-    std::mutex _mutex;
+    std::thread _listenerThread;
 };

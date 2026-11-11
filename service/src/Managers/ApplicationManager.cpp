@@ -1,7 +1,5 @@
 #include "Managers/ApplicationManager.h"
 
-#include "Managers/ThreadsManager.h"
-#include "Managers/ProfileManager.h"
 #include "Managers/SerializationManager.h"
 #include "Managers/DevicesManager.h"
 
@@ -35,13 +33,10 @@ ApplicationManager& ApplicationManager::GetInstance()
 void ApplicationManager::Start()
 {
 #ifdef NDEBUG
-    ProfileManager::GetInstance().OnChangeApplicationFocus();
 
-    DevicesManager::GetInstance().CreateListeners();
+    DevicesManager::GetInstance().Loop();
 
 #endif
-
-    ThreadsManager::GetInstance().Start();
 
     //SerializationManager::GetInstance().SerializeDevices(_devices);
 }

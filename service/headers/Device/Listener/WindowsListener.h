@@ -1,17 +1,24 @@
 #pragma once
+#include <atomic>
+#include <thread>
+
 #include "DeviceUsings.h"
 
 class WindowsListener
 {
 public:
 
-    ~WindowsListener() = default;
+    WindowsListener(DeviceId deviceId);
 
-    void ListenerUpdate(DeviceId deviceId);
+    ~WindowsListener() = default;
 
     void StopListener();
 
 private:
 
-    bool _keepLooping {true};
+    void ListenerUpdate(DeviceId deviceId);
+
+    std::atomic<bool> _keepLooping {true};
+
+    std::thread _listenerThread;
 };

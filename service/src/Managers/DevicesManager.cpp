@@ -4,17 +4,12 @@
 #include <linux/input.h>
 #include <linux/uinput.h>
 
+#include "TimeDefines.h"
 #include "Factory/VirtualDeviceFactory.h"
-#include "Managers/ThreadsManager.h"
 #include "Device/VirtualDeviceData.h"
 
 DevicesManager::DevicesManager()
 {
-    ThreadsManager::GetInstance().SetDevicesHoldAction([&]()
-    {
-        TriggerHoldCommands();
-    });
-
     std::unordered_map<unsigned long, std::unordered_set<int>> capableInputs;
 
     std::unordered_set<int> inputEvs;
@@ -74,6 +69,16 @@ DevicesManager& DevicesManager::GetInstance()
     return _devicesManagerInstance;
 }
 
+void DevicesManager::Loop()
+{
+    while (_shouldKeepTriggering.load())
+    {
+        _triggerKeyHoldCommandEvent.Trigger();
+
+        std::this_thread::sleep_for(Duration(THREAD_SLEEP_MILLIS));
+    }
+}
+
 void DevicesManager::CreateVirtualDeviceWrapper(DeviceId deviceId, VirtualDeviceData&& virtualDeviceData,
     PlatformListenerData&& platformListenerData)
 {
@@ -85,26 +90,44 @@ void DevicesManager::RegisterInputEvents(DeviceId deviceId, std::vector<InputEve
     PlatformVirtualDevice& virtualDevice {_devicesWrapper.at(deviceId).GetVirtualDevice()};
 
     std::vector<InputEvent> notRegisteredInputs;
-    notRegisteredInputs.reserve(inputEvents.size());
 
     for (const auto& inputEvent : inputEvents)
     {
         if (virtualDevice.HasInputRegistered(inputEvent))
         {
-            Emit(deviceId, notRegisteredInputs);
+            Emit(deviceId, std::move(notRegisteredInputs));
             notRegisteredInputs.clear();
 
-            virtualDevice.ExecuteInput(deviceId, inputEvent);
+            AppendInputEventToDevice(deviceId, {inputEvent});
             continue;
         }
 
         notRegisteredInputs.push_back(inputEvent);
     }
 
-    Emit(deviceId, notRegisteredInputs);
+    Emit(deviceId, std::move(notRegisteredInputs));
 }
 
-void DevicesManager::Emit(DeviceId deviceId, const std::vector<InputEvent>& inputEvents)
+void DevicesManager::AppendInputEventToDevice(DeviceId deviceId, InputEvent inputEvent)
+{
+    _deviceInputEventsStorage.at(deviceId).push(inputEvent);
+}
+
+InputEvent DevicesManager::GetDeviceInputEvent(DeviceId deviceId)
+{
+    const InputEvent& inputEvent {_deviceInputEventsStorage.at(deviceId).front()};
+
+    _deviceInputEventsStorage.at(deviceId).pop();
+
+    return inputEvent;
+}
+
+void DevicesManager::ExecuteInputEvent(DeviceId deviceId, const InputEvent& inputEvent)
+{
+    _devicesWrapper.at(deviceId).GetVirtualDevice().ExecuteInput(deviceId, inputEvent);
+}
+
+void DevicesManager::Emit(DeviceId deviceId, std::vector<InputEvent>&& inputEvents)
 {
     PlatformVirtualDevice& virtualDevice {_devicesWrapper.at(deviceId).GetVirtualDevice()};
 
@@ -121,6 +144,18 @@ void DevicesManager::ChangeDeviceCurrentSubProfile(DeviceId deviceId, uint8_t su
     _devicesWrapper.at(deviceId).GetVirtualDevice().ChangeCurrentSubProfile(subProfileIndex);
 }
 
+std::weak_ptr<std::function<void()>> DevicesManager::SubscribeToDeviceRegisterInput(DeviceId deviceId, std::function<void()>&& action)
+{
+    auto [it, inserted] = _onDeviceRegisterInput.try_emplace(deviceId);
+    return it->second.Subscribe(std::move(action));
+}
+
+void DevicesManager::UnsubscribeToDeviceRegisterInput(DeviceId deviceId)
+{
+    _onDeviceRegisterInput.at(deviceId).UnsubscribeAll();
+    _onDeviceRegisterInput.erase(deviceId);
+}
+
 std::weak_ptr<std::function<void()>> DevicesManager::SubscribeToTriggerKeyHoldCommand(std::function<void()>&& action)
 {
     return _triggerKeyHoldCommandEvent.Subscribe(std::move(action));
@@ -134,6 +169,11 @@ void DevicesManager::UnsubscribeToTriggerKeyHoldCommand(std::weak_ptr<std::funct
 void DevicesManager::TriggerHoldCommands()
 {
     _triggerKeyHoldCommandEvent.Trigger();
+}
+
+void DevicesManager::StopTriggering()
+{
+    _shouldKeepTriggering.store(false);
 }
 
 void DevicesManager::RemoveVirtualDevice(DeviceId deviceId)

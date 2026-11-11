@@ -47,10 +47,12 @@ void KeyInputStrategy::Press(DeviceId deviceId)
 
 void KeyInputStrategy::Hold(DeviceId deviceId)
 {
-    if (_currentKeyInputCommand != nullptr)
+    if (_currentKeyInputCommand == nullptr)
     {
-        _currentKeyInputCommand->Hold(deviceId);
+        return;
     }
+
+    _currentKeyInputCommand->Hold(deviceId);
 }
 
 void KeyInputStrategy::Release(DeviceId deviceId)

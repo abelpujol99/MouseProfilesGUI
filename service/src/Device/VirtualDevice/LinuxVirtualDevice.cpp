@@ -245,7 +245,7 @@ void LinuxVirtualDevice::CreateProfile()
     SetProfile(std::move(profile));*/
 }
 
-bool LinuxVirtualDevice::HasInputRegistered(InputEvent inputEvent)
+bool LinuxVirtualDevice::HasInputRegistered(const InputEvent& inputEvent)
 {
     const unsigned short& type {inputEvent.GetType()};
 
@@ -267,7 +267,7 @@ bool LinuxVirtualDevice::HasInputRegistered(InputEvent inputEvent)
     return false;
 }
 
-void LinuxVirtualDevice::ExecuteInput(DeviceId deviceId, InputEvent inputEvent)
+void LinuxVirtualDevice::ExecuteInput(DeviceId deviceId, const InputEvent& inputEvent)
 {
     const unsigned short& type {inputEvent.GetType()};
 
@@ -292,7 +292,7 @@ void LinuxVirtualDevice::ExecuteInput(DeviceId deviceId, InputEvent inputEvent)
     }
 }
 
-void LinuxVirtualDevice::Emit(InputEvent inputEvent)
+void LinuxVirtualDevice::Emit(const InputEvent& inputEvent)
 {
     input_event event{};
 

@@ -3,19 +3,19 @@
 
 #include <vector>
 
-#include "Input/EmitData.h"
+#include "Input/InputEvent.h"
 
 class Macro : public ICommand
 {
 public:
 
-    Macro(std::vector<EmitData>&& emitsData);
+    Macro(std::vector<InputEvent>&& inputEvents);
 
     ~Macro() override = default;
 
-    void Execute() const override;
+    void Execute(DeviceId deviceId) const override;
 
 private:
 
-    std::vector<EmitData> _emitsData;
+    std::vector<InputEvent> _inputEvents;
 };

@@ -3,7 +3,7 @@
 #include "Managers/ThreadsManager.h"
 #include "Managers/ProfileManager.h"
 #include "Managers/SerializationManager.h"
-#include "Managers/VirtualDeviceManager.h"
+#include "Managers/DevicesManager.h"
 
 std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInstance = nullptr;
 
@@ -37,7 +37,7 @@ void ApplicationManager::Start()
 #ifdef NDEBUG
     ProfileManager::GetInstance().OnChangeApplicationFocus();
 
-    VirtualDeviceManager::GetInstance().CreateListeners();
+    DevicesManager::GetInstance().CreateListeners();
 
 #endif
 

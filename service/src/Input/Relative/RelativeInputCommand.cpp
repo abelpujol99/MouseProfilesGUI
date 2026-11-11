@@ -3,12 +3,12 @@
 RelativeInputCommand::RelativeInputCommand(std::unique_ptr<ICommand const>&& command) : _command(std::move(command))
 {}
 
-void RelativeInputCommand::ExecuteCommand() const
+void RelativeInputCommand::ExecuteCommand(DeviceId deviceId) const
 {
     if (_command == nullptr)
     {
         return;
     }
 
-    _command->Execute();
+    _command->Execute(deviceId);
 }

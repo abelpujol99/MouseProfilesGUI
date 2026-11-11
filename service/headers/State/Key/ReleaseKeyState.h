@@ -7,12 +7,12 @@ class ReleaseKeyState : public IKeyState
 {
 public:
 
-    ReleaseKeyState(KeyInputStrategy* buttonInputCommand);
+    ReleaseKeyState(KeyInputStrategy* keyInputStrategy);
 
-    void OnInput() override;
+    void OnInput(DeviceId deviceId) override;
 
 private:
 
-    KeyInputStrategy* _buttonInputCommandStrategy;
+    KeyInputStrategy* _keyInputStrategy;
 
 };

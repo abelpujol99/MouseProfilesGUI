@@ -9,11 +9,11 @@ class NotificationBus
 {
     using TEvent = std::function<void()>;
 
-    using TEventList = std::vector<std::shared_ptr<TEvent>>;
-    using TEventListIterator = typename TEventList::iterator;
-    using TEventListConstIterator = typename TEventList::const_iterator;
+    using TEventVector = std::vector<std::shared_ptr<TEvent>>;
+    using TEventVectorIterator = typename TEventVector::iterator;
+    using TEventVectorConstIterator = typename TEventVector::const_iterator;
 
-    using TEventMap = std::unordered_map<T, TEventList>;
+    using TEventMap = std::unordered_map<T, TEventVector>;
     using TEventMapIterator = typename TEventMap::iterator;
     using TEventMapConstIterator = typename TEventMap::const_iterator;
 
@@ -52,7 +52,7 @@ NotificationBus<T>::~NotificationBus() noexcept
 template <typename T>
 void NotificationBus<T>::AddEntry(T notification)
 {
-    _notifications.emplace(notification, TEventList{});
+    _notifications.emplace(notification, TEventVector{});
 }
 
 template <typename T>
@@ -64,9 +64,9 @@ void NotificationBus<T>::RemoveEntry(T notification)
 template <typename T>
 void NotificationBus<T>::TriggerNotification(T notification)
 {
-    TEventListConstIterator itEnd {_notifications.at(notification).cend()};
+    TEventVectorConstIterator itEnd {_notifications.at(notification).cend()};
 
-    for (TEventListIterator it {_notifications.at(notification).begin()}; it != itEnd; ++it)
+    for (TEventVectorIterator it {_notifications.at(notification).begin()}; it != itEnd; ++it)
     {
         (**it)();
     }
@@ -94,9 +94,9 @@ void NotificationBus<T>::Unsubscribe(T notification, std::weak_ptr<TEvent>&& wea
                 continue;
             }
 
-            TEventListConstIterator itValueEnd {itMap->second.cend()};
+            TEventVectorConstIterator itValueEnd {itMap->second.cend()};
 
-            for (TEventListIterator itValue {itMap->second.begin()}; itValue != itValueEnd; ++itValue)
+            for (TEventVectorIterator itValue {itMap->second.begin()}; itValue != itValueEnd; ++itValue)
             {
                 if (*itValue != action)
                 {

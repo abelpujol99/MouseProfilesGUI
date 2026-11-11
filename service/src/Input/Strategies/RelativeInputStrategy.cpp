@@ -9,12 +9,12 @@ void RelativeInputStrategy::ChangeProfile(uint8_t profileIndex)
     _currentRelativeInputCommand = _relativeInputCommands.at(profileIndex).get();
 }
 
-void RelativeInputStrategy::Trigger() const
+void RelativeInputStrategy::Trigger(DeviceId deviceId) const
 {
     if (_currentRelativeInputCommand == nullptr)
     {
         return;
     }
 
-    _currentRelativeInputCommand->ExecuteCommand();
+    _currentRelativeInputCommand->ExecuteCommand(deviceId);
 }

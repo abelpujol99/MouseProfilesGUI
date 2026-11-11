@@ -13,7 +13,7 @@ public:
 
     void ChangeProfile(uint8_t profileIndex) override;
 
-    void Trigger() const;
+    void Trigger(DeviceId deviceId) const;
 
 private:
 

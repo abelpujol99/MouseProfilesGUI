@@ -1,60 +1,23 @@
-#include "Managers/ProfileManager.h"
+#include "../../../headers/Device/VirtualDevice/LinuxVirtualDevice.h"
 
-#include "Managers/ThreadsManager.h"
-#include "Managers/VirtualDeviceManager.h"
-#include "Input/Strategy/KeyInputStrategy.h"
+#include <iostream>
+#include <unistd.h>
+#include <linux/uinput.h>
+
 #include "Input/Relative/RelativeInput.h"
+#include "Managers/DevicesManager.h"
 
-ProfileManager::ProfileManager() : _currentSubProfileIndex(0)
+LinuxVirtualDevice::LinuxVirtualDevice(InputType inputType, int file) : BaseVirtualDevice(inputType), _writeFile(file)
+{}
+
+LinuxVirtualDevice::~LinuxVirtualDevice()
 {
-    ThreadsManager::GetInstance().SetProfileAction([&]()
-    {
-        TriggerHoldCommands();
-    });
+    LinuxVirtualDevice::Destroy();
 }
 
-ProfileManager& ProfileManager::GetInstance()
+void LinuxVirtualDevice::CreateProfile()
 {
-    static ProfileManager _profileManagerInstance;
 
-    return _profileManagerInstance;
-}
-
-void ProfileManager::OnChangeApplicationFocus()
-{
-    //TODO CATCH ON APPLICATION FOCUS FOR EACH LINUX ENVIRONMENT
-
-    //TODO READ CONFIG FILE
-
-    /*_allSubProfilesCodes.clear();
-
-    std::forward_list<Code> codes;
-
-    //codes.emplace_front(8); //SCROLL
-    codes.emplace_front(32); //LEFT TILT
-    codes.emplace_front(64); //RIGHT TILT
-    codes.emplace_front(80); //HIDDEN BUTTON
-    codes.emplace_front(81); //TASK BUTTON
-    codes.emplace_front(82); //BACK BUTTON
-    codes.emplace_front(84); //FORWARD BUTTON
-    codes.emplace_front(275); //SIDE BUTTON
-    codes.emplace_front(276); //EXTRA BUTTON
-
-    _allSubProfilesCodes.try_emplace(0, codes);
-
-    codes.clear();
-
-    codes.emplace_front(272); //LEFT BUTTON
-    codes.emplace_front(273); //RIGHT BUTTON
-    codes.emplace_front(275); //SIDE BUTTON
-
-    _allSubProfilesCodes.try_emplace(1, codes);
-
-    CreateProfile();*/
-}
-
-void ProfileManager::CreateProfile()
-{
 #define SUB_PROFILES 2
 
     /*std::unordered_map<Code, std::unique_ptr<IInputCommandStrategy>> profile;
@@ -282,111 +245,75 @@ void ProfileManager::CreateProfile()
     SetProfile(std::move(profile));*/
 }
 
-void ProfileManager::SetProfile(std::unordered_map<Code, KeyInputStrategy>&& keyInputsProfile,
-    std::unordered_map<Code, RelativeInput>&& relativeInputsProfile)
+bool LinuxVirtualDevice::HasInputRegistered(InputEvent inputEvent)
 {
-    _keyInputs = std::move(keyInputsProfile);
-    _relativeInputs = std::move(relativeInputsProfile);
+    const unsigned short& type {inputEvent.GetType()};
 
-    UpdateCodesBindings();
-}
-
-void ProfileManager::ChangeCurrentSubProfile(uint8_t subProfileIndex)
-{
-    _currentSubProfileIndex = subProfileIndex;
-
-    UpdateCodesBindings();
-}
-
-void ProfileManager::UpdateCodesBindings()
-{
-    _currentKeyInputs.clear();
-    _currentRelativeInputs.clear();
-
-    const std::forward_list<Code>& keyCodes {_subProfilesKeyCodes.at(_currentSubProfileIndex)};
-    const std::forward_list<RelativeCode>& relativeCodes {_subProfilesRelativeCodes.at(_currentSubProfileIndex)};
-
-    _mutex.lock();
-
-    for (auto& code : keyCodes)
+    if (type == EV_KEY)
     {
-        _currentKeyInputs.emplace(code);
-
-        _keyInputs.at(code).ChangeProfile(_currentSubProfileIndex);
+        return _keyProfile != nullptr &&
+            _keyProfile->currentInputs.contains(inputEvent.GetCode());
     }
 
-    for (auto& relativeCode : relativeCodes)
+    if (type == EV_REL)
     {
-        bool inputFlags[] {relativeCode.hasNegativeInput, relativeCode.hasPositiveInput};
+        const int& value {inputEvent.GetValue() < 0 ? 0 : inputEvent.GetValue()};
 
-        _currentRelativeInputs.emplace(relativeCode.code, inputFlags);
-
-        _relativeInputs.at(relativeCode.code).ChangeProfile(_currentSubProfileIndex);
+        return _relativeProfile != nullptr &&
+            _relativeProfile->currentInputs.contains(inputEvent.GetCode()) &&
+                _relativeProfile->currentInputs.at(value).data();
     }
 
-    _mutex.unlock();
+    return false;
 }
 
-bool ProfileManager::CanRegisterInput(InputEvent inputEvent)
+void LinuxVirtualDevice::ExecuteInput(DeviceId deviceId, InputEvent inputEvent)
 {
-    const Code& code {inputEvent.GetCode()};
+    const unsigned short& type {inputEvent.GetType()};
 
-    const int& value {inputEvent.GetValue()};
-
-    switch (inputEvent.GetType())
+    if (type == EV_KEY)
     {
-        case EV_KEY:
-
-            if (!_keyInputs.contains(code))
-            {
-                return false;
-            }
-
-            _mutex.lock();
-            _keyInputs.at(code).RegisterValue(value);
-            _mutex.unlock();
-
-            break;
-
-        case EV_REL:
-
-            if (!_relativeInputs.contains(code))
-            {
-                return false;
-            }
-
-            const RelativeInput& relativeInput {_relativeInputs.at(code)};
-
-            if (value < 0 && relativeInput.HasNegativeInput())
-            {
-                _mutex.lock();
-                relativeInput.TriggerNegativeInput();
-                _mutex.unlock();
-            }
-            else if (relativeInput.HasPositiveInput())
-            {
-                _mutex.lock();
-                relativeInput.TriggerPositiveInput();
-                _mutex.unlock();
-            }
-
-            break;
+        _keyProfile->inputs.at(inputEvent.GetCode()).RegisterValue(deviceId, inputEvent.GetValue());
+        return;
     }
 
-    return true;
+    if (type == EV_REL)
+    {
+        const RelativeInput& relativeInput {_relativeProfile->inputs.at(inputEvent.GetCode())};
+
+        if (inputEvent.GetValue() < 0)
+        {
+            relativeInput.TriggerNegativeInput(deviceId);
+        }
+        else
+        {
+            relativeInput.TriggerPositiveInput(deviceId);
+        }
+    }
 }
 
-std::weak_ptr<std::function<void()>> ProfileManager::SubscribeToTriggerKeyHoldCommand(std::function<void()>&& action)
+void LinuxVirtualDevice::Emit(InputEvent inputEvent)
 {
-    return _triggerKeyHoldCommandEvent.Subscribe(std::move(action));
+    input_event event{};
+
+    event.type = inputEvent.GetType();
+    event.code = inputEvent.GetCode();
+    event.value = inputEvent.GetValue();
+
+    //std::cout << "Type: " << event.type << " Code: " << event.code << " Value: " << event.value << std::endl;
+
+    gettimeofday(&event.time, nullptr);
+
+    write(_writeFile, &event, sizeof(event));
 }
 
-void ProfileManager::UnsubscribeToTriggerKeyHoldCommand(std::weak_ptr<std::function<void()>>&& action)
+void LinuxVirtualDevice::Synchronize()
 {
-    _triggerKeyHoldCommandEvent.Unsubscribe(std::move(action));
+    Emit({EV_SYN, SYN_REPORT, 0});
 }
 
-void ProfileManager::TriggerHoldCommands()
+void LinuxVirtualDevice::Destroy()
 {
-    _triggerKeyHoldCommandEvent.Trigger();
+    ioctl(_writeFile, UI_DEV_DESTROY);
+    close(_writeFile);
 }

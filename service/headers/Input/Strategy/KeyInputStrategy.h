@@ -15,23 +15,23 @@ public:
 
     void ChangeProfile(uint8_t profileIndex) override;
 
-    void ChangeState(std::unique_ptr<IKeyState>&& buttonInputState);
+    void ChangeState(std::unique_ptr<IKeyState>&& keyState);
 
-    void RegisterValue(int value);
+    void RegisterValue(DeviceId deviceId, int value) const;
 
-    void Press();
+    void Press(DeviceId deviceId);
 
-    void Hold();
+    void Hold(DeviceId deviceId);
 
-    void Release();
+    void Release(DeviceId deviceId);
 
     [[nodiscard]] bool IsHolding() const;
 
 private:
 
-    void FirstHoldDelay();
+    void FirstHoldDelay(DeviceId deviceId);
 
-    void HoldDelay();
+    void HoldDelay(DeviceId deviceId);
 
     std::unique_ptr<IKeyState> _keyState;
 

@@ -13,7 +13,7 @@ public:
 
     ~RelativeInputCommand() = default;
 
-    void ExecuteCommand() const;
+    void ExecuteCommand(DeviceId deviceId) const;
 
 private:
 

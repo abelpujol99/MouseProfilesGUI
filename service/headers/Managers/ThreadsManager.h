@@ -1,10 +1,10 @@
 #pragma once
 
 #include <forward_list>
+#include <functional>
 #include <mutex>
 #include <thread>
-
-#include "Utilities/Concepts/DerivedFromBaseListener.h"
+#include "Utilities/Usings/PlatformUsings.h"
 
 class ThreadsManager
 {
@@ -17,10 +17,9 @@ public:
 
     static ThreadsManager& GetInstance();
 
-    template <DerivedFromBaseListener TBaseListener>
-    void CreateListenersThreads(std::forward_list<FileCodes>&& fileCodes);
+    void CreateListenerThread(PlatformListener& platformListener, DeviceId deviceId, PlatformListenerData&& platformListenerData);
 
-    void SetProfileAction(std::function<void()>&& profileAction);
+    void SetDevicesHoldAction(std::function<void()>&& profileAction);
 
     void Start();
 
@@ -34,7 +33,7 @@ private:
 
     static std::unique_ptr<ThreadsManager> _threadsManagerInstance;
 
-    std::forward_list<std::unique_ptr<BaseListener>> _listeners;
+    std::forward_list<PlatformListener> _listeners;
 
     std::forward_list<std::thread> _listenersThreads;
 
@@ -46,13 +45,3 @@ private:
 
     std::mutex _mutex;
 };
-
-template<DerivedFromBaseListener TBaseListener>
-void ThreadsManager::CreateListenersThreads(std::forward_list<FileCodes>&& fileCodes)
-{
-    for (auto& fileCode : fileCodes)
-    {
-        _listeners.emplace_front(std::make_unique<TBaseListener>(std::move(fileCode)));
-        _listenersThreads.emplace_front(&BaseListener::ListenerUpdate, _listeners.front().get());
-    }
-}

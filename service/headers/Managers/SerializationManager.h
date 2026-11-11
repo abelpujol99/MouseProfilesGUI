@@ -36,11 +36,9 @@ private:
 
     void SerializeCodeRemap(CodeRemap codeRemap, std::ofstream& file);
 
-    void SerializeEmitInputEventCommand(std::vector<EmitData> emitsData, std::ofstream& file);
+    void SerializeEmitInputEventCommand(std::vector<InputEvent> inputEvents, std::ofstream& file);
 
     void SerializeSwitchToSubProfileCommand(uint8_t subProfileIndex, std::ofstream& file);
-
-    void SerializeEmitData(EmitData emitData, std::ofstream& file);
 
     void SerializeInputEvent(InputEvent inputEvent, std::ofstream& file);
 
@@ -61,11 +59,9 @@ private:
 
     [[nodiscard]] CodeRemap DeserializeCodeRemap(std::ifstream& file);
 
-    [[nodiscard]] std::vector<EmitData> DeserializeEmitInputEventCommand(std::ifstream& file);
+    [[nodiscard]] std::vector<InputEvent> DeserializeEmitInputEventCommand(std::ifstream& file);
 
     [[nodiscard]] uint8_t DeserializeSwitchToSubProfileCommand(std::ifstream& file);
-
-    [[nodiscard]] EmitData DeserializeEmitData(std::ifstream& file);
 
     [[nodiscard]] InputEvent DeserializeInputEvent(std::ifstream& file);
 

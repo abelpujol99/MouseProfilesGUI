@@ -91,7 +91,7 @@ void SerializationManager::SerializeCodeRemap(CodeRemap codeRemap, std::ofstream
 
     if (codeRemap.commandType == CommandType::EMIT_INPUT)
     {
-        SerializeEmitInputEventCommand(codeRemap.emitsData, file);
+        SerializeEmitInputEventCommand(codeRemap.inputEvents, file);
     }
     else if (codeRemap.commandType == CommandType::SWITCH_TO_SUB_PROFILE)
     {
@@ -99,25 +99,19 @@ void SerializationManager::SerializeCodeRemap(CodeRemap codeRemap, std::ofstream
     }
 }
 
-void SerializationManager::SerializeEmitInputEventCommand(std::vector<EmitData> emitsData, std::ofstream& file)
+void SerializationManager::SerializeEmitInputEventCommand(std::vector<InputEvent> inputEvents, std::ofstream& file)
 {
-    SerializePrimitiveType<size_t>(emitsData.size(), file);
+    SerializePrimitiveType<size_t>(inputEvents.size(), file);
 
-    for (auto&& emitData : emitsData)
+    for (auto&& inputEvent : inputEvents)
     {
-        SerializeEmitData(emitData, file);
+        SerializeInputEvent(inputEvent, file);
     }
 }
 
 void SerializationManager::SerializeSwitchToSubProfileCommand(uint8_t subProfileIndex, std::ofstream& file)
 {
     SerializePrimitiveType<uint8_t>(subProfileIndex, file);
-}
-
-void SerializationManager::SerializeEmitData(EmitData emitData, std::ofstream& file)
-{
-    SerializePrimitiveType<InputDevices>(emitData.GetInputDevice(), file);
-    SerializeInputEvent(emitData.GetInputEvent(), file);
 }
 
 void SerializationManager::SerializeInputEvent(InputEvent inputEvent, std::ofstream& file)
@@ -227,7 +221,7 @@ CodeRemap SerializationManager::DeserializeCodeRemap(std::ifstream& file)
 
     if (codeRemap.commandType == CommandType::EMIT_INPUT)
     {
-        codeRemap.emitsData = DeserializeEmitInputEventCommand(file);
+        codeRemap.inputEvents = DeserializeEmitInputEventCommand(file);
     }
     else if (codeRemap.commandType == CommandType::SWITCH_TO_SUB_PROFILE)
     {
@@ -237,30 +231,25 @@ CodeRemap SerializationManager::DeserializeCodeRemap(std::ifstream& file)
     return codeRemap;
 }
 
-std::vector<EmitData> SerializationManager::DeserializeEmitInputEventCommand(std::ifstream& file)
+std::vector<InputEvent> SerializationManager::DeserializeEmitInputEventCommand(std::ifstream& file)
 {
-    std::vector<EmitData> emitsData{};
+    std::vector<InputEvent> inputEvents{};
 
     size_t emitsDataCount {DeserializePrimitiveType<size_t>(file)};
 
-    emitsData.reserve(emitsDataCount);
+    inputEvents.reserve(emitsDataCount);
 
     for (size_t i{0}; i < emitsDataCount; ++i)
     {
-        emitsData.at(i) = DeserializeEmitData(file);
+        inputEvents.at(i) = DeserializeInputEvent(file);
     }
 
-    return emitsData;
+    return inputEvents;
 }
 
 uint8_t SerializationManager::DeserializeSwitchToSubProfileCommand(std::ifstream& file)
 {
     return DeserializePrimitiveType<uint8_t>(file);
-}
-
-EmitData SerializationManager::DeserializeEmitData(std::ifstream& file)
-{
-    return {DeserializePrimitiveType<InputDevices>(file), DeserializeInputEvent(file)};
 }
 
 InputEvent SerializationManager::DeserializeInputEvent(std::ifstream& file)

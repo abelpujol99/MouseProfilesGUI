@@ -7,5 +7,5 @@ public:
 
     ~ShutdownApplication() override = default;
 
-    void Execute() const override;
+    void Execute(DeviceId deviceId) const override;
 };

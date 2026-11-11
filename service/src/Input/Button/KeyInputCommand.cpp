@@ -5,32 +5,32 @@ KeyInputCommand::KeyInputCommand(KeyStateCommands&& keyStateCommands, CommandDel
     _onReleaseCommand(std::move(keyStateCommands.onRelease)), delayCommand(std::move(delayCommand))
 {}
 
-void KeyInputCommand::Press() const
+void KeyInputCommand::Press(DeviceId deviceId) const
 {
     if (_onPressCommand == nullptr)
     {
         return;
     }
 
-    _onPressCommand->Execute();
+    _onPressCommand->Execute(deviceId);
 }
 
-void KeyInputCommand::Hold() const
+void KeyInputCommand::Hold(DeviceId deviceId) const
 {
     if (_onHoldCommand == nullptr)
     {
         return;
     }
 
-    _onHoldCommand->Execute();
+    _onHoldCommand->Execute(deviceId);
 }
 
-void KeyInputCommand::Release() const
+void KeyInputCommand::Release(DeviceId deviceId) const
 {
     if (_onReleaseCommand == nullptr)
     {
         return;
     }
 
-    _onReleaseCommand->Execute();
+    _onReleaseCommand->Execute(deviceId);
 }

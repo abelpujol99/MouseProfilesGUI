@@ -23,12 +23,12 @@ bool RelativeInput::HasPositiveInput() const
     return _positiveInput != nullptr;
 }
 
-void RelativeInput::TriggerNegativeInput() const
+void RelativeInput::TriggerNegativeInput(DeviceId deviceId) const
 {
-    _negativeInput->Trigger();
+    _negativeInput->Trigger(deviceId);
 }
 
-void RelativeInput::TriggerPositiveInput() const
+void RelativeInput::TriggerPositiveInput(DeviceId deviceId) const
 {
-    _positiveInput->Trigger();
+    _positiveInput->Trigger(deviceId);
 }

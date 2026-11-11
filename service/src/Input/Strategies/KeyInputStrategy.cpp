@@ -1,11 +1,10 @@
 #include "Input/Strategy/KeyInputStrategy.h"
 
-#include "Managers/ProfileManager.h"
+#include "Managers/DevicesManager.h"
 #include "State/Key/PressKeyState.h"
 
 KeyInputStrategy::KeyInputStrategy(std::vector<std::unique_ptr<KeyInputCommand const>>&& buttonInputCommands,
-                                   CommandDelay&& commandDelay) :
-    _keyState(std::make_unique<PressKeyState>(this)), _keyInputCommands(std::move(buttonInputCommands)),
+    CommandDelay&& commandDelay) : _keyState(std::make_unique<PressKeyState>(this)), _keyInputCommands(std::move(buttonInputCommands)),
     _commandDelay(std::move(commandDelay))
 {}
 
@@ -14,43 +13,58 @@ void KeyInputStrategy::ChangeProfile(uint8_t profileIndex)
     _currentKeyInputCommand = _keyInputCommands[profileIndex].get();
 }
 
-void KeyInputStrategy::ChangeState(std::unique_ptr<IKeyState>&& buttonInputState)
+void KeyInputStrategy::ChangeState(std::unique_ptr<IKeyState>&& keyState)
 {
-    _keyState = std::move(buttonInputState);
+    _keyState = std::move(keyState);
 }
 
-void KeyInputStrategy::RegisterValue(int value)
+void KeyInputStrategy::RegisterValue(DeviceId deviceId, int value) const
 {
     if (value == _isPressed)
     {
         return;
     }
 
-    _keyState->OnInput();
+    _keyState->OnInput(deviceId);
 }
 
-void KeyInputStrategy::Press()
+void KeyInputStrategy::Press(DeviceId deviceId)
 {
     _isPressed = true;
-    _currentKeyInputCommand->Press();
+
+    if (_currentKeyInputCommand != nullptr)
+    {
+        _currentKeyInputCommand->Press(deviceId);
+    }
 
     _previousTimePoint = SystemClock::now();
 
-    //TODO SUBSCRIBE FIRST_HOLD_DELAY TO PROFILE MANAGER
+    _subscriptionToTriggerHoldCommand = DevicesManager::GetInstance().SubscribeToTriggerKeyHoldCommand([&, deviceId]()
+    {
+        FirstHoldDelay(deviceId);
+    });
 }
 
-void KeyInputStrategy::Hold()
+void KeyInputStrategy::Hold(DeviceId deviceId)
 {
-    _currentKeyInputCommand->Hold();
+    if (_currentKeyInputCommand != nullptr)
+    {
+        _currentKeyInputCommand->Hold(deviceId);
+    }
 }
 
-void KeyInputStrategy::Release()
+void KeyInputStrategy::Release(DeviceId deviceId)
 {
     _isPressed = false;
 
-    //TODO UNSUBSCRIBE HOLD_DELAY FROM PROFILE MANAGER
+    DevicesManager::GetInstance().UnsubscribeToTriggerKeyHoldCommand(std::move(_subscriptionToTriggerHoldCommand));
 
-    _currentKeyInputCommand->Release();
+    if (_currentKeyInputCommand == nullptr)
+    {
+        return;
+    }
+
+    _currentKeyInputCommand->Release(deviceId);
 }
 
 bool KeyInputStrategy::IsHolding() const
@@ -58,7 +72,7 @@ bool KeyInputStrategy::IsHolding() const
     return _isPressed;
 }
 
-void KeyInputStrategy::FirstHoldDelay()
+void KeyInputStrategy::FirstHoldDelay(DeviceId deviceId)
 {
     TimePoint currentTimePoint {SystemClock::now()};
 
@@ -73,15 +87,19 @@ void KeyInputStrategy::FirstHoldDelay()
         return;
     }
 
-    Hold();
+    Hold(deviceId);
 
     _timeElapsed = Duration(0);
 
-    //TODO UNSUBSCRIBE FIRST_HOLD_DELAY FROM PROFILE MANAGER
-    //TODO SUBSCRIBE HOLD_DELAY TO PROFILE MANAGER
+    DevicesManager::GetInstance().UnsubscribeToTriggerKeyHoldCommand(std::move(_subscriptionToTriggerHoldCommand));
+
+    _subscriptionToTriggerHoldCommand = DevicesManager::GetInstance().SubscribeToTriggerKeyHoldCommand([&, deviceId]()
+    {
+        HoldDelay(deviceId);
+    });
 }
 
-void KeyInputStrategy::HoldDelay()
+void KeyInputStrategy::HoldDelay(DeviceId deviceId)
 {
     TimePoint currentTimePoint {SystemClock::now()};
 
@@ -96,7 +114,7 @@ void KeyInputStrategy::HoldDelay()
         return;
     }
 
-    Hold();
+    Hold(deviceId);
 
     _timeElapsed = Duration(0);
 }

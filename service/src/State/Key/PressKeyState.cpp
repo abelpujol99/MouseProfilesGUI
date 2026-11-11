@@ -3,13 +3,12 @@
 #include "Input/Strategy/KeyInputStrategy.h"
 #include "State/Key/ReleaseKeyState.h"
 
-PressKeyState::PressKeyState(KeyInputStrategy* buttonInputCommand)
-    : _buttonInputCommand(buttonInputCommand)
+PressKeyState::PressKeyState(KeyInputStrategy* keyInputStrategy) : _keyInputStrategy(keyInputStrategy)
 {}
 
-void PressKeyState::OnInput()
+void PressKeyState::OnInput(DeviceId deviceId)
 {
-    _buttonInputCommand->Press();
+    _keyInputStrategy->Press(deviceId);
 
-    _buttonInputCommand->ChangeState(std::make_unique<ReleaseKeyState>(_buttonInputCommand));
+    _keyInputStrategy->ChangeState(std::make_unique<ReleaseKeyState>(_keyInputStrategy));
 }

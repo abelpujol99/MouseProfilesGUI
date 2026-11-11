@@ -16,7 +16,12 @@ ThreadsManager& ThreadsManager::GetInstance()
     return *_threadsManagerInstance;
 }
 
-void ThreadsManager::SetProfileAction(std::function<void()>&& profileAction)
+void ThreadsManager::CreateListenerThread(PlatformListener& platformListener, DeviceId deviceId, PlatformListenerData&& platformListenerData)
+{
+    _listenersThreads.emplace_front(&PlatformListener::ListenerUpdate, &platformListener, deviceId, std::move(platformListenerData));
+}
+
+void ThreadsManager::SetDevicesHoldAction(std::function<void()>&& profileAction)
 {
     _mutex.lock();
     _profileAction = std::move(profileAction);

@@ -13,8 +13,8 @@ public:
     [[nodiscard]] bool HasNegativeInput() const;
     [[nodiscard]] bool HasPositiveInput() const;
 
-    void TriggerNegativeInput() const;
-    void TriggerPositiveInput() const;
+    void TriggerNegativeInput(DeviceId deviceId) const;
+    void TriggerPositiveInput(DeviceId deviceId) const;
 
 private:
 

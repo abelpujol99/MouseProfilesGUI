@@ -1,15 +1,14 @@
 #include "Command/Macro.h"
 
-#include "Managers/VirtualDeviceManager.h"
+#include "Managers/DevicesManager.h"
 
-Macro::Macro(std::vector<EmitData>&& emitsData) : _emitsData(std::move(emitsData))
+Macro::Macro(std::vector<InputEvent>&& inputEvents) : _inputEvents(std::move(inputEvents))
 {}
 
-void Macro::Execute() const
+void Macro::Execute(DeviceId deviceId) const
 {
-    for (size_t i {0}; i < _emitsData.size(); ++i)
+    for (size_t i {0}; i < _inputEvents.size(); ++i)
     {
-        VirtualDeviceManager::GetInstance().Emit(_emitsData[i].GetInputDevice(), _emitsData[i].GetInputEvent());
-        VirtualDeviceManager::GetInstance().Emit(_emitsData[i].GetInputDevice(), InputEvent(EV_SYN, SYN_REPORT, 0));
+        DevicesManager::GetInstance().Emit(deviceId, {_inputEvents[i]});
     }
 }

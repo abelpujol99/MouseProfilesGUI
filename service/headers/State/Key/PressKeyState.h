@@ -7,12 +7,12 @@ class PressKeyState : public IKeyState
 {
 public:
 
-    PressKeyState(KeyInputStrategy* buttonInputCommand);
+    PressKeyState(KeyInputStrategy* keyInputStrategy);
 
-    void OnInput() override;
+    void OnInput(DeviceId deviceId) override;
 
 private:
 
-    KeyInputStrategy* _buttonInputCommand;
+    KeyInputStrategy* _keyInputStrategy;
 
 };

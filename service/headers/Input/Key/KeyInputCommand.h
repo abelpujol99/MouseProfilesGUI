@@ -14,11 +14,11 @@ public:
 
     ~KeyInputCommand() = default;
 
-    void Press() const;
+    void Press(DeviceId deviceId) const;
 
-    void Hold() const;
+    void Hold(DeviceId deviceId) const;
 
-    void Release() const;
+    void Release(DeviceId deviceId) const;
 
 private:
 

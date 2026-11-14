@@ -7,7 +7,7 @@ RelativeInput::RelativeInput(std::unique_ptr<RelativeInputStrategy> negativeInpu
     _positiveInput(std::move(positiveInput))
 {}
 
-void RelativeInput::ChangeProfile(uint8_t profileIndex)
+void RelativeInput::ChangeProfile(uint8_t profileIndex) const
 {
     _negativeInput->ChangeProfile(profileIndex);
     _positiveInput->ChangeProfile(profileIndex);

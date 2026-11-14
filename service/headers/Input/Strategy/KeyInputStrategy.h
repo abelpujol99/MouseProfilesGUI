@@ -1,17 +1,20 @@
 #pragma once
-#include "Input/Strategy/IInputCommandStrategy.h"
+#include "Input/Strategy/IInputTypeStrategy.h"
 
 #include <functional>
+#include <mutex>
 
-#include "Input/Key/KeyInputCommand.h"
+#include "Input/Key/KeyInputCommands.h"
 #include "State/Key/IKeyState.h"
 
 
-class KeyInputStrategy : public IInputCommandStrategy
+class KeyInputStrategy : public IInputTypeStrategy
 {
 public:
 
-    KeyInputStrategy(std::vector<std::unique_ptr<KeyInputCommand const>>&& buttonInputCommands, CommandDelay&& commandDelay);
+    KeyInputStrategy(std::vector<std::unique_ptr<KeyInputCommands const>>&& buttonInputCommands);
+
+    ~KeyInputStrategy() override;
 
     void ChangeProfile(uint8_t profileIndex) override;
 
@@ -37,15 +40,15 @@ private:
 
     bool _isPressed {false};
 
-    std::vector<std::unique_ptr<KeyInputCommand const>> _keyInputCommands;
+    std::vector<std::unique_ptr<KeyInputCommands const>> _keyInputCommands;
 
-    const KeyInputCommand* _currentKeyInputCommand {nullptr};
-
-    const CommandDelay _commandDelay;
+    const KeyInputCommands* _currentKeyInputCommand {nullptr};
 
     Duration _timeElapsed {0};
 
     TimePoint _previousTimePoint;
 
     std::weak_ptr<std::function<void()>> _subscriptionToTriggerHoldCommand;
+
+    std::mutex _mutex;
 };

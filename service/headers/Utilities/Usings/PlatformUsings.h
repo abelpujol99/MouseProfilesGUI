@@ -1,11 +1,13 @@
 #pragma once
 
 #ifdef __linux__
+#include <linux/uinput.h>
 #include "Device/VirtualDevice/LinuxVirtualDevice.h"
 #include "Device/Listener/LinuxListener.h"
 #include "Device/Emitter/LinuxEmitter.h"
 
     using PlatformVirtualDevice = LinuxVirtualDevice;
+    using PlatformDeviceData = uinput_setup;
     using PlatformListener = LinuxListener;
     using PlatformEmitter = LinuxEmitter;
     using PlatformListenerData = std::string;

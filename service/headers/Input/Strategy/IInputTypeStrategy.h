@@ -2,12 +2,12 @@
 
 #include <cstdint>
 
-class IInputCommandStrategy
+class IInputTypeStrategy
 {
 
 public:
 
-    virtual ~IInputCommandStrategy() = default;
+    virtual ~IInputTypeStrategy() = default;
 
     virtual void ChangeProfile(uint8_t profileIndex) = 0;
 };

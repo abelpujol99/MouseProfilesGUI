@@ -7,7 +7,7 @@ struct KeyStateCommands
 {
     std::unique_ptr<ICommand const> onPress;
 
-    std::unique_ptr<ICommand const> onHold;
+    std::unique_ptr<HoldCommand const> onHold;
 
     std::unique_ptr<ICommand const> onRelease;
 };

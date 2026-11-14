@@ -1,39 +1,19 @@
 #pragma once
-#include <forward_list>
-#include <mutex>
-#include <unordered_map>
-#include <unordered_set>
 
 #include "Input/InputEvent.h"
 #include "DeviceUsings.h"
-#include "../InputType.h"
+#include "Device/Profile/KeyProfile.h"
+#include "Device/Profile/RelativeProfile.h"
 #include "Input/Strategy/KeyInputStrategy.h"
-#include "Input/Relative/RelativeInput.h"
-#include "Serialization/RelativeCode.h"
 
 class RelativeInput;
 
 class BaseVirtualDevice
 {
-private:
-
-    struct KeyProfile
-    {
-        std::unordered_map<Code, KeyInputStrategy> inputs;
-        std::unordered_map<uint8_t, std::forward_list<Code>> subProfilesCodes;
-        std::unordered_set<Code> currentInputs;
-    };
-
-    struct RelativeProfile
-    {
-        std::unordered_map<Code, RelativeInput> inputs;
-        std::unordered_map<uint8_t, std::forward_list<RelativeCode>> subProfilesCodes;
-        std::unordered_map<Code, std::array<bool, 2>> currentInputs;
-    };
 
 public:
 
-    BaseVirtualDevice(InputType inputType);
+    BaseVirtualDevice() = default;
 
     BaseVirtualDevice(const BaseVirtualDevice& other) = delete;
     BaseVirtualDevice& operator=(const BaseVirtualDevice& other) = delete;
@@ -45,10 +25,9 @@ public:
 
     void OnChangeApplicationFocus();
 
-    void SetProfile(std::unordered_map<Code, KeyInputStrategy>&& keyInputsProfile,
-        std::unordered_map<Code, RelativeInput>&& relativeInputsProfile);
+    void SetKeyProfile(std::unique_ptr<KeyProfile>&& keyProfile);
 
-    virtual void CreateProfile() = 0;
+    void SetRelativeProfile(std::unique_ptr<RelativeProfile>&& relativeProfile);
 
     void ChangeCurrentSubProfile(uint8_t subProfileIndex);
 
@@ -65,6 +44,10 @@ public:
 protected:
 
     void UpdateCodesBindings() const;
+
+    void UpdateKeyCodesBindings() const;
+
+    void UpdateRelativeCodesBindings() const;
 
     std::unique_ptr<KeyProfile> _keyProfile {nullptr};
 

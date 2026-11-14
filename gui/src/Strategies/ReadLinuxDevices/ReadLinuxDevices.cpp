@@ -6,14 +6,13 @@
 #include <linux/input.h>
 #include <iostream>
 #include <map>
+#include <ranges>
+
+#define DEVICES_DIRECTORY "/dev/input"
 
 std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
 {
-    const std::string devicesDirectory {"/dev/input"};
-
-    std::vector<DeviceInfo> devicesInfo;
-
-    auto devicesFile {std::filesystem::directory_iterator(devicesDirectory)};
+    auto devicesFile {std::filesystem::directory_iterator(DEVICES_DIRECTORY)};
 
     std::map<DeviceId, DeviceInfo> devices;
 
@@ -26,7 +25,8 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
             continue;
         }
 
-        int file {open(path.c_str(), O_RDONLY, O_NONBLOCK)};
+        int file {open(path.c_str(), O_RDONLY | O_NONBLOCK)};
+
         if (file < 0)
         {
             std::cerr << "Failed to open " << path.c_str() << std::endl;
@@ -82,7 +82,9 @@ std::vector<DeviceInfo> ReadLinuxDevices::ReturnDevices()
         close(file);
     }
 
-    for (auto&& [deviceId, deviceInfo] : devices)
+    std::vector<DeviceInfo> devicesInfo;
+
+    for (auto& deviceInfo : devices | std::views::values)
     {
         devicesInfo.push_back(deviceInfo);
     }
@@ -117,7 +119,6 @@ bool ReadLinuxDevices::IsAPeripheric(int file)
     bool isAKeyboard {hasKeys && TestBit(KEY_A, keyBits) && TestBit(KEY_SPACE, keyBits)};
     bool isAGamepad {hasAbs && TestBit(BTN_SOUTH, keyBits)};
     bool isAJoystick {hasAbs && hasAbsXY && TestBit(BTN_JOYSTICK, keyBits)};
-    bool isATouchpad {hasAbs && hasAbsXY && TestBit(BTN_TOUCH, keyBits) && TestBit(BTN_TOOL_FINGER, keyBits)};
 
-    return isAMouse || isAKeyboard || isAGamepad || isAJoystick || isATouchpad;
+    return isAMouse || isAKeyboard || isAGamepad || isAJoystick;
 }

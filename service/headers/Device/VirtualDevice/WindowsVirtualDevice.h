@@ -5,11 +5,7 @@ class WindowsVirtualDevice : public BaseVirtualDevice
 {
 public:
 
-    WindowsVirtualDevice(InputType inputType);
-
     ~WindowsVirtualDevice() override = default;
-
-    void CreateProfile() override;
 
     bool HasInputRegistered(const InputEvent& inputEvent) override;
 

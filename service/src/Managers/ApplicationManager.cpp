@@ -3,82 +3,38 @@
 #include "Managers/SerializationManager.h"
 #include "Managers/DevicesManager.h"
 
-std::unique_ptr<ApplicationManager> ApplicationManager::_applicationManagerInstance = nullptr;
-
-ApplicationManager::ApplicationManager()
-{
-    _devices = SerializationManager::GetInstance().DeserializeDevicesProfiles();
-
-    _shouldRunObserver = std::make_unique<ObserverSingleValue<bool>>();
-
-    _shouldRunObserver->SetValue(true);
-
-    _shouldGUIRunObserver = std::make_unique<ObserverSingleValue<bool>>();
-
-    _shouldGUIRunObserver->SetValue(true);
-
-    _scrollWheelModeHidrawPath = "/sys/class/hidraw/hidraw0/device/scroll_mode";
-}
+ApplicationManager::ApplicationManager() : _devices(SerializationManager::GetInstance().DeserializeDevicesProfiles())
+{}
 
 ApplicationManager& ApplicationManager::GetInstance()
 {
-    if (!_applicationManagerInstance)
-    {
-        _applicationManagerInstance.reset(new ApplicationManager());
-    }
+    static ApplicationManager _applicationManagerInstance;
 
-    return *_applicationManagerInstance;
+    return _applicationManagerInstance;
 }
 
 void ApplicationManager::Start()
 {
-#ifdef NDEBUG
+//#ifdef NDEBUG
 
-    DevicesManager::GetInstance().Loop();
+    DevicesManager& devicesManagerInstance {DevicesManager::GetInstance()};
 
-#endif
+    devicesManagerInstance.Start();
+
+    devicesManagerInstance.Loop();
+
+//#endif
 
     //SerializationManager::GetInstance().SerializeDevices(_devices);
 }
 
-std::string ApplicationManager::GetPathToSwitchScrollMode() const
+void ApplicationManager::Shutdown()
 {
-    return _scrollWheelModeHidrawPath;
+    DevicesManager::GetInstance().RemoveVirtualDevices();
+    DevicesManager::GetInstance().StopTriggering();
 }
 
-std::weak_ptr<std::function<void(bool)>> ApplicationManager::SubscribeToShouldRunObserver(
-    std::function<void(bool)> action) const
-{
-    return _shouldRunObserver->Subscribe(std::move(action));
-}
-
-void ApplicationManager::UnsubscribeToShouldRunObserver(std::weak_ptr<std::function<void(bool)>> action) const
-{
-    _shouldRunObserver->Unsubscribe(std::move(action));
-}
-
-void ApplicationManager::SwitchShouldRun() const
-{
-    _shouldRunObserver->SetValue(false);
-}
-
-bool ApplicationManager::ShouldRun() const
-{
-    return _shouldRunObserver->GetValue();
-}
-
-std::weak_ptr<std::function<void(bool)>> ApplicationManager::SubscribeToShouldGUIRunObserver(
-    std::function<void(bool)> action) const
-{
-    return _shouldGUIRunObserver->Subscribe(std::move(action));
-}
-
-void ApplicationManager::UnsubscribeToShouldGUIRunObserver(std::weak_ptr<std::function<void(bool)>> action) const
-{
-    _shouldGUIRunObserver->Unsubscribe(std::move(action));
-}
-
-void ApplicationManager::SetEditingDeviceProfiles(std::string deviceName)
+/*void ApplicationManager::SetEditingDeviceProfiles(std::string deviceName)
 {
     if (!_devices.devicesProfiles.contains(deviceName))
     {
@@ -97,7 +53,7 @@ std::string ApplicationManager::CreateProfile()
 
     profile.isCurrentProfile = false;
 
-    _editingDeviceProfiles->profiles.emplace(profileName, profile);
+    _editingDeviceProfiles->profiles.emplace_back(profile);
 
     return profileName;
 }
@@ -158,24 +114,4 @@ std::unordered_map<std::string, Profile> ApplicationManager::GetDeviceProfiles(s
     }
 
     return {};
-}
-
-void ApplicationManager::StartGUI()
-{
-    /*WindowManager& windowManager {WindowManager::GetInstance()};
-
-    windowManager.SetInitialSize(1500, 700);
-    windowManager.Start();
-    windowManager.Update();*/
-}
-
-void ApplicationManager::TurnOnGUI() const
-{
-    _shouldGUIRunObserver->SetValue(true);
-}
-
-void ApplicationManager::TurnOffGUI() const
-{
-    _shouldGUIRunObserver->SetValue(false);
-    SerializationManager::GetInstance().SerializeDevices(_devices);
-}
+}*/

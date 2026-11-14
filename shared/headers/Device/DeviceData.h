@@ -1,13 +1,15 @@
 #pragma once
 #include <compare>
 #include <cstdint>
+#include <array>
 
 class DeviceData
 {
 public:
 
-    DeviceData(uint16_t busType, uint16_t vendor, uint16_t product, uint16_t version);
+    DeviceData(std::array<char, 80> name, uint16_t busType, uint16_t vendor, uint16_t product, uint16_t version);
 
+    [[nodiscard]] std::array<char, 80> GetName() const;
     [[nodiscard]] uint16_t GetBusType() const;
     [[nodiscard]] uint16_t GetVendor() const;
     [[nodiscard]] uint16_t GetProduct() const;
@@ -15,7 +17,7 @@ public:
 
 private:
 
-    //TODO DEVICE NAME
+    std::array<char, 80> _name {};
     uint16_t _busType;
     uint16_t _vendor;
     uint16_t _product;

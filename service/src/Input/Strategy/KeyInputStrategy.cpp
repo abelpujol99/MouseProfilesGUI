@@ -1,16 +1,24 @@
 #include "Input/Strategy/KeyInputStrategy.h"
 
+#include <iostream>
+
 #include "Managers/DevicesManager.h"
 #include "State/Key/PressKeyState.h"
 
-KeyInputStrategy::KeyInputStrategy(std::vector<std::unique_ptr<KeyInputCommand const>>&& buttonInputCommands,
-    CommandDelay&& commandDelay) : _keyState(std::make_unique<PressKeyState>(this)), _keyInputCommands(std::move(buttonInputCommands)),
-    _commandDelay(std::move(commandDelay))
+KeyInputStrategy::KeyInputStrategy(std::vector<std::unique_ptr<KeyInputCommands const>>&& buttonInputCommands) :
+    _keyState(std::make_unique<PressKeyState>(this)), _keyInputCommands(std::move(buttonInputCommands))
 {}
+
+KeyInputStrategy::~KeyInputStrategy()
+{
+    DevicesManager::GetInstance().UnsubscribeToTriggerKeyHoldCommand(std::move(_subscriptionToTriggerHoldCommand));
+}
 
 void KeyInputStrategy::ChangeProfile(uint8_t profileIndex)
 {
+    _mutex.lock();
     _currentKeyInputCommand = _keyInputCommands[profileIndex].get();
+    _mutex.unlock();
 }
 
 void KeyInputStrategy::ChangeState(std::unique_ptr<IKeyState>&& keyState)
@@ -41,7 +49,12 @@ void KeyInputStrategy::Press(DeviceId deviceId)
 
     _subscriptionToTriggerHoldCommand = DevicesManager::GetInstance().SubscribeToTriggerKeyHoldCommand([&, deviceId]()
     {
-        FirstHoldDelay(deviceId);
+        _mutex.lock();
+        if (_currentKeyInputCommand->GetHoldCommand() != nullptr)
+        {
+            FirstHoldDelay(deviceId);
+        }
+        _mutex.unlock();
     });
 }
 
@@ -84,7 +97,7 @@ void KeyInputStrategy::FirstHoldDelay(DeviceId deviceId)
 
     _previousTimePoint = currentTimePoint;
 
-    if (_commandDelay.GetFirstDelayInMillis() > _timeElapsed)
+    if (_currentKeyInputCommand->GetHoldCommand()->GetMillisToStart() > _timeElapsed)
     {
         return;
     }
@@ -97,7 +110,13 @@ void KeyInputStrategy::FirstHoldDelay(DeviceId deviceId)
 
     _subscriptionToTriggerHoldCommand = DevicesManager::GetInstance().SubscribeToTriggerKeyHoldCommand([&, deviceId]()
     {
-        HoldDelay(deviceId);
+        _mutex.lock();
+        if (_currentKeyInputCommand->GetHoldCommand() != nullptr)
+        {
+            HoldDelay(deviceId);
+        }
+        _mutex.unlock();
+
     });
 }
 
@@ -111,10 +130,12 @@ void KeyInputStrategy::HoldDelay(DeviceId deviceId)
 
     _previousTimePoint = currentTimePoint;
 
-    if (_commandDelay.GetMillisToRepeatCommand() > _timeElapsed)
+    if (_currentKeyInputCommand->GetHoldCommand()->GetMillisToRepeat() > _timeElapsed)
     {
         return;
     }
+
+    //std::cout << "Trigger" << std::endl;
 
     Hold(deviceId);
 

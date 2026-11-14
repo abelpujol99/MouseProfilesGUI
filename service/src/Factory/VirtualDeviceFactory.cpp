@@ -1,12 +1,15 @@
 #include "Factory/VirtualDeviceFactory.h"
 
+#include <cstring>
 #include <fcntl.h>
+#include <unistd.h>
 #include <linux/uinput.h>
 #include <sys/ioctl.h>
 
 #include "Device/VirtualDeviceData.h"
 #include "Device/VirtualDevice/LinuxVirtualDevice.h"
 #include "Device/VirtualDevice/WindowsVirtualDevice.h"
+#include "Utilities/Usings/PlatformUsings.h"
 
 LinuxVirtualDevice VirtualDeviceFactory::CreateLinuxVirtualDevice(VirtualDeviceData&& virtualDeviceData)
 {
@@ -17,36 +20,32 @@ LinuxVirtualDevice VirtualDeviceFactory::CreateLinuxVirtualDevice(VirtualDeviceD
         std::__throw_runtime_error("Unable to create a Virtual Device");
     }
 
-    for (auto& capableInput : virtualDeviceData.GetCapableInputs())
+    for (const auto& [inputType, virtualDeviceCapableInputs] : virtualDeviceData.GetCapableInputs())
     {
-        const unsigned long& inputType {capableInput.first};
-        const std::unordered_set<int>& virtualDeviceCapableInputs {capableInput.second};
-
         for (auto& virtualDeviceCapableInput : virtualDeviceCapableInputs)
         {
             ioctl(virtualFile, inputType, virtualDeviceCapableInput);
         }
     }
 
-    const DeviceData& deviceData {virtualDeviceData.GetDeviceData()};
+    const PlatformDeviceData& platformDeviceData {virtualDeviceData.GetDeviceData()};
 
-    uinput_setup inputSetup
+    if (ioctl(virtualFile, UI_DEV_SETUP, &platformDeviceData))
     {
-        input_id{
-            deviceData.GetBusType(),
-            deviceData.GetVendor(),
-            deviceData.GetProduct(),
-            deviceData.GetVersion()
-        }
-    };
+        perror("UI_DEV_CREATE");
+        close(virtualFile);
+        throw std::runtime_error("Unable to create virtual file");
+    }
 
-    ioctl(virtualFile, UI_DEV_SETUP, &inputSetup);
-    ioctl(virtualFile, UI_DEV_CREATE);
+    if (ioctl(virtualFile, UI_DEV_CREATE))
+    {
+        perror("UI_DEV_SETUP");
+    }
 
-    return {virtualDeviceData.GetInputType(), virtualFile};
+    return {virtualFile};
 }
 
 WindowsVirtualDevice VirtualDeviceFactory::CreateWindowsVirtualDevice(VirtualDeviceData&& virtualDeviceData)
 {
-    return {virtualDeviceData.GetInputType()};
+    return {};
 }

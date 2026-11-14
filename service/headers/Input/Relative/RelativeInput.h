@@ -8,7 +8,7 @@ public:
 
     RelativeInput(std::unique_ptr<RelativeInputStrategy> negativeInput, std::unique_ptr<RelativeInputStrategy> positiveInput);
 
-    void ChangeProfile(uint8_t profileIndex);
+    void ChangeProfile(uint8_t profileIndex) const;
 
     [[nodiscard]] bool HasNegativeInput() const;
     [[nodiscard]] bool HasPositiveInput() const;

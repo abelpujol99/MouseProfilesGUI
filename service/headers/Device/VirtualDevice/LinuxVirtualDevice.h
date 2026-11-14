@@ -9,7 +9,7 @@ class LinuxVirtualDevice : public BaseVirtualDevice
 {
 public:
 
-    LinuxVirtualDevice(InputType inputType, int file);
+    LinuxVirtualDevice(int file);
 
     LinuxVirtualDevice(const LinuxVirtualDevice& other) = delete;
     LinuxVirtualDevice& operator=(const LinuxVirtualDevice& other) = delete;
@@ -18,8 +18,6 @@ public:
     LinuxVirtualDevice& operator=(LinuxVirtualDevice&& other) noexcept = default;
 
     ~LinuxVirtualDevice() override;
-
-    void CreateProfile() override;
 
     bool HasInputRegistered(const InputEvent& inputEvent) override;
 

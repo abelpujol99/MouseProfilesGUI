@@ -13,6 +13,11 @@ DeviceWrapper::DeviceWrapper(DeviceId deviceId, VirtualDeviceData&& virtualDevic
     _platformEmitter(deviceId)
 {}
 
+DeviceWrapper::~DeviceWrapper()
+{
+    Destroy();
+}
+
 PlatformVirtualDevice& DeviceWrapper::GetVirtualDevice()
 {
     return _platformVirtualDevice;

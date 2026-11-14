@@ -1,11 +1,4 @@
-#include "../../../headers/Device/VirtualDevice/WindowsVirtualDevice.h"
-
-WindowsVirtualDevice::WindowsVirtualDevice(InputType inputType) : BaseVirtualDevice(inputType)
-{}
-
-void WindowsVirtualDevice::CreateProfile()
-{
-}
+#include "Device/VirtualDevice/WindowsVirtualDevice.h"
 
 bool WindowsVirtualDevice::HasInputRegistered(const InputEvent& inputEvent)
 {

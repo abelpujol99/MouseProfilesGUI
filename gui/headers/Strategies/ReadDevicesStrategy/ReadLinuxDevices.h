@@ -24,8 +24,8 @@ private:
         auto operator<=>(const DeviceId& other) const = default;
     };
 
-    bool TestBit(int bit, const uint8_t* array);
+    static bool TestBit(int bit, const uint8_t* array);
 
-    bool IsAPeripheric(int file);
+    static bool IsAPeripheric(int file);
 
 };

@@ -1,18 +1,5 @@
 #include "Device/VirtualDevice/BaseVirtualDevice.h"
 
-BaseVirtualDevice::BaseVirtualDevice(InputType inputType)
-{
-    if (HasInputType(inputType, InputType::KEY))
-    {
-        _keyProfile = std::make_unique<KeyProfile>();
-    }
-
-    if (HasInputType(inputType, InputType::RELATIVE))
-    {
-        _relativeProfile = std::make_unique<RelativeProfile>();
-    }
-}
-
 BaseVirtualDevice::BaseVirtualDevice(BaseVirtualDevice&& other) noexcept
 {
     _keyProfile = std::move(other._keyProfile);
@@ -62,25 +49,21 @@ void BaseVirtualDevice::OnChangeApplicationFocus()
     codes.emplace_front(273); //RIGHT BUTTON
     codes.emplace_front(275); //SIDE BUTTON
 
-    _allSubProfilesCodes.try_emplace(1, codes);
-
-    CreateProfile();*/
+    _allSubProfilesCodes.try_emplace(1, codes);*/
 }
 
-void BaseVirtualDevice::SetProfile(std::unordered_map<Code, KeyInputStrategy>&& keyInputsProfile,
-    std::unordered_map<Code, RelativeInput>&& relativeInputsProfile)
+void BaseVirtualDevice::SetKeyProfile(std::unique_ptr<KeyProfile>&& keyProfile)
 {
-    if (_keyProfile != nullptr)
-    {
-        _keyProfile->inputs = std::move(keyInputsProfile);
-    }
+    _keyProfile = std::move(keyProfile);
 
-    if (_relativeProfile != nullptr)
-    {
-        _relativeProfile->inputs = std::move(relativeInputsProfile);
-    }
+    UpdateKeyCodesBindings();
+}
 
-    ChangeCurrentSubProfile(0);
+void BaseVirtualDevice::SetRelativeProfile(std::unique_ptr<RelativeProfile>&& relativeProfile)
+{
+    _relativeProfile = std::move(relativeProfile);
+
+    UpdateRelativeCodesBindings();
 }
 
 void BaseVirtualDevice::ChangeCurrentSubProfile(uint8_t subProfileIndex)
@@ -92,41 +75,41 @@ void BaseVirtualDevice::ChangeCurrentSubProfile(uint8_t subProfileIndex)
 
 void BaseVirtualDevice::UpdateCodesBindings() const
 {
-    const bool& keyProfileExists {_keyProfile != nullptr};
-    const bool& relativeProfileExists {_keyProfile != nullptr};
+    if (_keyProfile != nullptr)
+    {
+        UpdateKeyCodesBindings();
+    }
+
+    if (_relativeProfile != nullptr)
+    {
+        UpdateRelativeCodesBindings();
+    }
+}
+
+void BaseVirtualDevice::UpdateKeyCodesBindings() const
+{
+    _keyProfile->currentInputs.clear();
 
     const std::forward_list<Code>& keyCodes {_keyProfile->subProfilesCodes.at(_currentSubProfileIndex)};
+
+    for (auto& code : keyCodes)
+    {
+        _keyProfile->currentInputs.emplace(code);
+
+        _keyProfile->inputs.at(code).ChangeProfile(_currentSubProfileIndex);
+    }
+}
+
+void BaseVirtualDevice::UpdateRelativeCodesBindings() const
+{
     const std::forward_list<RelativeCode>& relativeCodes {_relativeProfile->subProfilesCodes.at(_currentSubProfileIndex)};
 
-    if (keyProfileExists)
+    for (auto& relativeCode : relativeCodes)
     {
-        _keyProfile->currentInputs.clear();
-    }
+        std::array<bool, 2> inputFlags {relativeCode.hasNegativeInput, relativeCode.hasPositiveInput};
 
-    if (relativeProfileExists)
-    {
-        _relativeProfile->currentInputs.clear();
-    }
+        _relativeProfile->currentInputs.emplace(relativeCode.code, inputFlags);
 
-    if (keyProfileExists)
-    {
-        for (auto& code : keyCodes)
-        {
-            _keyProfile->currentInputs.emplace(code);
-
-            _keyProfile->inputs.at(code).ChangeProfile(_currentSubProfileIndex);
-        }
-    }
-
-    if (relativeProfileExists)
-    {
-        for (auto& relativeCode : relativeCodes)
-        {
-            std::array<bool, 2> inputFlags {relativeCode.hasNegativeInput, relativeCode.hasPositiveInput};
-
-            _relativeProfile->currentInputs.emplace(relativeCode.code, inputFlags);
-
-            _relativeProfile->inputs.at(relativeCode.code).ChangeProfile(_currentSubProfileIndex);
-        }
+        _relativeProfile->inputs.at(relativeCode.code).ChangeProfile(_currentSubProfileIndex);
     }
 }

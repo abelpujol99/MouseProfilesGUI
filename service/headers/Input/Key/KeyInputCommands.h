@@ -3,16 +3,16 @@
 #include <memory>
 
 #include "Command/ICommand.h"
-#include "Command/CommandDelay.h"
+#include "Command/HoldCommand.h"
 #include "Input/Key/KeyStateCommands.h"
 
-class KeyInputCommand
+class KeyInputCommands
 {
 public:
 
-    KeyInputCommand(KeyStateCommands&& keyStateCommands, CommandDelay&& delayCommand);
+    KeyInputCommands(KeyStateCommands&& keyStateCommands);
 
-    ~KeyInputCommand() = default;
+    ~KeyInputCommands() = default;
 
     void Press(DeviceId deviceId) const;
 
@@ -20,11 +20,11 @@ public:
 
     void Release(DeviceId deviceId) const;
 
+    [[nodiscard]] const HoldCommand* GetHoldCommand() const;
+
 private:
 
     const std::unique_ptr<ICommand const> _onPressCommand;
-    const std::unique_ptr<ICommand const> _onHoldCommand;
+    const std::unique_ptr<HoldCommand const> _holdCommand;
     const std::unique_ptr<ICommand const> _onReleaseCommand;
-
-    const CommandDelay delayCommand;
 };

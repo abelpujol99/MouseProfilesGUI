@@ -26,6 +26,8 @@ public:
 
     static DevicesManager& GetInstance();
 
+    void Start();
+
     void Loop();
 
     void CreateVirtualDeviceWrapper(DeviceId deviceId, VirtualDeviceData&& virtualDeviceData, PlatformListenerData&& platformListenerData);
@@ -50,17 +52,17 @@ public:
 
     void UnsubscribeToTriggerKeyHoldCommand(std::weak_ptr<std::function<void()>>&& action);
 
+    void RemoveVirtualDevice(DeviceId deviceId);
+
+    void RemoveVirtualDevices();
+
     void StopTriggering();
 
 private:
 
-    DevicesManager();
+    DevicesManager() = default;
 
     void TriggerHoldCommands();
-
-    void RemoveVirtualDevice(DeviceId deviceId);
-
-    void RemoveVirtualDevices();
 
     std::unordered_map<DeviceId, DeviceWrapper> _devicesWrapper;
 
@@ -71,4 +73,6 @@ private:
     TriggerBus _triggerKeyHoldCommandEvent;
 
     std::atomic<bool> _shouldKeepTriggering {true};
+
+    std::unordered_map<DeviceId, std::mutex> _devicesMutex;
 };
